@@ -78,6 +78,7 @@ let score = 0, gameOver = false, paused = false, shootCooldown = 0;
 let keys = {};
 let uiVisible = true;
 let gemMilestone = 10000;
+let lastTime = 0; // For Delta Time
 
 let coins = Number(localStorage.getItem("coins")) || 100;
 let gems = Number(localStorage.getItem("gems")) || 10;
@@ -145,8 +146,6 @@ function updateUI() {
     });
 
     document.getElementById("rebirthBtn").style.display = (weaponLevels.pistol >= 2) ? "block" : "none";
-
-    // Vis om boosters er aktive
     document.getElementById("armorBtn").style.borderColor = boosters.armor ? "#0f0" : "#4af";
     document.getElementById("doubleDamageBtn").style.borderColor = boosters.doubleDamage ? "#0f0" : "#4af";
     document.getElementById("slowEnemiesBtn").style.borderColor = boosters.slowEnemies ? "#0f0" : "#4af";
@@ -162,7 +161,6 @@ function upgradeWeapon(type) {
     else if(type === 'smg') cost = 800;
     else if(type === 'shotgun') cost = 1000;
     else if(type === 'ar') cost = 1500;
-
     if (weaponsOwned[type] && weaponLevels[type] < weaponConfigs[type].maxLvl && coins >= cost) {
         coins -= cost; weaponLevels[type]++; activeWeapon = type; saveProgress(); updateUI();
     }
@@ -237,26 +235,26 @@ function fire() {
     shootCooldown = config.cooldown[lvl];
 }
 
-function update() {
-    particles.forEach((p, i) => { p.x += p.vx; p.y += p.vy; p.life -= 0.02; if(p.life <= 0) particles.splice(i,1); });
-    floatingTexts.forEach((t, i) => { t.y -= 1; t.life -= 0.02; if(t.life <= 0) floatingTexts.splice(i,1); });
+function update(sf) {
+    particles.forEach((p, i) => { p.x += p.vx * sf; p.y += p.vy * sf; p.life -= 0.02 * sf; if(p.life <= 0) particles.splice(i,1); });
+    floatingTexts.forEach((t, i) => { t.y -= 1 * sf; t.life -= 0.02 * sf; if(t.life <= 0) floatingTexts.splice(i,1); });
     if (gameOver || paused) return;
     if (player.alive && activeWeapon !== "none" && shootCooldown <= 0) fire();
-    if (shootCooldown > 0) shootCooldown--;
-    stars.forEach(s => { s.y += s.s; if(s.y > 600) s.y = 0; });
+    if (shootCooldown > 0) shootCooldown -= 1 * sf;
+    stars.forEach(s => { s.y += s.s * sf; if(s.y > 600) s.y = 0; });
     if (player.alive) {
-        if ((keys['a'] || keys['arrowleft']) && player.x > 0) player.x -= player.speed;
-        if ((keys['d'] || keys['arrowright']) && player.x < 400 - player.width) player.x += player.speed;
+        if ((keys['a'] || keys['arrowleft']) && player.x > 0) player.x -= player.speed * sf;
+        if ((keys['d'] || keys['arrowright']) && player.x < 400 - player.width) player.x += player.speed * sf;
     }
     bullets.forEach((b, i) => {
-        b.x += b.vx; b.y += b.vy;
+        b.x += b.vx * sf; b.y += b.vy * sf;
         if (b.y < -20 || b.x < -20 || b.x > 420) bullets.splice(i, 1);
     });
-    let enemySpeedMult = boosters.slowEnemies ? 0.5 : 1.0;
+    let enemySpeedMult = (boosters.slowEnemies ? 0.5 : 1.0) * sf;
     enemies.forEach((e, ei) => {
         if (e.type === 'sinus') {
             if (!e.centerX) e.centerX = e.x;
-            e.angle += 0.05; e.x = e.centerX + Math.sin(e.angle) * 50;
+            e.angle += 0.05 * sf; e.x = e.centerX + Math.sin(e.angle) * 50;
             e.y += e.speedY * enemySpeedMult;
         } else { e.y += e.speedY * enemySpeedMult; }
         if (player.alive && player.x < e.x + e.w && player.x + player.width > e.x && player.y < e.y + e.h && player.y + player.height > e.y) {
@@ -267,7 +265,7 @@ function update() {
                 createExplosion(player.x + 17, player.y + 17, "#0f0", 50); 
                 createExplosion(player.x + 17, player.y + 17, "orange", 30);
                 
-                // FIKSET: Boosters fjernes ved død
+                // Boosters fjernes ved Game Over
                 boosters.armor = false;
                 boosters.doubleDamage = false;
                 boosters.slowEnemies = false;
@@ -287,7 +285,7 @@ function update() {
         });
         if (e.y > 600) enemies.splice(ei, 1);
     });
-    score += 0.3;
+    score += 0.3 * sf;
     if (score >= gemMilestone) { gems += 2; gemMilestone += 10000; updateUI(); }
 }
 
@@ -343,7 +341,18 @@ function resetGameData() { if(confirm("Slette alt?")) { localStorage.clear(); lo
 
 init();
 setInterval(spawnEnemy, 500); 
-(function loop(){ update(); draw(); requestAnimationFrame(loop); })();
+
+function loop(timestamp) {
+    let deltaTime = timestamp - lastTime;
+    lastTime = timestamp;
+    if (deltaTime > 100) deltaTime = 16.6; 
+    let speedFactor = deltaTime / 16.6;
+
+    update(speedFactor);
+    draw();
+    requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
 </script>
 </body>
 </html>
