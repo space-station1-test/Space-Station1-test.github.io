@@ -65,7 +65,6 @@ let player, enemies, bullets, stars, particles, floatingTexts;
 let score = 0, gameOver = false, paused = false, shootCooldown = 0;
 let keys = {};
 let uiVisible = true;
-let lastTime = 0;
 
 // Boss variabler
 let boss = null;
@@ -77,7 +76,7 @@ let highscore = Number(localStorage.getItem("highscore")) || 0;
 let activeWeapon = localStorage.getItem("activeWeapon") || "none";
 let weaponsOwned = JSON.parse(localStorage.getItem("weaponsOwned")) || { pistol: false, smg: false, shotgun: false, ar: false };
 let weaponLevels = JSON.parse(localStorage.getItem("weaponLevels")) || { pistol: 0, smg: 0, shotgun: 0, ar: 0 };
-let boosters = { armor: false, doubleDamage: false, slowEnemies: false };
+let boosters = { armor: false, doubleDamage: false };
 
 const weaponConfigs = {
     pistol: { cooldown: [25, 18, 12], maxLvl: 2, type: "single", dmg: 1 },
@@ -98,7 +97,6 @@ function updateUI() {
     document.getElementById("coinsDisplay").innerText = `Coins: ${Math.floor(coins)}`;
     document.getElementById("gemsDisplay").innerText = `Gems: ${gems}`;
     document.getElementById("highscoreDisplayUI").innerText = `Best: ${Math.floor(highscore)}`;
-    
     document.getElementById("armorBtn").style.borderColor = boosters.armor ? "#0f0" : "#4af";
     document.getElementById("doubleDamageBtn").style.borderColor = boosters.doubleDamage ? "#0f0" : "#4af";
     document.getElementById("rebirthBtn").style.display = (weaponLevels.pistol >= 2) ? "block" : "none";
@@ -120,7 +118,7 @@ function rebirth() {
         coins = 100; gems += 30;
         weaponLevels = { pistol: 0, smg: 0, shotgun: 0, ar: 0 };
         weaponsOwned = { pistol: false, smg: false, shotgun: false, ar: false };
-        boosters = { armor: false, doubleDamage: false, slowEnemies: false };
+        boosters = { armor: false, doubleDamage: false };
         activeWeapon = "none";
         bossSpawned = false; boss = null;
         saveProgress(); init();
@@ -153,7 +151,7 @@ function createExplosion(x, y, color, count = 20) {
 }
 
 function spawnEnemy() {
-    if (paused || gameOver || boss) return; // Ingen vanlige fiender når bossen er her
+    if (paused || gameOver || boss) return;
     enemies.push({x: Math.random()*370, y: -40, w: 30, h: 30, speedY: (2.5 + score/5000) * BASE_SPEED, color: '#f44', coins: 10, hp: 1});
 }
 
@@ -161,7 +159,7 @@ function spawnBoss() {
     boss = {
         x: 100, y: -100, targetY: 50, w: 200, h: 80, 
         hp: 200, maxHp: 200, speedX: 2, dir: 1, 
-        color: '#ff00ff', lastShot: 0
+        color: '#ff00ff'
     };
     bossSpawned = true;
 }
@@ -180,30 +178,24 @@ function fire() {
     shootCooldown = config.cooldown[weaponLevels[activeWeapon]];
 }
 
-function update(sf) {
+function update() {
     if (gameOver || paused) return;
 
-    // Sjekk for boss-spawn
-    if (score >= 75000 && !bossSpawned) {
-        spawnBoss();
-    }
+    if (score >= 75000 && !bossSpawned) spawnBoss();
 
     if (player.alive && activeWeapon !== "none" && shootCooldown <= 0) fire();
-    if (shootCooldown > 0) shootCooldown -= 1 * sf;
+    if (shootCooldown > 0) shootCooldown--;
 
-    // Spillerbevegelse
     if (player.alive) {
-        if ((keys['a'] || keys['arrowleft']) && player.x > 0) player.x -= player.speed * sf;
-        if ((keys['d'] || keys['arrowright']) && player.x < 400 - player.width) player.x += player.speed * sf;
+        if ((keys['a'] || keys['arrowleft']) && player.x > 0) player.x -= player.speed;
+        if ((keys['d'] || keys['arrowright']) && player.x < 400 - player.width) player.x += player.speed;
     }
 
-    // Boss-oppdatering
     if (boss) {
-        if (boss.y < boss.targetY) boss.y += 1 * sf;
-        boss.x += boss.speedX * boss.dir * sf;
+        if (boss.y < boss.targetY) boss.y += 1;
+        boss.x += boss.speedX * boss.dir;
         if (boss.x <= 0 || boss.x + boss.w >= 400) boss.dir *= -1;
 
-        // Boss kollisjon med kuler
         bullets.forEach((b, bi) => {
             if (b.x > boss.x && b.x < boss.x + boss.w && b.y > boss.y && b.y < boss.y + boss.h) {
                 boss.hp -= b.dmg;
@@ -212,17 +204,14 @@ function update(sf) {
                 if (boss.hp <= 0) {
                     createExplosion(boss.x + boss.w/2, boss.y + boss.h/2, "magenta", 100);
                     coins += 5000; gems += 50;
-                    boss = null;
-                    score += 10000;
-                    updateUI();
+                    boss = null; score += 10000; updateUI();
                 }
             }
         });
     }
 
-    // Vanlige fiender
     enemies.forEach((e, ei) => {
-        e.y += e.speedY * sf;
+        e.y += e.speedY;
         if (player.alive && player.x < e.x + e.w && player.x + player.width > e.x && player.y < e.y + e.h && player.y + player.height > e.y) {
             if (boosters.armor && !player.armorUsed) { player.armorUsed = true; enemies.splice(ei, 1); }
             else { 
@@ -237,15 +226,17 @@ function update(sf) {
                 coins += 10; score += 100; updateUI();
             }
         });
+        if (e.y > 600) enemies.splice(ei, 1);
     });
 
-    bullets.forEach((b, i) => { b.y += b.vy * sf; b.x += b.vx * sf; if(b.y < -20) bullets.splice(i,1); });
-    particles.forEach((p, i) => { p.x += p.vx * sf; p.y += p.vy * sf; p.life -= 0.02 * sf; if(p.life <= 0) particles.splice(i,1); });
-    score += 0.3 * sf;
+    bullets.forEach((b, i) => { b.y += b.vy; b.x += b.vx; if(b.y < -20) bullets.splice(i,1); });
+    particles.forEach((p, i) => { p.x += p.vx; p.y += p.vy; p.life -= 0.02; if(p.life <= 0) particles.splice(i,1); });
+    score += 0.3;
 }
 
 function draw() {
     ctx.clearRect(0,0,400,600);
+    stars.forEach(s => { ctx.fillStyle='white'; ctx.fillRect(s.x,s.y,2,2); s.y += s.s; if(s.y > 600) s.y = 0; });
     if (player.alive) {
         ctx.fillStyle = (boosters.armor && !player.armorUsed) ? '#4af' : '#0f0';
         ctx.fillRect(player.x, player.y, player.width, player.height);
@@ -258,7 +249,6 @@ function draw() {
     if (boss) {
         ctx.fillStyle = boss.color;
         ctx.fillRect(boss.x, boss.y, boss.w, boss.h);
-        // HP bar
         ctx.fillStyle = "red"; ctx.fillRect(100, 20, 200, 10);
         ctx.fillStyle = "lime"; ctx.fillRect(100, 20, 200 * (boss.hp / boss.maxHp), 10);
     }
@@ -270,11 +260,15 @@ function draw() {
 
 window.addEventListener("keydown", e => { keys[e.key.toLowerCase()] = true; });
 window.addEventListener("keyup", e => { keys[e.key.toLowerCase()] = false; });
-canvas.addEventListener("mousemove", e => {
+
+const handleMove = (e) => {
     if(paused || gameOver || !player.alive) return;
     const rect = canvas.getBoundingClientRect();
-    player.x = (e.clientX - rect.left) * (400 / rect.width) - 17;
-});
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    player.x = (clientX - rect.left) * (400 / rect.width) - 17;
+};
+canvas.addEventListener("mousemove", handleMove);
+canvas.addEventListener("touchmove", (e) => { e.preventDefault(); handleMove(e); }, { passive: false });
 
 function togglePause() { paused = !paused; }
 function restartGame() { init(); }
@@ -283,11 +277,8 @@ function resetGameData() { if(confirm("Slette alt?")) { localStorage.clear(); lo
 init();
 setInterval(spawnEnemy, 500); 
 
-function loop(timestamp) {
-    let deltaTime = timestamp - lastTime;
-    lastTime = timestamp;
-    if (deltaTime > 100) deltaTime = 16.6;
-    update(deltaTime / 16.6);
+function loop() {
+    update();
     draw();
     requestAnimationFrame(loop);
 }
