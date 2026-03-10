@@ -65,6 +65,11 @@
         <button class="reset-btn" onclick="resetGameData()">RESET ALL DATA</button>
     </div>
 </div>
+<div id="skinShop" style="margin-top: 15px; border-top: 1px solid #4af; padding-top: 10px;">
+    <span class="section-title">Skins</span>
+    <button onclick="selectSkin('creeper')">Bruk Creeper</button>
+    <button onclick="selectSkin('default')">Standard Skin</button>
+</div>
 
 <canvas id="game" width="400" height="600"></canvas>
 
@@ -79,7 +84,12 @@ let keys = {};
 let uiVisible = true;
 let gemMilestone = 10000;
 let lastTime = 0; // For Delta Time
+const creeperImg = new Image();
+creeperImg.src = "https://minecraftfaces.com/wp-content/themes/minecraftfaces/faces/creeper-face.png";
+let currentSkin = "default"; 
 
+function selectSkin(name) { currentSkin = name; }
+    
 let coins = Number(localStorage.getItem("coins")) || 100;
 let gems = Number(localStorage.getItem("gems")) || 10;
 let highscore = Number(localStorage.getItem("highscore")) || 0;
