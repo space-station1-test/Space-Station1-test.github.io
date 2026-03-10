@@ -305,13 +305,23 @@ function draw() {
     particles.forEach(p => { ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, 4, 4); });
     floatingTexts.forEach(t => { ctx.globalAlpha = t.life; ctx.fillStyle = t.color; ctx.font="bold 14px Arial"; ctx.fillText(t.text, t.x, t.y); });
     ctx.globalAlpha = 1;
-    if (player.alive) {
-               if (currentSkin === "creeper") {
-            ctx.drawImage(creeperImg, player.x, player.y, player.w, player.h);
+        if (player.alive) {
+        if (currentSkin === "creeper") {
+            // Tegner Creeper
+            ctx.drawImage(creeperImg, player.x, player.y, player.width, player.height);
+            
+            // Hvis du har armor, tegner vi en blå ramme rundt bildet
+            if (boosters.armor && !player.armorUsed) {
+                ctx.strokeStyle = "#4af";
+                ctx.lineWidth = 3;
+                ctx.strokeRect(player.x, player.y, player.width, player.height);
+            }
         } else {
-            ctx.fillStyle = "#0f0";
-            ctx.fillRect(player.x, player.y, player.w, player.h);
+            // Standard skin
+            ctx.fillStyle = (boosters.armor && !player.armorUsed) ? '#4af' : '#0f0';
+            ctx.fillRect(player.x, player.y, player.width, player.height);
         }
+    }
         ctx.fillStyle = (boosters.armor && !player.armorUsed) ? '#4af' : '#0f0';
         ctx.fillRect(player.x, player.y, player.width, player.height);
     }
