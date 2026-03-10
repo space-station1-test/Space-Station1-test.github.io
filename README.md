@@ -21,12 +21,12 @@
 <body>
 
 <div class="ui" id="mainUI">
-    <button id="toggleUIBtn" onclick="toggleUI()">Skjul UI</button>
+    <button id="toggleUIBtn" onclick="toggleUI()">Hide UI</button>
     <div id="uiContent">
         <div id="stats">
             <div id="coinsDisplay">Coins: 0</div>
             <div id="gemsDisplay">Gems: 0</div>
-            <div id="highscoreDisplayUI" style="color: #4af; font-size: 11px;">Best: 0</div>
+            <div id="highscoreDisplayUI" style="color: #4af; font-size: 11px;">Highscore: 0</div>
         </div>
         <button onclick="togglePause()">Pause</button>
         <button onclick="restartGame()">Restart</button>
@@ -35,32 +35,32 @@
             <span class="section-title">Våpen (1-4)</span>
             <div class="wpn-group">
                 <button id="pistolSelect" onclick="selectWeapon('pistol')">Pistol</button>
-                <button id="unlockBtn" onclick="buyWeapon('pistol', 0)">Lås opp (1k Score)</button>
-                <button id="upgradePistolBtn" onclick="upgradeWeapon('pistol')">Oppgrader</button>
+                <button id="unlockBtn" onclick="buyWeapon('pistol', 0)">Unlock at (1k Score)</button>
+                <button id="upgradePistolBtn" onclick="upgradeWeapon('pistol')">Upgrade</button>
             </div>
             <div class="wpn-group">
                 <button id="smgSelect" onclick="selectWeapon('smg')">SMG</button>
-                <button id="buySMGBtn" onclick="buyWeapon('smg', 1000)">SMG (1000🪙)</button>
-                <button id="upgradeSMGBtn" onclick="upgradeWeapon('smg')">Oppgrader</button>
+                <button id="buySMGBtn" onclick="buyWeapon('smg', 1000)">SMG (1000🟡)</button>
+                <button id="upgradeSMGBtn" onclick="upgradeWeapon('smg')">Upgrade</button>
             </div>
             <div class="wpn-group">
                 <button id="shotgunSelect" onclick="selectWeapon('shotgun')">Shotgun</button>
-                <button id="buyShotgunBtn" onclick="buyWeapon('shotgun', 750)">Shotgun (750🪙)</button>
-                <button id="upgradeShotgunBtn" onclick="upgradeWeapon('shotgun')">Oppgrader</button>
+                <button id="buyShotgunBtn" onclick="buyWeapon('shotgun', 750)">Shotgun (750🟡)</button>
+                <button id="upgradeShotgunBtn" onclick="upgradeWeapon('shotgun')">Upgrade</button>
             </div>
             <div class="wpn-group">
                 <button id="arSelect" onclick="selectWeapon('ar')">AR</button>
-                <button id="buyARBtn" onclick="buyWeapon('ar', 1200)">AR (1200🪙)</button>
-                <button id="upgradeARBtn" onclick="upgradeWeapon('ar')">Oppgrader</button>
+                <button id="buyARBtn" onclick="buyWeapon('ar', 1200)">AR (1200🟡)</button>
+                <button id="upgradeARBtn" onclick="upgradeWeapon('ar')">Upgrade</button>
             </div>
-            <button id="rebirthBtn" onclick="rebirth()" style="display:none; background: gold !important; color: black; font-weight: bold;">REBIRTH (500c)</button>
+            <button id="rebirthBtn" onclick="rebirth()" style="display:none; background: gold !important; color: black; font-weight: bold;">REBIRTH (500🟡)</button>
         </div>
 
         <div id="shop">
             <span class="section-title">Boosters (Gems)</span>
-            <button id="armorBtn" onclick="buyBooster('armor', 50)">🛡️ Armor (50💎)</button>
-            <button id="doubleDamageBtn" onclick="buyBooster('doubleDamage', 50)">🔥 2x Dmg (50💎)</button>
-            <button id="slowEnemiesBtn" onclick="buyBooster('slowEnemies', 50)">❄️ Slow (50💎)</button>
+            <button id="armorBtn" onclick="buyBooster('armor', 50)">🛡️Armor (50💎)</button>
+            <button id="doubleDamageBtn" onclick="buyBooster('doubleDamage', 50)">🔥2x Dmg (50💎)</button>
+            <button id="slowEnemiesBtn" onclick="buyBooster('slowEnemies', 50)">❄️Slow (50💎)</button>
         </div>
         <button class="reset-btn" onclick="resetGameData()">RESET ALL DATA</button>
     </div>
@@ -92,13 +92,13 @@ const weaponConfigs = {
     pistol: { cooldown: [25, 18, 12], maxLvl: 2, type: "single", dmg: 1 },
     smg: { cooldown: [8, 5], maxLvl: 1, type: "single", dmg: 0.5 },
     shotgun: { cooldown: [45, 30], maxLvl: 1, type: "triple", dmg: 1 },
-    ar: { cooldown: [10, 6], maxLvl: 1, type: "fast", dmg: 1 }
+    ar: { cooldown: [10, 8], maxLvl: 1, type: "fast", dmg: 1 }
 };
 
 function toggleUI() {
     uiVisible = !uiVisible;
     document.getElementById("uiContent").classList.toggle("hidden", !uiVisible);
-    document.getElementById("toggleUIBtn").innerText = uiVisible ? "Skjul UI" : "Vis UI";
+    document.getElementById("toggleUIBtn").innerText = uiVisible ? "Hide UI" : "Show UI";
 }
 
 function selectWeapon(type) {
@@ -109,31 +109,31 @@ function updateUI() {
     document.getElementById("coinsDisplay").innerText = `Coins: ${Math.floor(coins)}`;
     document.getElementById("gemsDisplay").innerText = `Gems: ${gems}`;
     document.getElementById("highscoreDisplayUI").innerText = `Best: ${Math.floor(highscore)}`;
-    
+
     document.getElementById("unlockBtn").style.display = weaponsOwned.pistol ? "none" : "block";
     document.getElementById("unlockBtn").disabled = (highscore < 1000 && score < 1000);
-    
+
     const upgPistol = document.getElementById("upgradePistolBtn");
     upgPistol.style.display = weaponsOwned.pistol ? "block" : "none";
-    upgPistol.innerText = weaponLevels.pistol >= 2 ? "Maxed" : `Oppgrader (${(weaponLevels.pistol + 1) * 300}c)`;
+    upgPistol.innerText = weaponLevels.pistol >= 2 ? "Maxed" : `Upgrade (${(weaponLevels.pistol + 1) * 300}🟡)`;
     upgPistol.disabled = weaponLevels.pistol >= 2 || coins < (weaponLevels.pistol + 1) * 300;
-    
+
     document.getElementById("buySMGBtn").style.display = weaponsOwned.smg ? "none" : "block";
     const upgSMG = document.getElementById("upgradeSMGBtn");
     upgSMG.style.display = weaponsOwned.smg ? "block" : "none";
-    upgSMG.innerText = weaponLevels.smg >= 1 ? "Maxed" : "Oppgrader (800c)";
+    upgSMG.innerText = weaponLevels.smg >= 1 ? "Maxed" : "Upgrade (800🟡)";
     upgSMG.disabled = weaponLevels.smg >= 1 || coins < 800;
 
     document.getElementById("buyShotgunBtn").style.display = weaponsOwned.shotgun ? "none" : "block";
     const upgShotgun = document.getElementById("upgradeShotgunBtn");
     upgShotgun.style.display = weaponsOwned.shotgun ? "block" : "none";
-    upgShotgun.innerText = weaponLevels.shotgun >= 1 ? "Maxed" : "Oppgrader (1000c)";
+    upgShotgun.innerText = weaponLevels.shotgun >= 1 ? "Maxed" : "Upgrade (1000🟡)";
     upgShotgun.disabled = weaponLevels.shotgun >= 1 || coins < 1000;
 
     document.getElementById("buyARBtn").style.display = weaponsOwned.ar ? "none" : "block";
     const upgAR = document.getElementById("upgradeARBtn");
     upgAR.style.display = weaponsOwned.ar ? "block" : "none";
-    upgAR.innerText = weaponLevels.ar >= 1 ? "Maxed" : "Oppgrader (1500c)";
+    upgAR.innerText = weaponLevels.ar >= 1 ? "Maxed" : "Upgrade (1500🟡)";
     upgAR.disabled = weaponLevels.ar >= 1 || coins < 1500;
 
     ["pistol", "smg", "shotgun", "ar"].forEach(w => {
@@ -141,12 +141,12 @@ function updateUI() {
         if(btn) {
             btn.style.display = weaponsOwned[w] ? "block" : "none";
             btn.className = activeWeapon === w ? "active-wpn" : "";
-            btn.innerText = activeWeapon === w ? w.toUpperCase() + " (VALGT)" : "Bruk " + w;
+            btn.innerText = activeWeapon === w ? w.toUpperCase() + " (equipped)" : "Bruk " + w;
         }
     });
 
     document.getElementById("rebirthBtn").style.display = (weaponLevels.pistol >= 2) ? "block" : "none";
-    document.getElementById("armorBtn").style.borderColor = boosters.armor ? "#0f0" : "#4af";
+    document.getElementById("armorBtn").style.borderColor = boosters.armor ? "#2f6" : "#4af";
     document.getElementById("doubleDamageBtn").style.borderColor = boosters.doubleDamage ? "#0f0" : "#4af";
     document.getElementById("slowEnemiesBtn").style.borderColor = boosters.slowEnemies ? "#0f0" : "#4af";
 }
@@ -264,7 +264,7 @@ function update(sf) {
                 player.alive = false;
                 createExplosion(player.x + 17, player.y + 17, "#0f0", 50); 
                 createExplosion(player.x + 17, player.y + 17, "orange", 30);
-                
+
                 // Boosters fjernes ved Game Over
                 boosters.armor = false;
                 boosters.doubleDamage = false;
