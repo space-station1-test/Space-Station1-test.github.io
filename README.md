@@ -83,11 +83,16 @@ let keys = {};
 let uiVisible = true;
 let gemMilestone = 10000;
 let lastTime = 0;
+
+// Skin-oppsett
 const creeperImg = new Image();
 creeperImg.src = "https://minecraftfaces.com/wp-content/themes/minecraftfaces/faces/creeper-face.png";
 let currentSkin = "default"; 
 
-function selectSkin(name) { currentSkin = name; }
+function selectSkin(name) { 
+    currentSkin = name; 
+    console.log("Skin endret til: " + name);
+}
     
 let coins = Number(localStorage.getItem("coins")) || 100;
 let gems = Number(localStorage.getItem("gems")) || 10;
@@ -246,18 +251,24 @@ function fire() {
 function update(sf) {
     particles.forEach((p, i) => { p.x += p.vx * sf; p.y += p.vy * sf; p.life -= 0.02 * sf; if(p.life <= 0) particles.splice(i,1); });
     floatingTexts.forEach((t, i) => { t.y -= 1 * sf; t.life -= 0.02 * sf; if(t.life <= 0) floatingTexts.splice(i,1); });
+    
     if (gameOver || paused) return;
+    
     if (player.alive && activeWeapon !== "none" && shootCooldown <= 0) fire();
     if (shootCooldown > 0) shootCooldown -= 1 * sf;
+    
     stars.forEach(s => { s.y += s.s * sf; if(s.y > 600) s.y = 0; });
+    
     if (player.alive) {
         if ((keys['a'] || keys['arrowleft']) && player.x > 0) player.x -= player.speed * sf;
         if ((keys['d'] || keys['arrowright']) && player.x < 400 - player.width) player.x += player.speed * sf;
     }
+    
     bullets.forEach((b, i) => {
         b.x += b.vx * sf; b.y += b.vy * sf;
         if (b.y < -20 || b.x < -20 || b.x > 420) bullets.splice(i, 1);
     });
+    
     let enemySpeedMult = (boosters.slowEnemies ? 0.5 : 1.0) * sf;
     enemies.forEach((e, ei) => {
         if (e.type === 'sinus') {
@@ -265,6 +276,7 @@ function update(sf) {
             e.angle += 0.05 * sf; e.x = e.centerX + Math.sin(e.angle) * 50;
             e.y += e.speedY * enemySpeedMult;
         } else { e.y += e.speedY * enemySpeedMult; }
+        
         if (player.alive && player.x < e.x + e.w && player.x + player.width > e.x && player.y < e.y + e.h && player.y + player.height > e.y) {
             if (boosters.armor && !player.armorUsed) { 
                 player.armorUsed = true; enemies.splice(ei, 1); createExplosion(player.x+17, player.y, "#4af"); 
@@ -276,6 +288,7 @@ function update(sf) {
                 setTimeout(() => { gameOver = true; if(score > highscore) { highscore = Math.floor(score); saveProgress(); } updateUI(); }, 1000);
             }
         }
+        
         bullets.forEach((b, bi) => {
             if (b.x < e.x + e.w && b.x + 6 > e.x && b.y < e.y + e.h && b.y + 12 > e.y) {
                 e.hp -= (b.dmg || 1); bullets.splice(bi, 1);
@@ -299,6 +312,7 @@ function draw() {
     floatingTexts.forEach(t => { ctx.globalAlpha = t.life; ctx.fillStyle = t.color; ctx.font="bold 14px Arial"; ctx.fillText(t.text, t.x, t.y); });
     ctx.globalAlpha = 1;
 
+    // Tegner spilleren
     if (player.alive) {
         if (currentSkin === "creeper") {
             ctx.drawImage(creeperImg, player.x, player.y, player.width, player.height);
@@ -319,6 +333,7 @@ function draw() {
             ctx.fillStyle = "lime"; ctx.fillRect(e.x, e.y - 8, e.w * (e.hp/e.maxHp), 5);
         }
     });
+    
     ctx.fillStyle = 'white'; ctx.font = 'bold 16px Arial';
     ctx.fillText(`Score: ${Math.floor(score)}`, 10, 25);
     ctx.fillStyle = '#4af'; ctx.font = '12px Arial';
