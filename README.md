@@ -21,7 +21,7 @@
 <body>
 
 <div class="ui" id="mainUI">
-    <button id="toggleUIBtn" onclick="toggleUI()">Hide UI</button>
+    <button id="toggleUIBtn" onclick="toggleUI()">Skjul UI</button>
     <div id="uiContent">
         <div id="stats">
             <div id="coinsDisplay">Coins: 0</div>
@@ -35,28 +35,32 @@
             <span class="section-title">Våpen (1-4)</span>
             <div class="wpn-group">
                 <button id="pistolSelect" onclick="selectWeapon('pistol')">Pistol</button>
-                <button id="unlockBtn" onclick="buyWeapon('pistol', 0)">Unlock at (1k Score)</button>
-                <button id="upgradePistolBtn" onclick="upgradeWeapon('pistol')">Upgrade</button>
+                <button id="unlockBtn" onclick="buyWeapon('pistol', 0)">Lås opp (1k Score)</button>
+                <button id="upgradePistolBtn" onclick="upgradeWeapon('pistol')">Oppgrader</button>
             </div>
             <div class="wpn-group">
                 <button id="smgSelect" onclick="selectWeapon('smg')">SMG</button>
                 <button id="buySMGBtn" onclick="buyWeapon('smg', 1000)">SMG (1000🟡)</button>
-                <button id="upgradeSMGBtn" onclick="upgradeWeapon('smg')">Upgrade</button>
+                <button id="upgradeSMGBtn" onclick="upgradeWeapon('smg')">Oppgrader</button>
             </div>
             <div class="wpn-group">
                 <button id="shotgunSelect" onclick="selectWeapon('shotgun')">Shotgun</button>
                 <button id="buyShotgunBtn" onclick="buyWeapon('shotgun', 750)">Shotgun (750🟡)</button>
-                <button id="upgradeShotgunBtn" onclick="upgradeWeapon('shotgun')">Upgrade</button>
+                <button id="upgradeShotgunBtn" onclick="upgradeWeapon('shotgun')">Oppgrader</button>
             </div>
             <div class="wpn-group">
                 <button id="arSelect" onclick="selectWeapon('ar')">AR</button>
                 <button id="buyARBtn" onclick="buyWeapon('ar', 1200)">AR (1200🟡)</button>
-                <button id="upgradeARBtn" onclick="upgradeWeapon('ar')">Upgrade</button>
+                <button id="upgradeARBtn" onclick="upgradeWeapon('ar')">Oppgrader</button>
             </div>
             <button id="rebirthBtn" onclick="rebirth()" style="display:none; background: gold !important; color: black; font-weight: bold;">REBIRTH (500🟡)</button>
         </div>
 
         <div id="shop">
+            <span class="section-title">Skins</span>
+            <button onclick="selectSkin('creeper')">Bruk Creeper 🟩</button>
+            <button onclick="selectSkin('default')">Standard Skin</button>
+            <br>
             <span class="section-title">Boosters (Gems)</span>
             <button id="armorBtn" onclick="buyBooster('armor', 50)">🛡️Armor (50💎)</button>
             <button id="doubleDamageBtn" onclick="buyBooster('doubleDamage', 50)">🔥2x Dmg (50💎)</button>
@@ -64,11 +68,6 @@
         </div>
         <button class="reset-btn" onclick="resetGameData()">RESET ALL DATA</button>
     </div>
-</div>
-<div id="skinShop" style="margin-top: 15px; border-top: 1px solid #4af; padding-top: 10px;">
-    <span class="section-title">Skins</span>
-    <button onclick="selectSkin('creeper')">Bruk Creeper</button>
-    <button onclick="selectSkin('default')">Standard Skin</button>
 </div>
 
 <canvas id="game" width="400" height="600"></canvas>
@@ -83,7 +82,7 @@ let score = 0, gameOver = false, paused = false, shootCooldown = 0;
 let keys = {};
 let uiVisible = true;
 let gemMilestone = 10000;
-let lastTime = 0; // For Delta Time
+let lastTime = 0;
 const creeperImg = new Image();
 creeperImg.src = "https://minecraftfaces.com/wp-content/themes/minecraftfaces/faces/creeper-face.png";
 let currentSkin = "default"; 
@@ -108,7 +107,7 @@ const weaponConfigs = {
 function toggleUI() {
     uiVisible = !uiVisible;
     document.getElementById("uiContent").classList.toggle("hidden", !uiVisible);
-    document.getElementById("toggleUIBtn").innerText = uiVisible ? "Hide UI" : "Show UI";
+    document.getElementById("toggleUIBtn").innerText = uiVisible ? "Skjul UI" : "Vis UI";
 }
 
 function selectWeapon(type) {
@@ -151,7 +150,7 @@ function updateUI() {
         if(btn) {
             btn.style.display = weaponsOwned[w] ? "block" : "none";
             btn.className = activeWeapon === w ? "active-wpn" : "";
-            btn.innerText = activeWeapon === w ? w.toUpperCase() + " (equipped)" : "Bruk " + w;
+            btn.innerText = activeWeapon === w ? w.toUpperCase() + " (utstyrt)" : "Bruk " + w;
         }
     });
 
@@ -178,8 +177,7 @@ function upgradeWeapon(type) {
 
 function rebirth() {
     if (coins >= 500) {
-        coins = 100;
-        gems += 30;
+        coins = 100; gems += 30;
         weaponLevels = { pistol: 0, smg: 0, shotgun: 0, ar: 0 };
         weaponsOwned = { pistol: false, smg: false, shotgun: false, ar: false };
         boosters = { armor: false, doubleDamage: false, slowEnemies: false };
@@ -274,12 +272,7 @@ function update(sf) {
                 player.alive = false;
                 createExplosion(player.x + 17, player.y + 17, "#0f0", 50); 
                 createExplosion(player.x + 17, player.y + 17, "orange", 30);
-
-                // Boosters fjernes ved Game Over
-                boosters.armor = false;
-                boosters.doubleDamage = false;
-                boosters.slowEnemies = false;
-
+                boosters.armor = false; boosters.doubleDamage = false; boosters.slowEnemies = false;
                 setTimeout(() => { gameOver = true; if(score > highscore) { highscore = Math.floor(score); saveProgress(); } updateUI(); }, 1000);
             }
         }
@@ -305,25 +298,19 @@ function draw() {
     particles.forEach(p => { ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, 4, 4); });
     floatingTexts.forEach(t => { ctx.globalAlpha = t.life; ctx.fillStyle = t.color; ctx.font="bold 14px Arial"; ctx.fillText(t.text, t.x, t.y); });
     ctx.globalAlpha = 1;
+
     if (player.alive) {
         if (currentSkin === "creeper") {
-            // Tegner Creeper
             ctx.drawImage(creeperImg, player.x, player.y, player.width, player.height);
-            
-            // Hvis du har armor, tegner vi en blå ramme rundt bildet
             if (boosters.armor && !player.armorUsed) {
-                ctx.strokeStyle = "#4af";
-                ctx.lineWidth = 3;
-                ctx.strokeRect(player.x, player.y, player.width, player.height);
+                ctx.strokeStyle = "#4af"; ctx.lineWidth = 3; ctx.strokeRect(player.x, player.y, player.width, player.height);
             }
         } else {
-            // Standard skin (grønn firkant)
             ctx.fillStyle = (boosters.armor && !player.armorUsed) ? '#4af' : '#0f0';
             ctx.fillRect(player.x, player.y, player.width, player.height);
         }
-    } // Her slutter player.alive sjekken
+    }
 
-    // Her fortsetter resten av koden din:
     bullets.forEach(b => { ctx.fillStyle = boosters.doubleDamage ? 'orange' : 'yellow'; ctx.fillRect(b.x, b.y, 6, 12); });
     enemies.forEach(e => { 
         ctx.fillStyle = e.color; ctx.fillRect(e.x, e.y, e.w, e.h); 
@@ -354,8 +341,7 @@ const handleMove = (e) => {
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const x = (clientX - rect.left) * (canvas.width / rect.width);
     player.x = x - player.width / 2;
-    if (player.x < 0) player.x = 0;
-    if (player.x > canvas.width - player.width) player.x = canvas.width - player.width;
+    player.x = Math.max(0, Math.min(canvas.width - player.width, player.x));
 };
 canvas.addEventListener("mousemove", handleMove);
 canvas.addEventListener("touchmove", (e) => { e.preventDefault(); handleMove(e); }, { passive: false });
@@ -372,7 +358,6 @@ function loop(timestamp) {
     lastTime = timestamp;
     if (deltaTime > 100) deltaTime = 16.6; 
     let speedFactor = deltaTime / 16.6;
-
     update(speedFactor);
     draw();
     requestAnimationFrame(loop);
