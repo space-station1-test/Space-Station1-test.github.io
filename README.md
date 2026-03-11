@@ -317,15 +317,13 @@ function draw() {
                 ctx.strokeRect(player.x, player.y, player.width, player.height);
             }
         } else {
-            // Standard skin
+            // Standard skin (grønn firkant)
             ctx.fillStyle = (boosters.armor && !player.armorUsed) ? '#4af' : '#0f0';
             ctx.fillRect(player.x, player.y, player.width, player.height);
         }
-    }
+    } // Her slutter player.alive sjekken
 
-        ctx.fillStyle = (boosters.armor && !player.armorUsed) ? '#4af' : '#0f0';
-        ctx.fillRect(player.x, player.y, player.width, player.height);
-    }
+    // Her fortsetter resten av koden din:
     bullets.forEach(b => { ctx.fillStyle = boosters.doubleDamage ? 'orange' : 'yellow'; ctx.fillRect(b.x, b.y, 6, 12); });
     enemies.forEach(e => { 
         ctx.fillStyle = e.color; ctx.fillRect(e.x, e.y, e.w, e.h); 
