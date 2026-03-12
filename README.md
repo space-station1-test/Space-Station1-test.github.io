@@ -311,7 +311,6 @@ function draw() {
             ctx.fillStyle = (boosters.armor && !player.armorUsed) ? '#4af' : '#0f0';
             ctx.fillRect(player.x, player.y, player.width, player.height);
         }
-    }
     bullets.forEach(b => { ctx.fillStyle = boosters.doubleDamage ? 'orange' : 'yellow'; ctx.fillRect(b.x, b.y, 6, 12); });
     enemies.forEach(e => { 
         ctx.fillStyle = e.color; ctx.fillRect(e.x, e.y, e.w, e.h); 
