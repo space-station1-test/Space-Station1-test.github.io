@@ -88,6 +88,7 @@ let gems = Number(localStorage.getItem("gems")) || 10;
 let highscore = Number(localStorage.getItem("highscore")) || 0;
 let currentSkin = "default"; 
 const creeperImg = new Image();
+creeperImg.crossOrigin = "anonymous"; //VIKTIG Dette løser ofte blokkering
 creeperImg.src = "https://minecraftfaces.com/wp-content/themes/minecraftfaces/faces/creeper-face.png";
 let activeWeapon = localStorage.getItem("activeWeapon") || "none";
 let weaponsOwned = JSON.parse(localStorage.getItem("weaponsOwned")) || { pistol: false, smg: false, shotgun: false, ar: false };
