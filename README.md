@@ -61,12 +61,6 @@
             <button onclick="currentSkin = 'creeper'">Bruk Creeper 🟩</button>
             <button onclick="currentSkin = 'default'">Standard 🚀</button>
             <span class="section-title">Boosters (Gems)</span>
-            ```
-
-Når du har gjort dette, vil spillet starte som vanlig, men hvis du trykker på **"Bruk Creeper"** i menyen til høyre, vil firkanten din umiddelbart bli til en Creeper!
-
-**Vil du at jeg skal legge til en lyd-effekt som spiller av når du bytter skin eller når en fiende dør?**
-Boosters (Gems)</span>
             <button id="armorBtn" onclick="buyBooster('armor', 50)">🛡️Armor (50💎)</button>
             <button id="doubleDamageBtn" onclick="buyBooster('doubleDamage', 50)">🔥2x Dmg (50💎)</button>
             <button id="slowEnemiesBtn" onclick="buyBooster('slowEnemies', 50)">❄️Slow (50💎)</button>
