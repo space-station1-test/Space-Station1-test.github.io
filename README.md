@@ -56,8 +56,17 @@
             <button id="rebirthBtn" onclick="rebirth()" style="display:none; background: gold !important; color: black; font-weight: bold;">REBIRTH (500🟡)</button>
         </div>
 
-        <div id="shop">
+                <div id="shop">
+            <span class="section-title">Skins</span>
+            <button onclick="currentSkin = 'creeper'">Bruk Creeper 🟩</button>
+            <button onclick="currentSkin = 'default'">Standard 🚀</button>
             <span class="section-title">Boosters (Gems)</span>
+            ```
+
+Når du har gjort dette, vil spillet starte som vanlig, men hvis du trykker på **"Bruk Creeper"** i menyen til høyre, vil firkanten din umiddelbart bli til en Creeper!
+
+**Vil du at jeg skal legge til en lyd-effekt som spiller av når du bytter skin eller når en fiende dør?**
+Boosters (Gems)</span>
             <button id="armorBtn" onclick="buyBooster('armor', 50)">🛡️Armor (50💎)</button>
             <button id="doubleDamageBtn" onclick="buyBooster('doubleDamage', 50)">🔥2x Dmg (50💎)</button>
             <button id="slowEnemiesBtn" onclick="buyBooster('slowEnemies', 50)">❄️Slow (50💎)</button>
@@ -298,9 +307,16 @@ function draw() {
     particles.forEach(p => { ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, 4, 4); });
     floatingTexts.forEach(t => { ctx.globalAlpha = t.life; ctx.fillStyle = t.color; ctx.font="bold 14px Arial"; ctx.fillText(t.text, t.x, t.y); });
     ctx.globalAlpha = 1;
-    if (player.alive) {
-        ctx.fillStyle = (boosters.armor && !player.armorUsed) ? '#4af' : '#0f0';
-        ctx.fillRect(player.x, player.y, player.width, player.height);
+        if (player.alive) {
+        if (currentSkin === "creeper" && creeperImg.complete) {
+            ctx.drawImage(creeperImg, player.x, player.y, player.width, player.height);
+            if (boosters.armor && !player.armorUsed) {
+                ctx.strokeStyle = "#4af"; ctx.lineWidth = 3; ctx.strokeRect(player.x, player.y, player.width, player.height);
+            }
+        } else {
+            ctx.fillStyle = (boosters.armor && !player.armorUsed) ? '#4af' : '#0f0';
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+        }
     }
     bullets.forEach(b => { ctx.fillStyle = boosters.doubleDamage ? 'orange' : 'yellow'; ctx.fillRect(b.x, b.y, 6, 12); });
     enemies.forEach(e => { 
