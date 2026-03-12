@@ -302,8 +302,8 @@ function draw() {
     floatingTexts.forEach(t => { ctx.globalAlpha = t.life; ctx.fillStyle = t.color; ctx.font="bold 14px Arial"; ctx.fillText(t.text, t.x, t.y); });
     ctx.globalAlpha = 1;
         if (player.alive) {
-        if (currentSkin === "creeper" && creeperImg.complete) {
-            ctx.drawImage(creeperImg, player.x, player.y, player.width, player.height);
+        ctx.fillStyle = (currentSkin === "creeper") ? "orange" : "#0f0"; 
+        ctx.fillRect(player.x, player.y, player.width, player.height);
             if (boosters.armor && !player.armorUsed) {
                 ctx.strokeStyle = "#4af"; ctx.lineWidth = 3; ctx.strokeRect(player.x, player.y, player.width, player.height);
             }
