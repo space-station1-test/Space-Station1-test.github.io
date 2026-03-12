@@ -297,42 +297,51 @@ function update(sf) {
 }
 
 function draw() {
-    ctx.clearRect(0,0,400,600);
-    stars.forEach(s => { ctx.fillStyle='white'; ctx.fillRect(s.x,s.y,2,2); });
+    // 1. Tøm skjermen og tegn bakgrunnen
+    ctx.clearRect(0, 0, 400, 600);
+    stars.forEach(s => { ctx.fillStyle = 'white'; ctx.fillRect(s.x, s.y, 2, 2); });
     particles.forEach(p => { ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, 4, 4); });
-    floatingTexts.forEach(t => { ctx.globalAlpha = t.life; ctx.fillStyle = t.color; ctx.font="bold 14px Arial"; ctx.fillText(t.text, t.x, t.y); });
+    floatingTexts.forEach(t => { ctx.globalAlpha = t.life; ctx.fillStyle = t.color; ctx.font = "bold 14px Arial"; ctx.fillText(t.text, t.x, t.y); });
     ctx.globalAlpha = 1;
-if (player.alive) {
-        if (currentSkin === "creeper" && creeperImg.complete) {
-            // Tegner bildet hvis det er lastet inn
+
+    // 2. Tegn spilleren (Sjekker bilde, ellers grønn boks)
+    if (player.alive) {
+        if (currentSkin === "creeper" && creeperImg.complete && creeperImg.naturalWidth > 0) {
             ctx.drawImage(creeperImg, player.x, player.y, player.width, player.height);
         } else {
-            // Tegner standard firkant hvis det ikke er creeper-skin, 
-            // eller hvis bildet ikke er ferdig lastet
             ctx.fillStyle = "#0f0";
             ctx.fillRect(player.x, player.y, player.width, player.height);
         }
 
-        // Tegn rustnings-effekten over uansett skin
+        // Tegn rustning rundt spilleren hvis den er aktiv
         if (boosters.armor && !player.armorUsed) {
-            ctx.strokeStyle = "#4af"; 
-            ctx.lineWidth = 3; 
+            ctx.strokeStyle = "#4af";
+            ctx.lineWidth = 3;
             ctx.strokeRect(player.x, player.y, player.width, player.height);
         }
-}
+    }
+
+    // 3. Tegn kuler, fiender og tekst
     bullets.forEach(b => { ctx.fillStyle = boosters.doubleDamage ? 'orange' : 'yellow'; ctx.fillRect(b.x, b.y, 6, 12); });
-    enemies.forEach(e => { 
-        ctx.fillStyle = e.color; ctx.fillRect(e.x, e.y, e.w, e.h); 
+    enemies.forEach(e => {
+        ctx.fillStyle = e.color; 
+        ctx.fillRect(e.x, e.y, e.w, e.h);
         if (e.isHeavy) {
             ctx.fillStyle = "red"; ctx.fillRect(e.x, e.y - 8, e.w, 5);
-            ctx.fillStyle = "lime"; ctx.fillRect(e.x, e.y - 8, e.w * (e.hp/e.maxHp), 5);
+            ctx.fillStyle = "lime"; ctx.fillRect(e.x, e.y - 8, e.w * (e.hp / e.maxHp), 5);
         }
     });
+
     ctx.fillStyle = 'white'; ctx.font = 'bold 16px Arial';
     ctx.fillText(`Score: ${Math.floor(score)}`, 10, 25);
     ctx.fillStyle = '#4af'; ctx.font = '12px Arial';
     ctx.fillText(`Highscore: ${Math.floor(highscore)}`, 10, 45);
-    if(gameOver) { ctx.fillStyle="red"; ctx.font="30px Arial"; ctx.fillText("GAME OVER", 110, 300); }
+    
+    if (gameOver) {
+        ctx.fillStyle = "red";
+        ctx.font = "30px Arial";
+        ctx.fillText("GAME OVER", 110, 300);
+    }
 }
 
 window.addEventListener("keydown", e => { 
