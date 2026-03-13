@@ -305,15 +305,19 @@ function draw() {
     ctx.globalAlpha = 1;
 
     if (player.alive) {
-        if (currentSkin === "creeper" && creeperImg.complete && creeperImg.naturalWidth > 0) {
-            ctx.drawImage(creeperImg, player.x, player.y, player.width, player.height);
+        if (currentSkin === "creeper") {
+            // Vi prøver å tegne bildet
+            if (creeperImg.complete && creeperImg.naturalWidth > 0) {
+                ctx.drawImage(creeperImg, player.x, player.y, player.width, player.height);
+            } else {
+                // HVIS BILDET BLOKKERES: Tegn en BLÅ firkant så vi ser at knappen virker!
+                ctx.fillStyle = "yellow"; 
+                ctx.fillRect(player.x, player.y, player.width, player.height);
+            }
         } else {
+            // Standard skin (grønn)
             ctx.fillStyle = "#0f0";
             ctx.fillRect(player.x, player.y, player.width, player.height);
-        }
-        if (boosters.armor && !player.armorUsed) {
-            ctx.strokeStyle = "#4af"; ctx.lineWidth = 3; 
-            ctx.strokeRect(player.x, player.y, player.width, player.height);
         }
     }
 
