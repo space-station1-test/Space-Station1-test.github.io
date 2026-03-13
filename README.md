@@ -184,6 +184,17 @@ function updateUI() {
     document.getElementById("armorBtn").style.borderColor = boosters.armor ? "#2f6" : "#4af";
     document.getElementById("doubleDamageBtn").style.borderColor = boosters.doubleDamage ? "#0f0" : "#4af";
     document.getElementById("slowEnemiesBtn").style.borderColor = boosters.slowEnemies ? "#0f0" : "#4af";
+    const cBtn = document.getElementById("creeperBtn");
+    if (creeperOwned) {
+        cBtn.innerText = currentSkin === 'creeper' ? "Creeper (I bruk)" : "Bruk Creeper 🟩";
+        cBtn.style.borderColor = "#0f0";
+        cBtn.disabled = false;
+        cBtn.style.opacity = "1";
+    } else {
+        cBtn.innerText = "Kjøp Creeper (5000🟡)";
+        cBtn.disabled = coins < 5000;
+        cBtn.style.opacity = coins < 5000 ? "0.5" : "1";
+    }
 }
 
 function buyWeapon(type, cost) {
