@@ -308,11 +308,34 @@ function draw() {
     particles.forEach(p => { ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, 4, 4); });
     floatingTexts.forEach(t => { ctx.globalAlpha = t.life; ctx.fillStyle = t.color; ctx.font="bold 14px Arial"; ctx.fillText(t.text, t.x, t.y); });
     ctx.globalAlpha = 1;
-        if (player.alive) {
-        ctx.fillStyle = (boosters.armor && !player.armorUsed) ? '#4af' : '#0f0';
-        ctx.fillRect(player.x, player.y, player.width, player.height);
-    }
+           if (player.alive) {
+        if (currentSkin === "creeper") {
+            // Sjekker om bildet er klart
+            if (creeperImg.complete && creeperImg.naturalWidth > 0) {
+                ctx.drawImage(creeperImg, player.x, player.y, player.width, player.height);
+            } else {
+                // Hvis bildet ikke kan vises, tegn en grønn firkant med ansikt
+                ctx.fillStyle = "#2e8b57";
+                ctx.fillRect(player.x, player.y, player.width, player.height);
+                ctx.fillStyle = "black";
+                ctx.fillRect(player.x + 5, player.y + 8, 8, 8); // Øye
+                ctx.fillRect(player.x + 22, player.y + 8, 8, 8); // Øye
+                ctx.fillRect(player.x + 12, player.y + 18, 11, 11); // Munn
+            }
+        } else {
+            // Standard skin (grønn firkant)
+            ctx.fillStyle = (boosters.armor && !player.armorUsed) ? '#4af' : '#0f0';
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+        }
 
+        // Tegn skjold-kant hvis du har armor
+        if (boosters.armor && !player.armorUsed) {
+            ctx.strokeStyle = "#4af";
+            ctx.lineWidth = 3;
+            ctx.strokeRect(player.x, player.y, player.width, player.height);
+        }
+    }
+    
     bullets.forEach(b => { ctx.fillStyle = boosters.doubleDamage ? 'orange' : 'yellow'; ctx.fillRect(b.x, b.y, 6, 12); });
     enemies.forEach(e => { 
         ctx.fillStyle = e.color; ctx.fillRect(e.x, e.y, e.w, e.h); 
