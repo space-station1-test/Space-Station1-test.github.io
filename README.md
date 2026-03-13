@@ -311,7 +311,7 @@ function draw() {
                if (player.alive) {
         if (currentSkin === "creeper") {
             // Tegn selve hode-firkanten (Mørkegrønn base)
-            ctx.fillStyle = "#2e8b57";
+            ctx.fillStyle = "#03AC13";
             ctx.fillRect(player.x, player.y, player.width, player.height);
 
             // Lag litt "piksel-mønster" for tekstur (lysere grønne flekker)
