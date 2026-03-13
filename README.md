@@ -308,33 +308,45 @@ function draw() {
     particles.forEach(p => { ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, 4, 4); });
     floatingTexts.forEach(t => { ctx.globalAlpha = t.life; ctx.fillStyle = t.color; ctx.font="bold 14px Arial"; ctx.fillText(t.text, t.x, t.y); });
     ctx.globalAlpha = 1;
-           if (player.alive) {
+               if (player.alive) {
         if (currentSkin === "creeper") {
-            // Sjekker om bildet er klart
-            if (creeperImg.complete && creeperImg.naturalWidth > 0) {
-                ctx.drawImage(creeperImg, player.x, player.y, player.width, player.height);
-            } else {
-                // Hvis bildet ikke kan vises, tegn en grønn firkant med ansikt
-                ctx.fillStyle = "#2e8b57";
-                ctx.fillRect(player.x, player.y, player.width, player.height);
-                ctx.fillStyle = "black";
-                ctx.fillRect(player.x + 5, player.y + 8, 8, 8); // Øye
-                ctx.fillRect(player.x + 22, player.y + 8, 8, 8); // Øye
-                ctx.fillRect(player.x + 12, player.y + 18, 11, 11); // Munn
-            }
+            // Tegn selve hode-firkanten (Mørkegrønn base)
+            ctx.fillStyle = "#2e8b57";
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+
+            // Lag litt "piksel-mønster" for tekstur (lysere grønne flekker)
+            ctx.fillStyle = "#3cb371";
+            ctx.fillRect(player.x + 2, player.y + 2, 8, 8);
+            ctx.fillRect(player.x + 20, player.y + 25, 10, 5);
+            ctx.fillRect(player.x + 5, player.y + 20, 5, 5);
+
+            // CREEPER ANSIKT (Svart)
+            ctx.fillStyle = "black";
+            
+            // Øyne
+            ctx.fillRect(player.x + 6, player.y + 8, 8, 8);  // Venstre øye
+            ctx.fillRect(player.x + 21, player.y + 8, 8, 8); // Høyre øye
+            
+            // Munn/Nese (den karakteristiske Creeper-formen)
+            ctx.fillRect(player.x + 13, player.y + 16, 9, 7);  // Nese
+            ctx.fillRect(player.x + 9, player.y + 20, 17, 9); // Overleppe
+            ctx.fillRect(player.x + 9, player.y + 26, 6, 6);  // Venstre "tann"
+            ctx.fillRect(player.x + 20, player.y + 26, 6, 6); // Høyre "tann"
+
         } else {
             // Standard skin (grønn firkant)
             ctx.fillStyle = (boosters.armor && !player.armorUsed) ? '#4af' : '#0f0';
             ctx.fillRect(player.x, player.y, player.width, player.height);
         }
 
-        // Tegn skjold-kant hvis du har armor
+        // Armor-effekt (blå glød rundt hvis du har skjold)
         if (boosters.armor && !player.armorUsed) {
             ctx.strokeStyle = "#4af";
             ctx.lineWidth = 3;
-            ctx.strokeRect(player.x, player.y, player.width, player.height);
+            ctx.strokeRect(player.x - 2, player.y - 2, player.width + 4, player.height + 4);
         }
     }
+
     
     bullets.forEach(b => { ctx.fillStyle = boosters.doubleDamage ? 'orange' : 'yellow'; ctx.fillRect(b.x, b.y, 6, 12); });
     enemies.forEach(e => { 
