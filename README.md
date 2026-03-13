@@ -57,6 +57,10 @@
         </div>
 
         <div id="shop">
+           <span class="section-title">Skins</span>
+<button onclick="endreSkin('creeper')">Bruk Creeper 🟩</button>
+<button onclick="endreSkin('default')">Standard 🚀</button>
+
             <span class="section-title">Boosters (Gems)</span>
             <button id="armorBtn" onclick="buyBooster('armor', 50)">🛡️Armor (50💎)</button>
             <button id="doubleDamageBtn" onclick="buyBooster('doubleDamage', 50)">🔥2x Dmg (50💎)</button>
@@ -79,6 +83,15 @@ let keys = {};
 let uiVisible = true;
 let gemMilestone = 10000;
 let lastTime = 0; // For Delta Time
+// SKIN LOGIKK
+let currentSkin = "default";
+const creeperImg = new Image();
+// Dette er bildet av creeperen lagret direkte som tekst (Base64)
+creeperImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAALHRFWHRDcmVhdGlvbiBUaW1lAFN1biA0IE1hciAyMDEyIDIyOjM1OjI0IC0wNTAwZ7S3VAAAAB50RVh0U29mdHdhcmUAYWRvYmUgcGhvdG9zaG9wIGNzM2u23e4AAABWSURBVDhPY2RgYPhf08DAwMAAxH9BeH9V9X8Ym7mZEUj8PzL28fHByIDYv8AIBP+PhP8zMjL8RxYAsX+BEYj9C4xA7F9gBGL/AiMQ+xcYgdjMDIyMjIwMAIB2P0F/D9pXAAAAAElFTkSuQmCC";
+
+function endreSkin(valg) {
+    currentSkin = valg;
+}
 
 let coins = Number(localStorage.getItem("coins")) || 100;
 let gems = Number(localStorage.getItem("gems")) || 10;
@@ -92,7 +105,7 @@ const weaponConfigs = {
     pistol: { cooldown: [25, 18, 12], maxLvl: 2, type: "single", dmg: 1 },
     smg: { cooldown: [8, 5], maxLvl: 1, type: "single", dmg: 0.5 },
     shotgun: { cooldown: [45, 30], maxLvl: 1, type: "triple", dmg: 1 },
-    ar: { cooldown: [10, 9], maxLvl: 1, type: "fast", dmg: 1 }
+    ar: { cooldown: [11, 11], maxLvl: 1, type: "fast", dmg: 1 }
 };
 
 function toggleUI() {
@@ -295,10 +308,11 @@ function draw() {
     particles.forEach(p => { ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, 4, 4); });
     floatingTexts.forEach(t => { ctx.globalAlpha = t.life; ctx.fillStyle = t.color; ctx.font="bold 14px Arial"; ctx.fillText(t.text, t.x, t.y); });
     ctx.globalAlpha = 1;
-    if (player.alive) {
+        if (player.alive) {
         ctx.fillStyle = (boosters.armor && !player.armorUsed) ? '#4af' : '#0f0';
         ctx.fillRect(player.x, player.y, player.width, player.height);
     }
+
     bullets.forEach(b => { ctx.fillStyle = boosters.doubleDamage ? 'orange' : 'yellow'; ctx.fillRect(b.x, b.y, 6, 12); });
     enemies.forEach(e => { 
         ctx.fillStyle = e.color; ctx.fillRect(e.x, e.y, e.w, e.h); 
