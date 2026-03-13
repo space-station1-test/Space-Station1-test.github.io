@@ -477,6 +477,18 @@ function loop(timestamp) {
     update(speedFactor);
     draw();
     requestAnimationFrame(loop);
+function loop(timestamp) {
+    let deltaTime = timestamp - lastTime;
+    lastTime = timestamp;
+    if (deltaTime > 100) deltaTime = 16.6; 
+    let speedFactor = deltaTime / 16.6;
+
+    update(speedFactor);
+    // LEGG TIL DENNE LINJEN HER:
+    handleEnemySpawning(timestamp); 
+    
+    draw();
+    requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
 </script>
