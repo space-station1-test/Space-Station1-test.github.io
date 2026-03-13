@@ -57,15 +57,16 @@
         </div>
 
         <div id="shop">
-           <span class="section-title">Skins</span>
-<button onclick="endreSkin('creeper')">Bruk Creeper 🟩</button>
-<button onclick="endreSkin('default')">Standard 🚀</button>
+    <span class="section-title">Skins</span>
+    <button id="creeperBtn" onclick="endreSkin('creeper')">Kjøp Creeper (5000🟡)</button>
+    <button onclick="endreSkin('default')">Standard 🚀</button>
+    
+    <span class="section-title">Boosters (Gems)</span>
+    <button id="armorBtn" onclick="buyBooster('armor', 50)">🛡️Armor (50💎)</button>
+    <button id="doubleDamageBtn" onclick="buyBooster('doubleDamage', 50)">🔥2x Dmg (50💎)</button>
+    <button id="slowEnemiesBtn" onclick="buyBooster('slowEnemies', 50)">❄️Slow (50💎)</button>
+</div>
 
-            <span class="section-title">Boosters (Gems)</span>
-            <button id="armorBtn" onclick="buyBooster('armor', 50)">🛡️Armor (50💎)</button>
-            <button id="doubleDamageBtn" onclick="buyBooster('doubleDamage', 50)">🔥2x Dmg (50💎)</button>
-            <button id="slowEnemiesBtn" onclick="buyBooster('slowEnemies', 50)">❄️Slow (50💎)</button>
-        </div>
         <button class="reset-btn" onclick="resetGameData()">RESET ALL DATA</button>
     </div>
 </div>
