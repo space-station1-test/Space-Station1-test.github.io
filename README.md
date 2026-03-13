@@ -306,17 +306,16 @@ function draw() {
 
     if (player.alive) {
         if (currentSkin === "creeper") {
-            // Vi prøver å tegne bildet
+            // Hvis bildet er lastet (noe det blir med Base64), tegn det
             if (creeperImg.complete && creeperImg.naturalWidth > 0) {
                 ctx.drawImage(creeperImg, player.x, player.y, player.width, player.height);
             } else {
-                // HVIS BILDET BLOKKERES: Tegn en BLÅ firkant så vi ser at knappen virker!
+                // Fallback hvis bildet mot formodning ikke er klart
                 ctx.fillStyle = "yellow"; 
                 ctx.fillRect(player.x, player.y, player.width, player.height);
             }
         } else {
-            // Standard skin (grønn)
-            ctx.fillStyle = "#0f0";
+            ctx.fillStyle = "#0f0"; // Standard grønn
             ctx.fillRect(player.x, player.y, player.width, player.height);
         }
     }
