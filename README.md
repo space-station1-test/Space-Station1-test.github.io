@@ -106,7 +106,7 @@ function endreSkin(valg) {
                 updateUI();     // Oppdaterer knapper
                 alert("Creeper skin kjøpt!");
             } else {
-                alert("Du trenger 5000 coins for å kjøpe dette skinnet!");
+                alert("You need 5000 coins!");
             }
         }
     } else {
@@ -186,12 +186,12 @@ function updateUI() {
     document.getElementById("slowEnemiesBtn").style.borderColor = boosters.slowEnemies ? "#0f0" : "#4af";
     const cBtn = document.getElementById("creeperBtn");
     if (creeperOwned) {
-        cBtn.innerText = currentSkin === 'creeper' ? "Creeper (I bruk)" : "Bruk Creeper 🟩";
+        cBtn.innerText = currentSkin === 'creeper' ? "Creeper (equipped)" : "Bruk Creeper 🟩";
         cBtn.style.borderColor = "#0f0";
         cBtn.disabled = false;
         cBtn.style.opacity = "1";
     } else {
-        cBtn.innerText = "Kjøp Creeper (5000🟡)";
+        cBtn.innerText = "Buy Creeper (5000🟡)";
         cBtn.disabled = coins < 5000;
         cBtn.style.opacity = coins < 5000 ? "0.5" : "1";
     }
