@@ -90,8 +90,9 @@ let highscore = Number(localStorage.getItem("highscore")) || 0;
 // SKIN LOGIKK
 let currentSkin = "default"; 
 const creeperImg = new Image();
-creeperImg.crossOrigin = "anonymous";
-creeperImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAALHRFWHRDcmVhdGlvbiBUaW1lAFN1biA0IE1hciAyMDEyIDIyOjM1OjI0IC0wNTAwZ7S3VAAAAB50RVh0U29mdHdhcmUAYWRvYmUgcGhvdG9zaG9wIGNzM2u23e4AAABWSURBVDhPY2RgYPhf08DAwMAAxH9BeH9V9X8Ym7mZEUj8PzL28fHByIDYv8AIBP+PhP8zMjL8RxYAsX+BEYj9C4xA7F9gBGL/AiMQ+xcYgdjMDIyMjIwMAIB2P0F/D9pXAAAAAElFTkSuQmCC";
+// Vi fjerner .crossOrigin helt siden vi bruker Base64
+creeperImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAALUlEQVRYR2NkYGD4z8DAwMgwZf9/SjH6hoYGf9IMYBhVQD8F9FNAfwX0U0A/BfQDAIn7Ah6v999yAAAAAElFTkSuQmCC"; 
+// Den over er en grønn firkant med mørke prikker (test-creeper)
 function endreSkin(valg) {
     currentSkin = valg;
 }
@@ -305,16 +306,14 @@ function draw() {
 
     if (player.alive) {
         if (currentSkin === "creeper") {
-            // Hvis bildet er lastet (noe det blir med Base64), tegn det
-            if (creeperImg.complete && creeperImg.naturalWidth > 0) {
+            if (creeperImg.complete && creeperImg.width > 0) {
                 ctx.drawImage(creeperImg, player.x, player.y, player.width, player.height);
             } else {
-                // Fallback hvis bildet mot formodning ikke er klart
-                ctx.fillStyle = "yellow"; 
+                ctx.fillStyle = "yellow"; // Hvis dette skjer, er bildet fortsatt ikke lastet
                 ctx.fillRect(player.x, player.y, player.width, player.height);
             }
         } else {
-            ctx.fillStyle = "#0f0"; // Standard grønn
+            ctx.fillStyle = "#0f0";
             ctx.fillRect(player.x, player.y, player.width, player.height);
         }
     }
