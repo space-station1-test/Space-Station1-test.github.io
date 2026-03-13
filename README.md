@@ -458,7 +458,7 @@ function handleEnemySpawning(timestamp) {
         spawnEnemy();
         
         // Bonus-spawns: Per 10 000 poeng spawner vi 2 ekstra fiender
-        let extraEnemies = Math.floor(score / 10000) * 2;
+        let extraEnemies = Math.floor(score / 1000) * 2;
         for (let i = 0; i < extraEnemies; i++) {
             spawnEnemy();
         }
