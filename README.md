@@ -127,7 +127,7 @@ const weaponConfigs = {
     pistol: { cooldown: [25, 18, 12], maxLvl: 2, type: "single", dmg: 1 },
     smg: { cooldown: [8, 5], maxLvl: 1, type: "single", dmg: 0.5 },
     shotgun: { cooldown: [45, 30], maxLvl: 1, type: "triple", dmg: 1 },
-    ar: { cooldown: [11, 11], maxLvl: 1, type: "fast", dmg: 1 }
+    ar: { cooldown: [11, 12], maxLvl: 1, type: "fast", dmg: 1 }
 };
 
 function toggleUI() {
@@ -186,7 +186,7 @@ function updateUI() {
     document.getElementById("slowEnemiesBtn").style.borderColor = boosters.slowEnemies ? "#0f0" : "#4af";
     const cBtn = document.getElementById("creeperBtn");
     if (creeperOwned) {
-        cBtn.innerText = currentSkin === 'creeper' ? "Creeper (equipped)" : "Bruk Creeper 🟩";
+        cBtn.innerText = currentSkin === 'creeper' ? "Creeper (equipped)" : "Use Creeper 🟩";
         cBtn.style.borderColor = "#0f0";
         cBtn.disabled = false;
         cBtn.style.opacity = "1";
