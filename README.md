@@ -29,7 +29,7 @@
             <div id="highscoreDisplayUI" style="color: #4af; font-size: 11px;">Highscore: 0</div>
         </div>
 <button id="pauseBtn" onclick="togglePause()">Pause</button>
-            onclick="restartGame()">Restart</button>
+onclick="restartGame()">Restart</button>
         
         <div id="weaponShop">
             <span class="section-title">Våpen (1-4)</span>
