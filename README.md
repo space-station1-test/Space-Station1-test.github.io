@@ -394,6 +394,20 @@ function draw() {
     ctx.fillStyle = '#4af'; ctx.font = '12px Arial';
     ctx.fillText(`Highscore: ${Math.floor(highscore)}`, 10, 45);
     if(gameOver) { ctx.fillStyle="red"; ctx.font="30px Arial"; ctx.fillText("GAME OVER", 110, 300); }
+    // Tegn PAUSE-tekst midt på skjermen
+    if (paused && !gameOver) {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.5)"; // Gjør bakgrunnen litt mørkere
+        ctx.fillRect(0, 0, 400, 600);
+        
+        ctx.fillStyle = "white";
+        ctx.font = "bold 40px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText("PAUSE", 200, 300);
+        
+        ctx.font = "16px Arial";
+        ctx.fillText("Trykk på knappen for å fortsette", 200, 340);
+        ctx.textAlign = "start"; // Nullstill tekstjustering for andre tekster
+    }
 }
 
 window.addEventListener("keydown", e => { 
