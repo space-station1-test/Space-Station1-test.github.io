@@ -490,6 +490,7 @@ function loop(timestamp) {
     draw();
     requestAnimationFrame(loop);
 }
+}
 requestAnimationFrame(loop);
 </script>
 </body>
