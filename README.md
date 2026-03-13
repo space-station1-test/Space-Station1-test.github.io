@@ -176,7 +176,7 @@ function updateUI() {
         if(btn) {
             btn.style.display = weaponsOwned[w] ? "block" : "none";
             btn.className = activeWeapon === w ? "active-wpn" : "";
-            btn.innerText = activeWeapon === w ? w.toUpperCase() + " (equipped)" : "Bruk " + w;
+            btn.innerText = activeWeapon === w ? w.toUpperCase() + " (equipped)" : "Use " + w;
         }
     });
 
