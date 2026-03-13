@@ -92,7 +92,6 @@ let currentSkin = "default";
 const creeperImg = new Image();
 creeperImg.crossOrigin = "anonymous";
 creeperImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAALHRFWHRDcmVhdGlvbiBUaW1lAFN1biA0IE1hciAyMDEyIDIyOjM1OjI0IC0wNTAwZ7S3VAAAAB50RVh0U29mdHdhcmUAYWRvYmUgcGhvdG9zaG9wIGNzM2u23e4AAABWSURBVDhPY2RgYPhf08DAwMAAxH9BeH9V9X8Ym7mZEUj8PzL28fHByIDYv8AIBP+PhP8zMjL8RxYAsX+BEYj9C4xA7F9gBGL/AiMQ+xcYgdjMDIyMjIwMAIB2P0F/D9pXAAAAAElFTkSuQmCC";
-
 function endreSkin(valg) {
     currentSkin = valg;
 }
@@ -106,7 +105,7 @@ const weaponConfigs = {
     pistol: { cooldown: [25, 18, 12], maxLvl: 2, type: "single", dmg: 1 },
     smg: { cooldown: [8, 5], maxLvl: 1, type: "single", dmg: 0.5 },
     shotgun: { cooldown: [45, 30], maxLvl: 1, type: "triple", dmg: 1 },
-    ar: { cooldown: [10, 9], maxLvl: 1, type: "fast", dmg: 1 }
+    ar: { cooldown: [11, 10], maxLvl: 1, type: "fast", dmg: 1 }
 };
 
 function toggleUI() {
