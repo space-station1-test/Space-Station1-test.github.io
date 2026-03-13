@@ -417,7 +417,19 @@ const handleMove = (e) => {
 canvas.addEventListener("mousemove", handleMove);
 canvas.addEventListener("touchmove", (e) => { e.preventDefault(); handleMove(e); }, { passive: false });
 
-function togglePause() { paused = !paused; }
+function togglePause() {
+    paused = !paused;
+    const pBtn = document.getElementById("pauseBtn");
+    
+    if (paused) {
+        pBtn.innerText = "Fortsett"; // Teksten når spillet ER pauset
+        pBtn.style.backgroundColor = "#440000"; // Valgfritt: gjør knappen rødlig når pauset
+    } else {
+        pBtn.innerText = "Pause"; // Teksten når spillet kjører
+        pBtn.style.backgroundColor = "#222"; // Tilbake til vanlig farge
+    }
+}
+
 function restartGame() { init(); }
 function resetGameData() { if(confirm("Slette alt?")) { localStorage.clear(); location.reload(); } }
 
