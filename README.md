@@ -405,7 +405,7 @@ function draw() {
         ctx.fillText("PAUSE", 200, 300);
         
         ctx.font = "16px Arial";
-        ctx.fillText("Trykk på knappen for å fortsette", 200, 340);
+        ctx.fillText("Press pause to continue", 200, 340);
         ctx.textAlign = "start"; // Nullstill tekstjustering for andre tekster
     }
 }
