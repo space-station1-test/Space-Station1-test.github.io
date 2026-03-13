@@ -85,12 +85,33 @@ let gemMilestone = 10000;
 let lastTime = 0; // For Delta Time
 // SKIN LOGIKK
 let currentSkin = "default";
+// Sjekker om spilleren allerede eier skinnet fra før
+let creeperOwned = JSON.parse(localStorage.getItem("creeperOwned")) || false;
+
 const creeperImg = new Image();
-// Dette er bildet av creeperen lagret direkte som tekst (Base64)
 creeperImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAALHRFWHRDcmVhdGlvbiBUaW1lAFN1biA0IE1hciAyMDEyIDIyOjM1OjI0IC0wNTAwZ7S3VAAAAB50RVh0U29mdHdhcmUAYWRvYmUgcGhvdG9zaG9wIGNzM2u23e4AAABWSURBVDhPY2RgYPhf08DAwMAAxH9BeH9V9X8Ym7mZEUj8PzL28fHByIDYv8AIBP+PhP8zMjL8RxYAsX+BEYj9C4xA7F9gBGL/AiMQ+xcYgdjMDIyMjIwMAIB2P0F/D9pXAAAAAElFTkSuQmCC";
 
 function endreSkin(valg) {
-    currentSkin = valg;
+    if (valg === 'creeper') {
+        if (creeperOwned) {
+            currentSkin = 'creeper';
+        } else {
+            if (coins >= 5000) {
+                coins -= 5000;
+                creeperOwned = true;
+                currentSkin = 'creeper';
+                localStorage.setItem("creeperOwned", true);
+                saveProgress(); // Lagrer mynter
+                updateUI();     // Oppdaterer knapper
+                alert("Creeper skin kjøpt!");
+            } else {
+                alert("Du trenger 5000 coins for å kjøpe dette skinnet!");
+            }
+        }
+    } else {
+        currentSkin = 'default';
+    }
+    updateUI();
 }
 
 let coins = Number(localStorage.getItem("coins")) || 100;
