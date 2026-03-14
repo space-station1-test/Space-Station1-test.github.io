@@ -16,6 +16,20 @@
     .reset-btn { border-color: #f44; color: #f44; margin-top: 10px; font-size: 9px; }
     .hidden { display: none !important; }
     .wpn-group { margin-bottom: 10px; padding: 5px; border-radius: 4px; background: rgba(255,255,255,0.05); }
+.ui-left { 
+    position: absolute; 
+    top: 10px; 
+    left: 10px; /* Plasseres til venstre */
+    display: flex; 
+    flex-direction: column; 
+    gap: 5px; 
+    z-index: 10; 
+    width: 180px; 
+    background: rgba(0,0,0,0.85); 
+    padding: 10px; 
+    border-radius: 8px; 
+    border: 1px solid #4af; 
+}
 </style>
 </head>
 <body>
@@ -124,10 +138,10 @@ let weaponLevels = JSON.parse(localStorage.getItem("weaponLevels")) || { pistol:
 let boosters = { armor: false, doubleDamage: false, slowEnemies: false };
 
 const weaponConfigs = {
-    pistol: { cooldown: [25, 22, 19], maxLvl: 2, type: "single", dmg: 1 },
+    pistol: { cooldown: [25, 18, 19], maxLvl: 2, type: "single", dmg: 1 },
     smg: { cooldown: [8, 5], maxLvl: 1, type: "single", dmg: 0.5 },
     shotgun: { cooldown: [45, 30], maxLvl: 1, type: "triple", dmg: 1 },
-    ar: { cooldown: [14, 12], maxLvl: 1, type: "fast", dmg: 1 }
+    ar: { cooldown: [10, 13], maxLvl: 1, type: "fast", dmg: 1 }
 };
 
 function toggleUI() {
@@ -458,7 +472,7 @@ function handleEnemySpawning(timestamp) {
         spawnEnemy();
         
         // Bonus-spawns: Per 10 000 poeng spawner vi 2 ekstra fiender
-        let extraEnemies = Math.floor(score / 1000) * 2;
+        let extraEnemies = Math.floor(score / 10000) * 2;
         for (let i = 0; i < extraEnemies; i++) {
             spawnEnemy();
         }
