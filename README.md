@@ -16,59 +16,9 @@
     .reset-btn { border-color: #f44; color: #f44; margin-top: 10px; font-size: 9px; }
     .hidden { display: none !important; }
     .wpn-group { margin-bottom: 10px; padding: 5px; border-radius: 4px; background: rgba(255,255,255,0.05); }
-.ui-left { 
-    position: absolute; 
-    top: 10px; 
-    left: 10px; /* Plasseres til venstre */
-    display: flex; 
-    flex-direction: column; 
-    gap: 5px; 
-    z-index: 10; 
-    width: 180px; 
-    background: rgba(0,0,0,0.85); 
-    padding: 10px; 
-    border-radius: 8px; 
-    border: 1px solid #4af; 
-}
 </style>
 </head>
 <body>
-<div class="ui-left" id="skinUI">
-    <span class="section-title">Skins Shop</span>
-    <button id="creeperBtn" onclick="endreSkin('creeper')">Kjøp Creeper (5000🟡)</button>
-    <button id="emojiBtn" onclick="endreSkin('emoji')">Kjøp Emoji (2000🟡)</button>
-    <button onclick="endreSkin('default')">Standard 🚀</button>
-</div>
-
-<div class="ui" id="mainUI">
-    ```
-
----
-
-### 3. Oppdater JavaScript
-For at menyene skal se bra ut sammen, må vi sørge for at `updateUI()` oppdaterer knappene i den nye menyen også. Sørg for at slutten av din `updateUI`-funksjon ser slik ut:
-
-```javascript
-function updateUI() {
-    const cBtn = document.getElementById("creeperBtn");
-    if (creeperOwned) {
-        cBtn.innerText = currentSkin === 'creeper' ? "Creeper (I bruk)" : "Bruk Creeper 🟩";
-        cBtn.style.borderColor = "#0f0";
-    } else {
-        cBtn.innerText = "Kjøp Creeper (5000🟡)";
-        cBtn.disabled = coins < 5000;
-        cBtn.style.opacity = coins < 5000 ? "0.5" : "1";
-    }
-    const eBtn = document.getElementById("emojiBtn");
-    if (emojiOwned) {
-        eBtn.innerText = currentSkin === 'emoji' ? "Emoji (I bruk)" : "Bruk Emoji 😎";
-        eBtn.style.borderColor = "#ff0";
-    } else {
-        eBtn.innerText = "Kjøp Emoji (2000🟡)";
-        eBtn.disabled = coins < 2000;
-        eBtn.style.opacity = coins < 2000 ? "0.5" : "1";
-    }
-}
 
 <div class="ui" id="mainUI">
     <button id="toggleUIBtn" onclick="toggleUI()">Hide UI</button>
