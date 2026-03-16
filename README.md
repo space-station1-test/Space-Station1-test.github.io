@@ -145,10 +145,17 @@ function selectWeapon(type) {
     if (weaponsOwned[type]) { activeWeapon = type; saveProgress(); updateUI(); }
 }
 
+// ... (behold variablene dine på toppen)
+
 function updateUI() {
-    document.getElementById("coinsDisplay").innerText = `Coins: ${Math.floor(coins)}`;
-    document.getElementById("gemsDisplay").innerText = `Gems: ${gems}`;
-    document.getElementById("highscoreDisplayUI").innerText = `Best: ${Math.floor(highscore)}`;
+    // Sjekk at elementene eksisterer før vi oppdaterer
+    const coinsEl = document.getElementById("coinsDisplay");
+    const gemsEl = document.getElementById("gemsDisplay");
+    const highscoreEl = document.getElementById("highscoreDisplayUI");
+    
+    if(coinsEl) coinsEl.innerText = `Coins: ${Math.floor(coins)}`;
+    if(gemsEl) gemsEl.innerText = `Gems: ${gems}`;
+    if(highscoreEl) highscoreEl.innerText = `Best: ${Math.floor(highscore)}`;
 
     // Våpen-knapper (Equip/Use)
     ["pistol", "smg", "shotgun", "ar"].forEach(w => {
@@ -160,7 +167,7 @@ function updateUI() {
             selectBtn.className = activeWeapon === w ? "active-wpn" : "";
             selectBtn.innerText = activeWeapon === w ? w.toUpperCase() + " (Equipped)" : "Use " + w;
         }
-            
+
         if(upgradeBtn) {
             upgradeBtn.style.display = weaponsOwned[w] ? "block" : "none";
             let currentLvl = weaponLevels[w];
@@ -182,53 +189,44 @@ function updateUI() {
         }
     });
 
-    // Skjul/Vis kjøp-knapper hvis man allerede eier dem
-    if(weaponsOwned.smg) document.getElementById("buySMGBtn").style.display = "none";
-    if(weaponsOwned.shotgun) document.getElementById("buyShotgunBtn").style.display = "none";
-    if(weaponsOwned.ar) document.getElementById("buyARBtn").style.display = "none";
+    // Skjul kjøpeknapper hvis man eier våpenet
+    if(weaponsOwned.smg && document.getElementById("buySMGBtn")) document.getElementById("buySMGBtn").style.display = "none";
+    if(weaponsOwned.shotgun && document.getElementById("buyShotgunBtn")) document.getElementById("buyShotgunBtn").style.display = "none";
+    if(weaponsOwned.ar && document.getElementById("buyARBtn")) document.getElementById("buyARBtn").style.display = "none";
 
-    // Oppdater andre UI-elementer (Skins osv.)
-    const cBtn = document.getElementById("creeperBtn");
-    if (creeperOwned) {
-        cBtn.innerText = currentSkin === 'creeper' ? "Creeper (Equipped)" : "Use Creeper 🟩";
-    } else {
-        cBtn.disabled = coins < 4000;
+    // Unlock Pistol knapp
+    const unlockBtn = document.getElementById("unlockBtn");
+    if(unlockBtn) {
+        unlockBtn.style.display = weaponsOwned.pistol ? "none" : "block";
+        unlockBtn.disabled = (highscore < 1000 && score < 1000);
     }
-}
 
-    // Våpen UI logikk
-    document.getElementById("unlockBtn").style.display = weaponsOwned.pistol ? "none" : "block";
-    document.getElementById("unlockBtn").disabled = (highscore < 1000 && score < 1000);
-
-    ["pistol", "smg", "shotgun", "ar"].forEach(w => {
-        const btn = document.getElementById(w + "Select");
-        if(btn) {
-            btn.style.display = weaponsOwned[w] ? "block" : "none";
-            btn.className = activeWeapon === w ? "active-wpn" : "";
-            btn.innerText = activeWeapon === w ? w.toUpperCase() + " (Equipped)" : "Use " + w;
+    // Skins: Creeper
+    const cBtn = document.getElementById("creeperBtn");
+    if (cBtn) {
+        if (creeperOwned) {
+            cBtn.innerText = currentSkin === 'creeper' ? "Creeper (Equipped)" : "Use Creeper 🟩";
+            cBtn.style.borderColor = "#0f0";
+        } else {
+            cBtn.innerText = "Buy Creeper (4000🟡)";
+            cBtn.disabled = coins < 4000;
         }
-    });
-
-    // Oppdater Creeper-knapp
-    const cBtn = document.getElementById("creeperBtn");
-    if (creeperOwned) {
-        cBtn.innerText = currentSkin === 'creeper' ? "Creeper (Equipped)" : "Use Creeper 🟩";
-        cBtn.style.borderColor = "#0f0";
-    } else {
-        cBtn.innerText = "Buy Creeper (4000🟡)";
-        cBtn.disabled = coins < 4000;
     }
 
-    // Oppdater Emoji-knapp
+    // Skins: Emoji
     const eBtn = document.getElementById("emojiBtn");
-    if (emojiOwned) {
-        eBtn.innerText = currentSkin === 'emoji' ? "Emoji (I bruk)" : "Use Emoji 😎";
-        eBtn.style.borderColor = "#ff0";
-    } else {
-        eBtn.innerText = "Buy Emoji (3000🟡)";
-        eBtn.disabled = coins < 3000;
+    if (eBtn) {
+        if (emojiOwned) {
+            eBtn.innerText = currentSkin === 'emoji' ? "Emoji (Equipped)" : "Use Emoji 😎";
+            eBtn.style.borderColor = "#ff0";
+        } else {
+            eBtn.innerText = "Buy Emoji (3000🟡)";
+            eBtn.disabled = coins < 3000;
+        }
     }
-}
+} // <--- Nå er hele updateUI samlet i én blokk.
+
+// ... (Resten av funksjonene dine herfra: buyWeapon, upgradeWeapon, osv.)
 
 function buyWeapon(type, cost) {
     if (coins >= cost) { coins -= cost; weaponsOwned[type] = true; activeWeapon = type; saveProgress(); updateUI(); }
