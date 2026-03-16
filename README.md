@@ -148,27 +148,6 @@ function selectWeapon(type) {
 // ... (behold variablene dine på toppen)
 
 function updateUI() {
-    // Sjekk at elementene eksisterer før vi oppdaterer
-    const coinsEl = document.getElementById("coinsDisplay");
-    const gemsEl = document.getElementById("gemsDisplay");
-    const highscoreEl = document.getElementById("highscoreDisplayUI");
-    
-    if(coinsEl) coinsEl.innerText = `Coins: ${Math.floor(coins)}`;
-    if(gemsEl) gemsEl.innerText = `Gems: ${gems}`;
-    if(highscoreEl) highscoreEl.innerText = `Best: ${Math.floor(highscore)}`;
-
-    // Våpen-knapper (Equip/Use)
-    ["pistol", "smg", "shotgun", "ar"].forEach(w => {
-        const selectBtn = document.getElementById(w + "Select");
-        const upgradeBtn = document.getElementById("upgrade" + w.toUpperCase() + "Btn");
-        
-        if(selectBtn) {
-            selectBtn.style.display = weaponsOwned[w] ? "block" : "none";
-            selectBtn.className = activeWeapon === w ? "active-wpn" : "";
-            selectBtn.innerText = activeWeapon === w ? w.toUpperCase() + " (Equipped)" : "Use " + w;
-        }
-
-function updateUI() {
     // 1. Oppdater tall (Coins/Gems/Highscore)
     document.getElementById("coinsDisplay").innerText = `Coins: ${Math.floor(coins)}`;
     document.getElementById("gemsDisplay").innerText = `Gems: ${gems}`;
