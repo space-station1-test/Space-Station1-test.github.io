@@ -67,7 +67,7 @@
             </div>
             <div class="wpn-group">
                 <button id="smgSelect" onclick="selectWeapon('smg')">SMG</button>
-                <button id="buySMGBtn" onclick="buyWeapon('smg', 1000)">SMG (1000🟡)</button>
+                <button id="buySMGBtn" onclick="buyWeapon('smg', 1000)">SMG (1100🟡)</button>
                 <button id="upgradeSMGBtn" onclick="upgradeWeapon('smg')">Upgrade</button>
             </div>
             <div class="wpn-group">
@@ -141,9 +141,9 @@ let boosters = { armor: false, doubleDamage: false, slowEnemies: false };
 
 const weaponConfigs = {
     pistol: { cooldown: [25, 18, 19], maxLvl: 2, type: "single", dmg: 1 },
-    smg: { cooldown: [9, 7], maxLvl: 2, type: "single", dmg: 0.5 },
-    shotgun: { cooldown: [45, 30], maxLvl: 2, type: "triple", dmg: 1 },
-    ar: { cooldown: [10, 13], maxLvl: 2, type: "fast", dmg: 1 }
+    smg: { cooldown: [9, 6], maxLvl: 1, type: "single", dmg: 0.5 },
+    shotgun: { cooldown: [45, 30], maxLvl: 1, type: "triple", dmg: 1 },
+    ar: { cooldown: [10, 13], maxLvl: 1, type: "fast", dmg: 1 }
 };
 
 function toggleUI() {
@@ -172,8 +172,8 @@ function updateUI() {
     document.getElementById("buySMGBtn").style.display = weaponsOwned.smg ? "none" : "block";
     const upgSMG = document.getElementById("upgradeSMGBtn");
     upgSMG.style.display = weaponsOwned.smg ? "block" : "none";
-    upgSMG.innerText = weaponLevels.smg >= 1 ? "Maxed" : "Upgrade (800🟡)";
-    upgSMG.disabled = weaponLevels.smg >= 1 || coins < 800;
+    upgSMG.innerText = weaponLevels.smg >= 1 ? "Maxed" : "Upgrade 1000🟡)";
+    upgSMG.disabled = weaponLevels.smg >= 1 || coins < 1000;
 
     document.getElementById("buyShotgunBtn").style.display = weaponsOwned.shotgun ? "none" : "block";
     const upgShotgun = document.getElementById("upgradeShotgunBtn");
