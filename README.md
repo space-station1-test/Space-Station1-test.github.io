@@ -107,10 +107,10 @@ let weaponLevels = JSON.parse(localStorage.getItem("weaponLevels")) || { pistol:
 let boosters = { armor: false, doubleDamage: false, slowEnemies: false };
 
 const weaponConfigs = {
-    pistol: { cooldown: [25, 18, 12], maxLvl: 2, type: "single", dmg: 1 },
+    pistol: { cooldown: [25, 19, 15], maxLvl: 2, type: "single", dmg: 1 },
     smg: { cooldown: [8, 5], maxLvl: 1, type: "single", dmg: 0.5 },
     shotgun: { cooldown: [45, 30], maxLvl: 1, type: "triple", dmg: 1 },
-    ar: { cooldown: [10, 9], maxLvl: 1, type: "fast", dmg: 1 }
+    ar: { cooldown: [14, 11], maxLvl: 1, type: "fast", dmg: 1 }
 };
 
 function endreSkin(valg) {
