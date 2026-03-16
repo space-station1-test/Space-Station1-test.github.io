@@ -6,6 +6,13 @@
     body { margin:0; background:black; color:white; display:flex; justify-content:center; align-items:center; height:100vh; font-family:Arial; overflow:hidden; touch-action: none; }
     canvas { background:#05080f; border:2px solid #4af; max-width: 100vw; max-height: 100vh; cursor: crosshair; }
     .ui { position:absolute; top:10px; right:10px; display:flex; flex-direction:column; gap:5px; z-index:10; width: 195px; background: rgba(0,0,0,0.85); padding: 10px; border-radius: 8px; border: 1px solid #4af; max-height: 90vh; overflow-y: auto; }
+   .ui-left { 
+        position:absolute; top:10px; left:10px; 
+        display:flex; flex-direction:column; gap:5px; 
+        z-index:10; width: 180px; background: rgba(0,0,0,0.85); 
+        padding: 10px; border-radius: 8px; border: 1px solid #4af; 
+        max-height: 90vh; overflow-y: auto; 
+    }
     button { padding:8px; font-size:11px; cursor:pointer; background: #222; color: white; border: 1px solid #4af; border-radius: 4px; width: 100%; margin-bottom: 2px; }
     button:active { background: #4af; }
     button.active-wpn { background: #004400; border-color: #0f0; color: #0f0; }
