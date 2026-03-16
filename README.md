@@ -168,8 +168,35 @@ function updateUI() {
             selectBtn.innerText = activeWeapon === w ? w.toUpperCase() + " (Equipped)" : "Use " + w;
         }
 
-        if(upgradeBtn) {
+function updateUI() {
+    // 1. Oppdater tall (Coins/Gems/Highscore)
+    document.getElementById("coinsDisplay").innerText = `Coins: ${Math.floor(coins)}`;
+    document.getElementById("gemsDisplay").innerText = `Gems: ${gems}`;
+    document.getElementById("highscoreDisplayUI").innerText = `Best: ${Math.floor(highscore)}`;
+
+    // 2. Gå gjennom alle våpen og oppdater knapper
+    ["pistol", "smg", "shotgun", "ar"].forEach(w => {
+        const selectBtn = document.getElementById(w + "Select");
+        const upgradeBtn = document.getElementById("upgrade" + w.toUpperCase() + "Btn");
+        const buyBtn = document.getElementById("buy" + w.toUpperCase() + "Btn");
+
+        // Håndter kjøpe-knapper (kun synlig hvis man IKKE eier våpenet)
+        if (buyBtn) {
+            buyBtn.style.display = weaponsOwned[w] ? "none" : "block";
+        }
+
+        // Håndter Select-knapp (kun synlig hvis man eier våpenet)
+        if (selectBtn) {
+            selectBtn.style.display = weaponsOwned[w] ? "block" : "none";
+            selectBtn.className = activeWeapon === w ? "active-wpn" : "";
+            selectBtn.innerText = activeWeapon === w ? w.toUpperCase() + " (Equipped)" : "Use " + w;
+        }
+
+        // Håndter Upgrade-knapp
+        if (upgradeBtn) {
+            // Vis kun hvis våpenet er eid
             upgradeBtn.style.display = weaponsOwned[w] ? "block" : "none";
+            
             let currentLvl = weaponLevels[w];
             let maxLvl = weaponConfigs[w].maxLvl;
             
@@ -177,6 +204,7 @@ function updateUI() {
                 upgradeBtn.innerText = "MAX LEVEL";
                 upgradeBtn.disabled = true;
             } else {
+                // Beregn pris
                 let nextCost = 0;
                 if(w === 'pistol') nextCost = (currentLvl + 1) * 300;
                 else if(w === 'smg') nextCost = 1100;
@@ -189,44 +217,19 @@ function updateUI() {
         }
     });
 
-    // Skjul kjøpeknapper hvis man eier våpenet
-    if(weaponsOwned.smg && document.getElementById("buySMGBtn")) document.getElementById("buySMGBtn").style.display = "none";
-    if(weaponsOwned.shotgun && document.getElementById("buyShotgunBtn")) document.getElementById("buyShotgunBtn").style.display = "none";
-    if(weaponsOwned.ar && document.getElementById("buyARBtn")) document.getElementById("buyARBtn").style.display = "none";
-
-    // Unlock Pistol knapp
-    const unlockBtn = document.getElementById("unlockBtn");
-    if(unlockBtn) {
-        unlockBtn.style.display = weaponsOwned.pistol ? "none" : "block";
-        unlockBtn.disabled = (highscore < 1000 && score < 1000);
-    }
-
-    // Skins: Creeper
+    // 3. Håndter Skins (Creeper/Emoji)
     const cBtn = document.getElementById("creeperBtn");
     if (cBtn) {
-        if (creeperOwned) {
-            cBtn.innerText = currentSkin === 'creeper' ? "Creeper (Equipped)" : "Use Creeper 🟩";
-            cBtn.style.borderColor = "#0f0";
-        } else {
-            cBtn.innerText = "Buy Creeper (4000🟡)";
-            cBtn.disabled = coins < 4000;
-        }
+        cBtn.innerText = creeperOwned ? (currentSkin === 'creeper' ? "Creeper (Equipped)" : "Use Creeper 🟩") : "Buy Creeper (4000🟡)";
+        cBtn.disabled = !creeperOwned && coins < 4000;
     }
 
-    // Skins: Emoji
     const eBtn = document.getElementById("emojiBtn");
     if (eBtn) {
-        if (emojiOwned) {
-            eBtn.innerText = currentSkin === 'emoji' ? "Emoji (Equipped)" : "Use Emoji 😎";
-            eBtn.style.borderColor = "#ff0";
-        } else {
-            eBtn.innerText = "Buy Emoji (3000🟡)";
-            eBtn.disabled = coins < 3000;
-        }
+        eBtn.innerText = emojiOwned ? (currentSkin === 'emoji' ? "Emoji (Equipped)" : "Use Emoji 😎") : "Buy Emoji (3000🟡)";
+        eBtn.disabled = !emojiOwned && coins < 3000;
     }
-} // <--- Nå er hele updateUI samlet i én blokk.
-
-// ... (Resten av funksjonene dine herfra: buyWeapon, upgradeWeapon, osv.)
+}
 
 function buyWeapon(type, cost) {
     if (coins >= cost) { coins -= cost; weaponsOwned[type] = true; activeWeapon = type; saveProgress(); updateUI(); }
