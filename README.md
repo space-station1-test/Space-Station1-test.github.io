@@ -147,7 +147,17 @@ const weaponConfigs = {
 
 function toggleUI() {
     uiVisible = !uiVisible;
+    
+    // Skjuler innholdet i høyre meny
     document.getElementById("uiContent").classList.toggle("hidden", !uiVisible);
+    
+    // Skjuler hele venstre meny (skins)
+    const leftUI = document.getElementById("skinShop");
+    if (leftUI) {
+        leftUI.classList.toggle("hidden", !uiVisible);
+    }
+    
+    // Oppdaterer teksten på knappen
     document.getElementById("toggleUIBtn").innerText = uiVisible ? "Hide UI" : "Show UI";
 }
 
