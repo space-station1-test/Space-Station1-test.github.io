@@ -172,7 +172,7 @@ function updateUI() {
             } else {
                 let nextCost = 0;
                 if(w === 'pistol') nextCost = (currentLvl + 1) * 300;
-                else if(w === 'smg') nextCost = 800;
+                else if(w === 'smg') nextCost = 1100;
                 else if(w === 'shotgun') nextCost = 1000;
                 else if(w === 'ar') nextCost = 1500;
                 
@@ -190,9 +190,9 @@ function updateUI() {
     // Oppdater andre UI-elementer (Skins osv.)
     const cBtn = document.getElementById("creeperBtn");
     if (creeperOwned) {
-        cBtn.innerText = currentSkin === 'creeper' ? "Creeper (I bruk)" : "Bruk Creeper 🟩";
+        cBtn.innerText = currentSkin === 'creeper' ? "Creeper (Equipped)" : "Use Creeper 🟩";
     } else {
-        cBtn.disabled = coins < 5000;
+        cBtn.disabled = coins < 4000;
     }
 }
 
@@ -205,28 +205,28 @@ function updateUI() {
         if(btn) {
             btn.style.display = weaponsOwned[w] ? "block" : "none";
             btn.className = activeWeapon === w ? "active-wpn" : "";
-            btn.innerText = activeWeapon === w ? w.toUpperCase() + " (equipped)" : "Use " + w;
+            btn.innerText = activeWeapon === w ? w.toUpperCase() + " (Equipped)" : "Use " + w;
         }
     });
 
     // Oppdater Creeper-knapp
     const cBtn = document.getElementById("creeperBtn");
     if (creeperOwned) {
-        cBtn.innerText = currentSkin === 'creeper' ? "Creeper (I bruk)" : "Bruk Creeper 🟩";
+        cBtn.innerText = currentSkin === 'creeper' ? "Creeper (Equipped)" : "Use Creeper 🟩";
         cBtn.style.borderColor = "#0f0";
     } else {
-        cBtn.innerText = "Kjøp Creeper (5000🟡)";
-        cBtn.disabled = coins < 5000;
+        cBtn.innerText = "Buy Creeper (4000🟡)";
+        cBtn.disabled = coins < 4000;
     }
 
     // Oppdater Emoji-knapp
     const eBtn = document.getElementById("emojiBtn");
     if (emojiOwned) {
-        eBtn.innerText = currentSkin === 'emoji' ? "Emoji (I bruk)" : "Bruk Emoji 😎";
+        eBtn.innerText = currentSkin === 'emoji' ? "Emoji (I bruk)" : "Use Emoji 😎";
         eBtn.style.borderColor = "#ff0";
     } else {
-        eBtn.innerText = "Kjøp Emoji (2000🟡)";
-        eBtn.disabled = coins < 2000;
+        eBtn.innerText = "Buy Emoji (3000🟡)";
+        eBtn.disabled = coins < 3000;
     }
 }
 
@@ -237,7 +237,7 @@ function buyWeapon(type, cost) {
 function upgradeWeapon(type) {
     let cost = 0;
     if(type === 'pistol') cost = (weaponLevels.pistol + 1) * 300;
-    else if(type === 'smg') cost = 800;
+    else if(type === 'smg') cost = 1100;
     else if(type === 'shotgun') cost = 1000;
     else if(type === 'ar') cost = 1500;
 
