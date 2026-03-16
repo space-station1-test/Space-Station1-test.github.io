@@ -67,7 +67,7 @@
             </div>
             <div class="wpn-group">
                 <button id="smgSelect" onclick="selectWeapon('smg')">SMG</button>
-                <button id="buySMGBtn" onclick="buyWeapon('smg', 1000)">SMG (1100🟡)</button>
+                <button id="buySMGBtn" onclick="buyWeapon('smg', 1100)">SMG (1100🟡)</button>
                 <button id="upgradeSMGBtn" onclick="upgradeWeapon('smg')">Upgrade</button>
             </div>
             <div class="wpn-group">
