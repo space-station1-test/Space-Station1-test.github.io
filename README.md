@@ -405,10 +405,36 @@ function resetGameData() { if(confirm("Slette alt?")) { localStorage.clear(); lo
 window.addEventListener("keydown", e => { const key = e.key.toLowerCase(); keys[key] = true; });
 window.addEventListener("keyup", e => { keys[e.key.toLowerCase()] = false; });
 canvas.addEventListener("mousemove", (e) => {
-    if(paused || gameOver || !player.alive) return;
+// Funksjon som oppdaterer spillerens posisjon
+function handleInput(e) {
+    if (paused || gameOver || !player.alive) return;
+    
+    // Hindre at siden scroller når man drar på skjermen
+    if (e.type === "touchmove" || e.type === "touchstart") {
+        e.preventDefault();
+    }
+
     const rect = canvas.getBoundingClientRect();
-    player.x = (e.clientX - rect.left) * (canvas.width / rect.width) - player.width / 2;
-});
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    
+    // Beregn X-posisjon relativt til canvas-størrelsen
+    const x = (clientX - rect.left) * (canvas.width / rect.width);
+    
+    // Sett skipet i senter av fingeren/musen
+    player.x = x - player.width / 2;
+
+    // Hold skipet innenfor skjermen
+    if (player.x < 0) player.x = 0;
+    if (player.x > canvas.width - player.width) player.x = canvas.width - player.width;
+}
+
+// Mus-styring
+canvas.addEventListener("mousemove", handleInput);
+canvas.addEventListener("mousedown", handleInput);
+
+// Touch-styring (Mobil/Nettbrett)
+canvas.addEventListener("touchstart", handleInput, { passive: false });
+canvas.addEventListener("touchmove", handleInput, { passive: false });
 
 init();
 requestAnimationFrame(loop);
