@@ -404,7 +404,6 @@ function resetGameData() { if(confirm("Slette alt?")) { localStorage.clear(); lo
 
 window.addEventListener("keydown", e => { const key = e.key.toLowerCase(); keys[key] = true; });
 window.addEventListener("keyup", e => { keys[e.key.toLowerCase()] = false; });
-canvas.addEventListener("mousemove", (e) => {
 // Funksjon som oppdaterer spillerens posisjon
 function handleInput(e) {
     if (paused || gameOver || !player.alive) return;
