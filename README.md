@@ -150,6 +150,52 @@ function updateUI() {
     document.getElementById("gemsDisplay").innerText = `Gems: ${gems}`;
     document.getElementById("highscoreDisplayUI").innerText = `Best: ${Math.floor(highscore)}`;
 
+    // Våpen-knapper (Equip/Use)
+    ["pistol", "smg", "shotgun", "ar"].forEach(w => {
+        const selectBtn = document.getElementById(w + "Select");
+        const upgradeBtn = document.getElementById("upgrade" + w.toUpperCase() + "Btn");
+        
+        if(selectBtn) {
+            selectBtn.style.display = weaponsOwned[w] ? "block" : "none";
+            selectBtn.className = activeWeapon === w ? "active-wpn" : "";
+            selectBtn.innerText = activeWeapon === w ? w.toUpperCase() + " (Equipped)" : "Use " + w;
+        }
+
+        if(upgradeBtn) {
+            upgradeBtn.style.display = weaponsOwned[w] ? "block" : "none";
+            let currentLvl = weaponLevels[w];
+            let maxLvl = weaponConfigs[w].maxLvl;
+            
+            if (currentLvl >= maxLvl) {
+                upgradeBtn.innerText = "MAX LEVEL";
+                upgradeBtn.disabled = true;
+            } else {
+                let nextCost = 0;
+                if(w === 'pistol') nextCost = (currentLvl + 1) * 300;
+                else if(w === 'smg') nextCost = 800;
+                else if(w === 'shotgun') nextCost = 1000;
+                else if(w === 'ar') nextCost = 1500;
+                
+                upgradeBtn.innerText = `Upgrade (${nextCost}🟡)`;
+                upgradeBtn.disabled = coins < nextCost;
+            }
+        }
+    });
+
+    // Skjul/Vis kjøp-knapper hvis man allerede eier dem
+    if(weaponsOwned.smg) document.getElementById("buySMGBtn").style.display = "none";
+    if(weaponsOwned.shotgun) document.getElementById("buyShotgunBtn").style.display = "none";
+    if(weaponsOwned.ar) document.getElementById("buyARBtn").style.display = "none";
+
+    // Oppdater andre UI-elementer (Skins osv.)
+    const cBtn = document.getElementById("creeperBtn");
+    if (creeperOwned) {
+        cBtn.innerText = currentSkin === 'creeper' ? "Creeper (I bruk)" : "Bruk Creeper 🟩";
+    } else {
+        cBtn.disabled = coins < 5000;
+    }
+}
+
     // Våpen UI logikk
     document.getElementById("unlockBtn").style.display = weaponsOwned.pistol ? "none" : "block";
     document.getElementById("unlockBtn").disabled = (highscore < 1000 && score < 1000);
@@ -194,8 +240,20 @@ function upgradeWeapon(type) {
     else if(type === 'smg') cost = 800;
     else if(type === 'shotgun') cost = 1000;
     else if(type === 'ar') cost = 1500;
+
+    // Sjekk om spilleren eier våpenet, ikke er på max level, og har råd
     if (weaponsOwned[type] && weaponLevels[type] < weaponConfigs[type].maxLvl && coins >= cost) {
-        coins -= cost; weaponLevels[type]++; saveProgress(); updateUI();
+        coins -= cost; 
+        weaponLevels[type]++; 
+        saveProgress(); 
+        updateUI(); // Dette oppdaterer knappene med en gang!
+        
+        // En liten visuell bekreftelse
+        floatingTexts.push({x: player.x, y: player.y, text: "UPGRADED!", color: "#0f0", life: 1});
+    } else if (weaponLevels[type] >= weaponConfigs[type].maxLvl) {
+        alert("Already maxed!");
+    } else {
+        alert("Not enough coins!");
     }
 }
 
