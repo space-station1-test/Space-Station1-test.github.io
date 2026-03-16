@@ -28,8 +28,8 @@
 
 <div class="ui-left" id="skinUI">
     <span class="section-title">Skin Shop</span>
-    <button id="creeperBtn" onclick="endreSkin('creeper')">Kjøp Creeper (5000🟡)</button>
-    <button id="emojiBtn" onclick="endreSkin('emoji')">Kjøp Emoji (2000🟡)</button>
+    <button id="creeperBtn" onclick="endreSkin('creeper')">Buy Creeper (4000🟡)</button>
+    <button id="emojiBtn" onclick="endreSkin('emoji')">Buy Emoji (3000🟡)</button>
     <button onclick="endreSkin('default')">Standard 🚀</button>
 </div>
 
@@ -116,16 +116,16 @@ const weaponConfigs = {
 function endreSkin(valg) {
     if (valg === 'creeper') {
         if (creeperOwned) { currentSkin = 'creeper'; }
-        else if (coins >= 5000) {
-            coins -= 5000; creeperOwned = true; currentSkin = 'creeper';
+        else if (coins >= 4000) {
+            coins -= 4000; creeperOwned = true; currentSkin = 'creeper';
             localStorage.setItem("creeperOwned", true);
-        } else { alert("Du trenger 5000 coins!"); }
+        } else { alert("You need 4000 coins!"); }
     } else if (valg === 'emoji') {
         if (emojiOwned) { currentSkin = 'emoji'; }
-        else if (coins >= 2000) {
-            coins -= 2000; emojiOwned = true; currentSkin = 'emoji';
+        else if (coins >= 3000) {
+            coins -= 3000; emojiOwned = true; currentSkin = 'emoji';
             localStorage.setItem("emojiOwned", true);
-        } else { alert("Du trenger 2000 coins!"); }
+        } else { alert("You need 3000 coins!"); }
     } else {
         currentSkin = 'default';
     }
