@@ -347,7 +347,7 @@ function draw() {
         }
     }
 
-    bullets.forEach(b => { ctx.fillStyle = boosters.doubleDamage ? 'orange' : 'yellow'; ctx.fillRect(b.x, b.y, 6, 12); });
+    bullets.forEach(b => { ctx.fillStyle = boosters.doubleDamage ? 'blue' : 'yellow'; ctx.fillRect(b.x, b.y, 6, 12); });
     enemies.forEach(e => { 
         ctx.fillStyle = e.color; ctx.fillRect(e.x, e.y, e.w, e.h); 
         if (e.isHeavy) {
@@ -358,6 +358,9 @@ function draw() {
 
     ctx.fillStyle = 'white'; ctx.font = 'bold 16px Arial'; ctx.textAlign = "left";
     ctx.fillText(`Score: ${Math.floor(score)}`, 10, 25);
+    ctx.fillStyle = '#4af'; // En fin lyseblå farge (samme som borderen)
+ctx.font = 'bold 14px Arial';
+ctx.fillText(`Best: ${Math.floor(highscore)}`, 10, 50);
     if(gameOver) { ctx.fillStyle="red"; ctx.font="30px Arial"; ctx.textAlign="center"; ctx.fillText("GAME OVER", 200, 300); }
     
     if (paused && !gameOver) {
