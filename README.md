@@ -172,7 +172,7 @@ function updateUI() {
     document.getElementById("buySMGBtn").style.display = weaponsOwned.smg ? "none" : "block";
     const upgSMG = document.getElementById("upgradeSMGBtn");
     upgSMG.style.display = weaponsOwned.smg ? "block" : "none";
-    upgSMG.innerText = weaponLevels.smg >= 1 ? "Maxed" : "Upgrade 1000🟡)";
+    upgSMG.innerText = weaponLevels.smg >= 1 ? "Maxed" : "Upgrade 1100🟡)";
     upgSMG.disabled = weaponLevels.smg >= 1 || coins < 1000;
 
     document.getElementById("buyShotgunBtn").style.display = weaponsOwned.shotgun ? "none" : "block";
