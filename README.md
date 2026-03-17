@@ -106,7 +106,8 @@ let currentSkin = "default";
 // Sjekker om spilleren allerede eier skinnet fra før
 let creeperOwned = JSON.parse(localStorage.getItem("creeperOwned")) || false;
 let neonOwned = JSON.parse(localStorage.getItem("neonOwned")) || false;
-
+let pigOwned = JSON.parse(localStorage.getItem("pigOwned")) || false;
+    
 function endreSkin(valg) {
     if (valg === 'creeper') {
         if (creeperOwned) { currentSkin = 'creeper'; }
@@ -121,6 +122,14 @@ function endreSkin(valg) {
             coins -= 8000; neonOwned = true; currentSkin = 'neon';
             localStorage.setItem("neonOwned", true);
         } else { alert("You need 8000 coins!"); }
+    }
+    // NY DEL FOR GRIS:
+    else if (valg === 'pig') {
+        if (pigOwned) { currentSkin = 'pig'; }
+        else if (coins >= 5500) {
+            coins -= 5500; pigOwned = true; currentSkin = 'pig';
+            localStorage.setItem("pigOwned", true);
+        } else { alert("Du trenger 5500 coins for Gris!"); }
     }
     else { currentSkin = 'default'; }
     saveProgress();
