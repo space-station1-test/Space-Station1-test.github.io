@@ -40,7 +40,6 @@
         <span class="section-title">Skins</span>
         <button id="creeperBtn" onclick="endreSkin('creeper')">Buy Creeper (5000🟡)</button>
         <button onclick="endreSkin('default')">Standard 🚀</button>
-        <button id="neonBtn" onclick="endreSkin('neon')">Buy Neon Knight (8000🟡)</button>
         
         <span class="section-title">Boosters (Gems)</span>
         <button id="armorBtn" onclick="buyBooster('armor', 50)">🛡️Armor (50💎)</button>
@@ -127,8 +126,8 @@ function endreSkin(valg) {
     updateUI();
 }
 
-let coins = Number(localStorage.getItem("coins")) || 10000;
-let gems = Number(localStorage.getItem("gems")) || 10000;
+let coins = Number(localStorage.getItem("coins")) || 100000;
+let gems = Number(localStorage.getItem("gems")) || 100000;
 let highscore = Number(localStorage.getItem("highscore")) || 0;
 let activeWeapon = localStorage.getItem("activeWeapon") || "none";
 let weaponsOwned = JSON.parse(localStorage.getItem("weaponsOwned")) || { pistol: false, smg: false, shotgun: false, ar: false };
@@ -201,14 +200,6 @@ function updateUI() {
             btn.innerText = activeWeapon === w ? w.toUpperCase() + " (equipped)" : "Use " + w;
         }
     });
-
-    const nBtn = document.getElementById("neonBtn");
-if (neonOwned) {
-    nBtn.innerText = currentSkin === 'neon' ? "Neon (equipped)" : "Use Neon Knight";
-    nBtn.style.borderColor = "#0ff";
-} else {
-    nBtn.disabled = coins < 8000;
-}
     document.getElementById("rebirthBtn").style.display = (weaponLevels.pistol >= 2) ? "block" : "none";
     document.getElementById("armorBtn").style.borderColor = boosters.armor ? "#2f6" : "#4af";
     document.getElementById("doubleDamageBtn").style.borderColor = boosters.doubleDamage ? "#0f0" : "#4af";
@@ -398,31 +389,7 @@ function draw() {
             if (currentSkin === "creeper") {
     // ... din eksisterende creeper kode ...
 } 
-else if (currentSkin === "neon") {
-    // Bakgrunns-kvadrat (mørk blå/lilla)
-    ctx.fillStyle = "#1a0033";
-    ctx.fillRect(player.x, player.y, player.width, player.height);
 
-    // Neon-ramme
-    ctx.strokeStyle = "#0ff";
-    ctx.lineWidth = 2;
-    ctx.strokeRect(player.x + 2, player.y + 2, player.width - 4, player.height - 4);
-
-    // Glødende kjerne (en mindre firkant i midten)
-    let pulse = Math.sin(Date.now() / 200) * 5; // Lager en pulserende effekt
-    ctx.fillStyle = "#0ff";
-    ctx.globalAlpha = 0.5 + (pulse / 10);
-    ctx.fillRect(player.x + 10, player.y + 10, 15, 15);
-    ctx.globalAlpha = 1;
-
-    // Detaljer i hjørnene
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(player.x, player.y, 4, 4); // Topp venstre
-    ctx.fillRect(player.x + player.width - 4, player.y, 4, 4); // Topp høyre
-}
-else {
-    // ... default skin ...
-}
         } else {
             // Standard skin (grønn firkant)
             ctx.fillStyle = (boosters.armor && !player.armorUsed) ? '#4af' : '#0f0';
