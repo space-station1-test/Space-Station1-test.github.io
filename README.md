@@ -38,6 +38,7 @@
     <div class="ui-left" id="skinShop">
     <div id="shop">
         <span class="section-title">Skins</span>
+        <button id="neonBtn" onclick="endreSkin('neon')">Buy Neon Core (8000🟡)</button>
         <button id="creeperBtn" onclick="endreSkin('creeper')">Buy Creeper (5000🟡)</button>
         <button onclick="endreSkin('default')">Standard 🚀</button>
         
@@ -204,6 +205,14 @@ function updateUI() {
     document.getElementById("armorBtn").style.borderColor = boosters.armor ? "#2f6" : "#4af";
     document.getElementById("doubleDamageBtn").style.borderColor = boosters.doubleDamage ? "#0f0" : "#4af";
     document.getElementById("slowEnemiesBtn").style.borderColor = boosters.slowEnemies ? "#0f0" : "#4af";
+    const nBtn = document.getElementById("neonBtn");
+if (neonOwned) {
+    nBtn.innerText = currentSkin === 'neon' ? "The Core (Equipped)" : "Use The Core";
+    nBtn.style.borderColor = "#f0f";
+} else {
+    nBtn.innerText = "Buy The Core (7000🟡)";
+    nBtn.disabled = coins < 7000;
+}
     const cBtn = document.getElementById("creeperBtn");
     if (creeperOwned) {
         cBtn.innerText = currentSkin === 'creeper' ? "Creeper (equipped)" : "Use Creeper 🟩";
@@ -361,48 +370,41 @@ function draw() {
     particles.forEach(p => { ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, 4, 4); });
     floatingTexts.forEach(t => { ctx.globalAlpha = t.life; ctx.fillStyle = t.color; ctx.font="bold 14px Arial"; ctx.fillText(t.text, t.x, t.y); });
     ctx.globalAlpha = 1;
-               if (player.alive) {
-        if (currentSkin === "creeper") {
-            // Tegn selve hode-firkanten (Mørkegrønn base)
-            ctx.fillStyle = "#03AC13";
-            ctx.fillRect(player.x, player.y, player.width, player.height);
-
-            // Lag litt "piksel-mønster" for tekstur (lysere grønne flekker)
-            ctx.fillStyle = "#3cb371";
-            ctx.fillRect(player.x + 2, player.y + 2, 8, 8);
-            ctx.fillRect(player.x + 20, player.y + 25, 10, 5);
-            ctx.fillRect(player.x + 5, player.y + 20, 5, 5);
-
-            // CREEPER ANSIKT (Svart)
-            ctx.fillStyle = "black";
-            
-            // Øyne
-            ctx.fillRect(player.x + 6, player.y + 8, 8, 8);  // Venstre øye
-            ctx.fillRect(player.x + 21, player.y + 8, 8, 8); // Høyre øye
-            
-            // Munn/Nese (den karakteristiske Creeper-formen)
-            ctx.fillRect(player.x + 13, player.y + 16, 9, 7);  // Nese
-            ctx.fillRect(player.x + 9, player.y + 20, 17, 9); // Overleppe
-            ctx.fillRect(player.x + 9, player.y + 26, 6, 6);  // Venstre "tann"
-            ctx.fillRect(player.x + 20, player.y + 26, 6, 6); // Høyre "tann"
-
-            if (currentSkin === "creeper") {
-    // ... din eksisterende creeper kode ...
-} 
-
-        } else {
-            // Standard skin (grønn firkant)
-            ctx.fillStyle = (boosters.armor && !player.armorUsed) ? '#4af' : '#0f0';
-            ctx.fillRect(player.x, player.y, player.width, player.height);
-        }
-
-        // Armor-effekt (blå glød rundt hvis du har skjold)
-        if (boosters.armor && !player.armorUsed) {
-            ctx.strokeStyle = "#4af";
-            ctx.lineWidth = 3;
-            ctx.strokeRect(player.x - 2, player.y - 2, player.width + 4, player.height + 4);
-        }
+    if (player.alive) {
+    if (currentSkin === "creeper") {
+        // --- DIN EKSISTERENDE CREEPER KODE HER ---
+        ctx.fillStyle = "#03AC13";
+        ctx.fillRect(player.x, player.y, player.width, player.height);
+        ctx.fillStyle = "black";
+        ctx.fillRect(player.x + 6, player.y + 8, 8, 8); 
+        ctx.fillRect(player.x + 21, player.y + 8, 8, 8);
+        ctx.fillRect(player.x + 13, player.y + 16, 9, 7);
+    } 
+    else if (currentSkin === "The Core") {
+        // --- NY CORE/NEON LOGIKK ---
+        let hue = (Date.now() * 0.1) % 360; // Lager regnbue-effekt
+        ctx.fillStyle = "#000";
+        ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+        ctx.lineWidth = 3;
+        
+        // Hovedfirkant
+        ctx.fillRect(player.x, player.y, player.width, player.height);
+        ctx.strokeRect(player.x, player.y, player.width, player.height);
+        
+        // Roterende kjerne i midten
+        ctx.save();
+        ctx.translate(player.x + player.width/2, player.y + player.height/2);
+        ctx.rotate(Date.now() * 0.005);
+        ctx.fillStyle = `hsl(${(hue+180)%360}, 100%, 50%)`;
+        ctx.fillRect(-player.width/4, -player.height/4, player.width/2, player.height/2);
+        ctx.restore();
+    } 
+    else {
+        // Standard skin
+        ctx.fillStyle = (boosters.armor && !player.armorUsed) ? '#4af' : '#0f0';
+        ctx.fillRect(player.x, player.y, player.width, player.height);
     }
+}
 
     
     bullets.forEach(b => { ctx.fillStyle = boosters.doubleDamage ? 'orange' : 'yellow'; ctx.fillRect(b.x, b.y, 6, 12); });
@@ -491,7 +493,6 @@ function handleEnemySpawning(timestamp) {
     }
 }
 
-
 function loop(timestamp) {
     let deltaTime = timestamp - lastTime;
     lastTime = timestamp;
@@ -499,21 +500,9 @@ function loop(timestamp) {
     let speedFactor = deltaTime / 16.6;
 
     update(speedFactor);
-    draw();
-    requestAnimationFrame(loop);
-function loop(timestamp) {
-    let deltaTime = timestamp - lastTime;
-    lastTime = timestamp;
-    if (deltaTime > 100) deltaTime = 16.6; 
-    let speedFactor = deltaTime / 16.6;
-
-    update(speedFactor);
-    // LEGG TIL DENNE LINJEN HER:
     handleEnemySpawning(timestamp); 
-    
     draw();
     requestAnimationFrame(loop);
-}
 }
 requestAnimationFrame(loop);
 </script>
