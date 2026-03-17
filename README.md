@@ -105,29 +105,28 @@ let lastTime = 0; // For Delta Time
 let currentSkin = "default";
 // Sjekker om spilleren allerede eier skinnet fra før
 let creeperOwned = JSON.parse(localStorage.getItem("creeperOwned")) || false;
-
+let neonOwned = JSON.parse(localStorage.getItem("neonOwned")) || false;
+    
 const creeperImg = new Image();
 creeperImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAALHRFWHRDcmVhdGlvbiBUaW1lAFN1biA0IE1hciAyMDEyIDIyOjM1OjI0IC0wNTAwZ7S3VAAAAB50RVh0U29mdHdhcmUAYWRvYmUgcGhvdG9zaG9wIGNzM2u23e4AAABWSURBVDhPY2RgYPhf08DAwMAAxH9BeH9V9X8Ym7mZEUj8PzL28fHByIDYv8AIBP+PhP8zMjL8RxYAsX+BEYj9C4xA7F9gBGL/AiMQ+xcYgdjMDIyMjIwMAIB2P0F/D9pXAAAAAElFTkSuQmCC";
 
 function endreSkin(valg) {
     if (valg === 'creeper') {
-        if (creeperOwned) {
-            currentSkin = 'creeper';
-        } else {
-            if (coins >= 5000) {
-                coins -= 5000;
-                creeperOwned = true;
-                currentSkin = 'creeper';
-                localStorage.setItem("creeperOwned", true);
-                saveProgress(); // Lagrer mynter
-                updateUI();
-            } else {
-                alert("You need 5000 coins!");
-            }
+        if (creeperOwned) { currentSkin = 'creeper'; }
+        else if (coins >= 5000) {
+            coins -= 5000; creeperOwned = true; currentSkin = 'creeper';
+            localStorage.setItem("creeperOwned", true);
         }
-    } else {
-        currentSkin = 'default';
+    } 
+    else if (valg === 'neon') {
+        if (neonOwned) { currentSkin = 'neon'; }
+        else if (coins >= 8000) {
+            coins -= 8000; neonOwned = true; currentSkin = 'neon';
+            localStorage.setItem("neonOwned", true);
+        } else { alert("You need 8000 coins!"); }
     }
+    else { currentSkin = 'default'; }
+    saveProgress();
     updateUI();
 }
 
@@ -206,6 +205,13 @@ function updateUI() {
         }
     });
 
+    const nBtn = document.getElementById("neonBtn");
+if (neonOwned) {
+    nBtn.innerText = currentSkin === 'neon' ? "Neon (equipped)" : "Use Neon Knight";
+    nBtn.style.borderColor = "#0ff";
+} else {
+    nBtn.disabled = coins < 8000;
+}
     document.getElementById("rebirthBtn").style.display = (weaponLevels.pistol >= 2) ? "block" : "none";
     document.getElementById("armorBtn").style.borderColor = boosters.armor ? "#2f6" : "#4af";
     document.getElementById("doubleDamageBtn").style.borderColor = boosters.doubleDamage ? "#0f0" : "#4af";
@@ -392,6 +398,34 @@ function draw() {
             ctx.fillRect(player.x + 9, player.y + 26, 6, 6);  // Venstre "tann"
             ctx.fillRect(player.x + 20, player.y + 26, 6, 6); // Høyre "tann"
 
+            if (currentSkin === "creeper") {
+    // ... din eksisterende creeper kode ...
+} 
+else if (currentSkin === "neon") {
+    // Bakgrunns-kvadrat (mørk blå/lilla)
+    ctx.fillStyle = "#1a0033";
+    ctx.fillRect(player.x, player.y, player.width, player.height);
+
+    // Neon-ramme
+    ctx.strokeStyle = "#0ff";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(player.x + 2, player.y + 2, player.width - 4, player.height - 4);
+
+    // Glødende kjerne (en mindre firkant i midten)
+    let pulse = Math.sin(Date.now() / 200) * 5; // Lager en pulserende effekt
+    ctx.fillStyle = "#0ff";
+    ctx.globalAlpha = 0.5 + (pulse / 10);
+    ctx.fillRect(player.x + 10, player.y + 10, 15, 15);
+    ctx.globalAlpha = 1;
+
+    // Detaljer i hjørnene
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(player.x, player.y, 4, 4); // Topp venstre
+    ctx.fillRect(player.x + player.width - 4, player.y, 4, 4); // Topp høyre
+}
+else {
+    // ... default skin ...
+}
         } else {
             // Standard skin (grønn firkant)
             ctx.fillStyle = (boosters.armor && !player.armorUsed) ? '#4af' : '#0f0';
