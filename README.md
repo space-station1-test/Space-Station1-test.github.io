@@ -39,6 +39,7 @@
     <div id="shop">
         <span class="section-title">Skins</span>
         <button id="neonBtn" onclick="endreSkin('neon')">Buy Neon Core (8000🟡)</button>
+        <button id="pigBtn" onclick="endreSkin('pig')">Buy Pig (5500🟡)</button>
         <button id="creeperBtn" onclick="endreSkin('creeper')">Buy Creeper (5000🟡)</button>
         <button onclick="endreSkin('default')">Standard 🚀</button>
         
@@ -214,6 +215,17 @@ function updateUI() {
     document.getElementById("armorBtn").style.borderColor = boosters.armor ? "#2f6" : "#4af";
     document.getElementById("doubleDamageBtn").style.borderColor = boosters.doubleDamage ? "#0f0" : "#4af";
     document.getElementById("slowEnemiesBtn").style.borderColor = boosters.slowEnemies ? "#0f0" : "#4af";
+    const pBtn = document.getElementById("pigBtn");
+    if (pBtn) {
+        if (pigOwned) {
+            pBtn.innerText = currentSkin === 'pig' ? "Pig (Equipped)" : "Use Pig 🐷";
+            pBtn.style.borderColor = "#f9f";
+        } else {
+            pBtn.innerText = "Buy Pig (5500🟡)";
+            pBtn.disabled = coins < 5500;
+        }
+    }
+    
 // Oppdater Neon/Core-knappen
     const nBtn = document.getElementById("neonBtn");
     if (nBtn) {
@@ -420,6 +432,28 @@ if (player.alive) {
             ctx.fillRect(-player.width/4, -player.height/4, player.width/2, player.height/2);
             ctx.restore();
         } 
+                else if (currentSkin === "pig") {
+            // Kropp (Rosa)
+            ctx.fillStyle = "#ffadad";
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+
+            // Tryne (Mørkere rosa)
+            ctx.fillStyle = "#ff85a2";
+            ctx.fillRect(player.x + 10, player.y + 18, 15, 10);
+            
+            // Nesebor
+            ctx.fillStyle = "#d44d7d";
+            ctx.fillRect(player.x + 12, player.y + 21, 3, 3);
+            ctx.fillRect(player.x + 20, player.y + 21, 3, 3);
+
+            // Øyne
+            ctx.fillStyle = "white";
+            ctx.fillRect(player.x + 6, player.y + 10, 6, 6);
+            ctx.fillRect(player.x + 23, player.y + 10, 6, 6);
+            ctx.fillStyle = "black";
+            ctx.fillRect(player.x + 8, player.y + 12, 3, 3);
+            ctx.fillRect(player.x + 25, player.y + 12, 3, 3);
+        }
         else {
             // Standard skin
             ctx.fillStyle = (boosters.armor && !player.armorUsed) ? '#4af' : '#0f0';
