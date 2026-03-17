@@ -205,26 +205,29 @@ function updateUI() {
     document.getElementById("armorBtn").style.borderColor = boosters.armor ? "#2f6" : "#4af";
     document.getElementById("doubleDamageBtn").style.borderColor = boosters.doubleDamage ? "#0f0" : "#4af";
     document.getElementById("slowEnemiesBtn").style.borderColor = boosters.slowEnemies ? "#0f0" : "#4af";
+// Oppdater Neon/Core-knappen
     const nBtn = document.getElementById("neonBtn");
-if (neonOwned) {
-    nBtn.innerText = currentSkin === 'neon' ? "The Core (Equipped)" : "Use The Core";
-    nBtn.style.borderColor = "#f0f";
-} else {
-    nBtn.innerText = "Buy The Core (7000🟡)";
-    nBtn.disabled = coins < 7000;
-}
-    const cBtn = document.getElementById("creeperBtn");
-    if (creeperOwned) {
-        cBtn.innerText = currentSkin === 'creeper' ? "Creeper (equipped)" : "Use Creeper 🟩";
-        cBtn.style.borderColor = "#0f0";
-        cBtn.disabled = false;
-        cBtn.style.opacity = "1";
-    } else {
-        cBtn.innerText = "Buy Creeper (5000🟡)";
-        cBtn.disabled = coins < 5000;
-        cBtn.style.opacity = coins < 5000 ? "0.5" : "1";
+    if (nBtn) {
+        if (neonOwned) {
+            nBtn.innerText = currentSkin === 'The Core' ? "The Core (Equipped)" : "Use The Core";
+            nBtn.style.borderColor = "#f0f";
+        } else {
+            nBtn.innerText = "Buy The Core (7000🟡)";
+            nBtn.disabled = coins < 7000;
+        }
     }
-}
+
+    // Oppdater Creeper-knappen
+    const cBtn = document.getElementById("creeperBtn");
+    if (cBtn) {
+        if (creeperOwned) {
+            cBtn.innerText = currentSkin === 'creeper' ? "Creeper (Equipped)" : "Use Creeper 🟩";
+            cBtn.style.borderColor = "#0f0";
+        } else {
+            cBtn.innerText = "Buy Creeper (5000🟡)";
+            cBtn.disabled = coins < 5000;
+        }
+    }
 
 function buyWeapon(type, cost) {
     if (coins >= cost) { coins -= cost; weaponsOwned[type] = true; activeWeapon = type; saveProgress(); updateUI(); }
@@ -370,41 +373,51 @@ function draw() {
     particles.forEach(p => { ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, 4, 4); });
     floatingTexts.forEach(t => { ctx.globalAlpha = t.life; ctx.fillStyle = t.color; ctx.font="bold 14px Arial"; ctx.fillText(t.text, t.x, t.y); });
     ctx.globalAlpha = 1;
-    if (player.alive) {
-    if (currentSkin === "creeper") {
-        // --- DIN EKSISTERENDE CREEPER KODE HER ---
-        ctx.fillStyle = "#03AC13";
-        ctx.fillRect(player.x, player.y, player.width, player.height);
-        ctx.fillStyle = "black";
-        ctx.fillRect(player.x + 6, player.y + 8, 8, 8); 
-        ctx.fillRect(player.x + 21, player.y + 8, 8, 8);
-        ctx.fillRect(player.x + 13, player.y + 16, 9, 7);
-    } 
-    else if (currentSkin === "The Core") {
-        // --- NY CORE/NEON LOGIKK ---
-        let hue = (Date.now() * 0.1) % 360; // Lager regnbue-effekt
-        ctx.fillStyle = "#000";
-        ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
-        ctx.lineWidth = 3;
-        
-        // Hovedfirkant
-        ctx.fillRect(player.x, player.y, player.width, player.height);
-        ctx.strokeRect(player.x, player.y, player.width, player.height);
-        
-        // Roterende kjerne i midten
-        ctx.save();
-        ctx.translate(player.x + player.width/2, player.y + player.height/2);
-        ctx.rotate(Date.now() * 0.005);
-        ctx.fillStyle = `hsl(${(hue+180)%360}, 100%, 50%)`;
-        ctx.fillRect(-player.width/4, -player.height/4, player.width/2, player.height/2);
-        ctx.restore();
-    } 
-    else {
-        // Standard skin
-        ctx.fillStyle = (boosters.armor && !player.armorUsed) ? '#4af' : '#0f0';
-        ctx.fillRect(player.x, player.y, player.width, player.height);
+if (player.alive) {
+        if (currentSkin === "creeper") {
+            // Fikset Creeper-design
+            ctx.fillStyle = "#03AC13";
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+            
+            ctx.fillStyle = "black";
+            // Øyne
+            ctx.fillRect(player.x + 6, player.y + 8, 8, 8);  
+            ctx.fillRect(player.x + 21, player.y + 8, 8, 8);
+            // Munn og nese (den klassiske Creeper-formen)
+            ctx.fillRect(player.x + 13, player.y + 16, 9, 12); 
+            ctx.fillRect(player.x + 9, player.y + 22, 17, 6);  
+        } 
+        else if (currentSkin === "neon") {
+            // The Core design
+            let hue = (Date.now() * 0.1) % 360;
+            ctx.fillStyle = "#000";
+            ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+            ctx.lineWidth = 3;
+            
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+            ctx.strokeRect(player.x, player.y, player.width, player.height);
+            
+            // Roterende kjerne
+            ctx.save();
+            ctx.translate(player.x + player.width/2, player.y + player.height/2);
+            ctx.rotate(Date.now() * 0.005);
+            ctx.fillStyle = `hsl(${(hue+180)%360}, 100%, 50%)`;
+            ctx.fillRect(-player.width/4, -player.height/4, player.width/2, player.height/2);
+            ctx.restore();
+        } 
+        else {
+            // Standard skin
+            ctx.fillStyle = (boosters.armor && !player.armorUsed) ? '#4af' : '#0f0';
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+        }
+
+        // Armor-effekt (blå ramme)
+        if (boosters.armor && !player.armorUsed) {
+            ctx.strokeStyle = "#4af";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(player.x - 3, player.y - 3, player.width + 6, player.height + 6);
+        }
     }
-}
 
     
     bullets.forEach(b => { ctx.fillStyle = boosters.doubleDamage ? 'orange' : 'yellow'; ctx.fillRect(b.x, b.y, 6, 12); });
