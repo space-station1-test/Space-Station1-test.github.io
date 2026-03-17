@@ -131,7 +131,7 @@ function endreSkin(valg) {
 }
 
 let coins = Number(localStorage.getItem("coins")) || 10000;
-let gems = Number(localStorage.getItem("gems")) || 10;
+let gems = Number(localStorage.getItem("gems")) || 10000;
 let highscore = Number(localStorage.getItem("highscore")) || 0;
 let activeWeapon = localStorage.getItem("activeWeapon") || "none";
 let weaponsOwned = JSON.parse(localStorage.getItem("weaponsOwned")) || { pistol: false, smg: false, shotgun: false, ar: false };
