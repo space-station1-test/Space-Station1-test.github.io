@@ -106,14 +106,6 @@ let currentSkin = "default";
 // Sjekker om spilleren allerede eier skinnet fra før
 let creeperOwned = JSON.parse(localStorage.getItem("creeperOwned")) || false;
 let neonOwned = JSON.parse(localStorage.getItem("neonOwned")) || false;
-    
-const creeperImg = new Image();
-creeperImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAALHRFWHRDcmVhdGlvbiBUaW1lAFN1biA0IE1hciAyMDEyIDIyOjM1OjI0IC0wNTAwZ7S3VAAAAB50RVh0U29mdHdhcmUAYWRvYmUgcGhvdG9zaG9wIGNzM2u23e4AAABWSURBVDhPY2RgYPhf08DAwMAAxH9BeH9V9X8Ym7mZEUj8PzL28fHByIDYv8AIBP+PhP8zMjL8RxYAsX+BEYj9C4xA7F9gBGL/AiMQ+xcYgdjMDIyMjIwMAIB2P0F/D9pXAAAAAElFTkSuQmCC";
-
-const neonImg = new Image();
-// Her kan du lime inn din egen Base64-streng. 
-// Jeg legger ved en midlertidig blå firkant her:
-neonImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMklEQVQ4T2N8z/CfAR0wMv6fQByGf6SBMD7VAFID6BvA0DCA6SNoGA7A6iNoGA6S6iNoGAA8yS8T6mK7tAAAAABJRU5ErkJggg==";1
 
 function endreSkin(valg) {
     if (valg === 'creeper') {
