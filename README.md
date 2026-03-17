@@ -444,7 +444,7 @@ if (player.alive) {
         ctx.fillText("PAUSE", 200, 300);
         
         ctx.font = "16px Arial";
-        ctx.fillText("Press the pause button to continue", 200, 340);
+        ctx.fillText("", 200, 340);
         ctx.textAlign = "start"; // Nullstill tekstjustering for andre tekster
     }
 }
@@ -484,7 +484,7 @@ function togglePause() {
 }
 
 function restartGame() { init(); }
-function resetGameData() { if(confirm("Slette alt?")) { localStorage.clear(); location.reload(); } }
+function resetGameData() { if(confirm("Delete all data?")) { localStorage.clear(); location.reload(); } }
 
 init();
 let lastSpawnTime = 0;
