@@ -374,19 +374,25 @@ function draw() {
     floatingTexts.forEach(t => { ctx.globalAlpha = t.life; ctx.fillStyle = t.color; ctx.font="bold 14px Arial"; ctx.fillText(t.text, t.x, t.y); });
     ctx.globalAlpha = 1;
 if (player.alive) {
-        if (currentSkin === "creeper") {
-            // Fikset Creeper-design
+                if (currentSkin === "creeper") {
+            // Bakgrunn (Grønn)
             ctx.fillStyle = "#03AC13";
             ctx.fillRect(player.x, player.y, player.width, player.height);
             
             ctx.fillStyle = "black";
-            // Øyne
-            ctx.fillRect(player.x + 6, player.y + 8, 8, 8);  
-            ctx.fillRect(player.x + 21, player.y + 8, 8, 8);
-            // Munn og nese (den klassiske Creeper-formen)
-            ctx.fillRect(player.x + 13, player.y + 16, 9, 12); 
-            ctx.fillRect(player.x + 9, player.y + 22, 17, 6);  
-        } 
+            // Øyne (Symmetrisk plassert)
+            ctx.fillRect(player.x + 5, player.y + 7, 8, 8);  
+            ctx.fillRect(player.x + 22, player.y + 7, 8, 8);
+            
+            // Munn/Nese (Den klassiske Creeper-formen)
+            // Midtdelen (nese/overleppe)
+            ctx.fillRect(player.x + 13, player.y + 15, 9, 10); 
+            // Sidene som går ned (leppene)
+            ctx.fillRect(player.x + 9, player.y + 20, 17, 8);  
+            // Fjerner det som er under "haken" for å få riktig form
+            ctx.fillStyle = "#03AC13";
+            ctx.fillRect(player.x + 13, player.y + 25, 9, 3);
+        }
         else if (currentSkin === "neon") {
             // The Core design
             let hue = (Date.now() * 0.1) % 360;
