@@ -56,7 +56,7 @@
             <div id="gemsDisplay">Gems: 0</div>
             <div id="highscoreDisplayUI" style="color: #4af; font-size: 11px;">Highscore: 0</div>
         </div>
-        <button onclick="togglePause()">Pause</button>
+        <button id="pauseBtn" onclick="togglePause()">Pause</button>
         <button onclick="restartGame()">Restart</button>
         
         <div id="weaponShop">
@@ -228,7 +228,7 @@ function updateUI() {
             cBtn.disabled = coins < 5000;
         }
     }
-
+}
 function buyWeapon(type, cost) {
     if (coins >= cost) { coins -= cost; weaponsOwned[type] = true; activeWeapon = type; saveProgress(); updateUI(); }
 }
