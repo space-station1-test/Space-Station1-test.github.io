@@ -40,6 +40,7 @@
         <span class="section-title">Skins</span>
         <button id="creeperBtn" onclick="endreSkin('creeper')">Buy Creeper (5000🟡)</button>
         <button onclick="endreSkin('default')">Standard 🚀</button>
+        <button id="neonBtn" onclick="endreSkin('neon')">Buy Neon Knight (8000🟡)</button>
         
         <span class="section-title">Boosters (Gems)</span>
         <button id="armorBtn" onclick="buyBooster('armor', 50)">🛡️Armor (50💎)</button>
@@ -139,10 +140,10 @@ let weaponLevels = JSON.parse(localStorage.getItem("weaponLevels")) || { pistol:
 let boosters = { armor: false, doubleDamage: false, slowEnemies: false };
 
 const weaponConfigs = {
-    pistol: { cooldown: [25, 18, 19], maxLvl: 2, type: "single", dmg: 1 },
-    smg: { cooldown: [9, 6], maxLvl: 1, type: "single", dmg: 0.5 },
+    pistol: { cooldown: [25, 21, 18], maxLvl: 2, type: "single", dmg: 1 },
+    smg: { cooldown: [8, 5], maxLvl: 1, type: "single", dmg: 0.5 },
     shotgun: { cooldown: [45, 30], maxLvl: 1, type: "triple", dmg: 1 },
-    ar: { cooldown: [10, 13], maxLvl: 1, type: "fast", dmg: 1 }
+    ar: { cooldown: [14, 11], maxLvl: 1, type: "fast", dmg: 1 }
 };
 
 function toggleUI() {
