@@ -414,7 +414,14 @@ powerups.forEach((p, pi) => {
     }
     if (p.y > 600) powerups.splice(pi, 1);
 });
-if (rainbowTimer > 0) rainbowTimer -= 1 * sf;
+// ... (koden for powerups og rainbowTimer her) ...
+
+    if (rainbowTimer > 0) rainbowTimer -= 1 * sf;
+
+    // FLYTT DISSE TO LINJENE HIT:
+    score += 0.3 * sf; 
+    if (score >= gemMilestone) { gems += 2; gemMilestone += 10000; updateUI(); }
+
 }
 
 function draw() {
