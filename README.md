@@ -386,7 +386,7 @@ function update(sf) {
                     // Drop gems
                     if (Math.random() < 0.02) { 
                         gems += 5; 
-                        floatingTexts.push({x: e.x, y: e.y, text: "GEMS! +5", color: "#a4f", life: 1}); 
+                        floatingTexts.push({x: e.x, y: e.y, text: "+5 GEMS!", color: "#a4f", life: 1}); 
                     }
                     
                     // Legg til coins og score
