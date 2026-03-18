@@ -395,7 +395,7 @@ function update(sf) {
                     createExplosion(e.x+e.w/2, e.y+e.h/2, e.color);
 
                     // 0.1% sjanse for Rainbow Drop
-                    if (Math.random() < 0.001) {
+                    if (Math.random() < 0.08) {
                         powerups.push({ x: e.x, y: e.y, w: 25, h: 25, speedY: 2 * sf });
                     }
 
@@ -539,7 +539,7 @@ if (player.alive) {
         ctx.fillStyle = "white";
         ctx.font = "bold 40px Arial";
         ctx.textAlign = "center";
-        ctx.fillText("PAUSE", 200, 300);
+        ctx.fillText("PAUSED", 200, 300);
         
         ctx.font = "16px Arial";
         ctx.fillText("", 200, 340);
