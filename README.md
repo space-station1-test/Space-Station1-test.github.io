@@ -119,8 +119,8 @@ function endreSkin(valg) {
             localStorage.setItem("creeperOwned", true);
         }
     } 
-    else if (valg === 'neon') {
-        if (neonOwned) { currentSkin = 'neon'; }
+    else if (valg === 'The Core') {
+        if (thecoreOwned) { currentSkin = 'neon'; }
         else if (coins >= 8000) {
             coins -= 8000; neonOwned = true; currentSkin = 'neon';
             localStorage.setItem("neonOwned", true);
@@ -407,7 +407,7 @@ function update(sf) {
     });
 powerups.forEach((p, pi) => {
     p.y += p.speedY;
-    if (player.alive && player.x < p.x + p.w && player.x + player.width > p.x && player.y < p.y + p.h && player.y + player.height > p.y) {
+    if (player.alive && rainbowTimer <= 0 && player.x < e.x + e.w && player.x + player.width > e.x && player.y < e.y + e.h && player.y + player.height > e.y) {
         rainbowTimer = 500; // Varer i ca. 8-10 sekunder
         powerups.splice(pi, 1);
         floatingTexts.push({x: player.x, y: player.y - 20, text: "ULTRA RAINBOW!", color: "#f0f", life: 2});
