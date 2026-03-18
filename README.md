@@ -119,13 +119,13 @@ function endreSkin(valg) {
             localStorage.setItem("creeperOwned", true);
         }
     } 
-    else if (valg === 'The Core') {
-        if (thecoreOwned) { currentSkin = 'neon'; }
-        else if (coins >= 8000) {
-            coins -= 8000; neonOwned = true; currentSkin = 'neon';
-            localStorage.setItem("neonOwned", true);
-        } else { alert("You need 8000 coins!"); }
-    }
+    else if (valg === 'neon' || valg === 'The Core') { // Godtar begge
+    if (neonOwned) { currentSkin = 'neon'; }
+    else if (coins >= 8000) {
+        coins -= 8000; neonOwned = true; currentSkin = 'neon';
+        localStorage.setItem("neonOwned", true);
+    } else { alert("You need 8000 coins for The Core!"); }
+}
     // NY DEL FOR GRIS:
     else if (valg === 'pig') {
         if (pigOwned) { currentSkin = 'pig'; }
