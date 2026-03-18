@@ -97,6 +97,8 @@ const ctx = canvas.getContext("2d");
 const BASE_SPEED = 1.3;
 
 let player, enemies, bullets, stars, particles, floatingTexts;
+let powerups = []; // Ny liste for drops
+let rainbowTimer = 0; // Ny timer for effekten
 let score = 0, gameOver = false, paused = false, shootCooldown = 0;
 let keys = {};
 let uiVisible = true;
@@ -331,7 +333,7 @@ function fire() {
     } else {
         bullets.push({x: player.x + 15, y: player.y, vx: 0, vy: -12, dmg: damage});
     }
-    shootCooldown = config.cooldown[lvl];
+    shootCooldown = rainbowTimer > 0 ? config.cooldown[lvl] / 3 : config.cooldown[lvl]; // 3x raskere!
 }
 
 function update(sf) {
@@ -378,14 +380,31 @@ function update(sf) {
                 if (e.hp <= 0) {
                     if (Math.random() < 0.02) { gems += 5; floatingTexts.push({x: e.x, y: e.y, text: "GEMS! +5", color: "#a4f", life: 1}); }
                     coins += (e.coins || 10); score += (e.isHeavy ? 500 : 100); createExplosion(e.x+e.w/2, e.y+e.h/2, e.color);
+                if (e.hp <= 0) {
+                    if (Math.random() < 0.02) { gems += 5; floatingTexts.push({x: e.x, y: e.y, text: "GEMS! +5", color: "#a4f", life: 1}); }
+                    coins += (e.coins || 10); score += (e.isHeavy ? 500 : 100); createExplosion(e.x+e.w/2, e.y+e.h/2, e.color);
+// 0.1% sjanse (0.001) for Rainbow Drop
+if (Math.random() < 0.001) {
+    powerups.push({ x: e.x, y: e.y, w: 25, h: 25, speedY: 2 * sf });
+}
                     enemies.splice(ei, 1); updateUI();
                 }
-            }
+            }   
         });
         if (e.y > 600) enemies.splice(ei, 1);
     });
     score += 0.3 * sf;
     if (score >= gemMilestone) { gems += 2; gemMilestone += 10000; updateUI(); }
+powerups.forEach((p, pi) => {
+    p.y += p.speedY;
+    if (player.alive && player.x < p.x + p.w && player.x + player.width > p.x && player.y < p.y + p.h && player.y + player.height > p.y) {
+        rainbowTimer = 500; // Varer i ca. 8-10 sekunder
+        powerups.splice(pi, 1);
+        floatingTexts.push({x: player.x, y: player.y - 20, text: "ULTRA RAINBOW! 🌈", color: "#f0f", life: 2});
+    }
+    if (p.y > 600) powerups.splice(pi, 1);
+});
+if (rainbowTimer > 0) rainbowTimer -= 1 * sf;
 }
 
 function draw() {
@@ -469,7 +488,27 @@ if (player.alive) {
     }
 
     
-    bullets.forEach(b => { ctx.fillStyle = boosters.doubleDamage ? 'orange' : 'yellow'; ctx.fillRect(b.x, b.y, 6, 12); });
+        bullets.forEach(b => { 
+        if (rainbowTimer > 0) {
+            // Regnbuefarge som skifter raskt (0.8 styrer farten)
+            ctx.fillStyle = `hsl(${(Date.now() * 0.8) % 360}, 100%, 60%)`;
+        } else {
+            ctx.fillStyle = boosters.doubleDamage ? 'orange' : 'yellow'; 
+        }
+        ctx.fillRect(b.x, b.y, 6, 12); 
+    });
+
+    // Tegner selve den sjeldne boksen når den faller
+    powerups.forEach(p => {
+        ctx.fillStyle = `hsl(${(Date.now() * 0.5) % 360}, 100%, 50%)`;
+        ctx.shadowBlur = 15; // Gir boksen en hvit glød så den synes godt
+        ctx.shadowColor = "white";
+        ctx.fillRect(p.x, p.y, p.w, p.h);
+        ctx.strokeStyle = "white";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(p.x, p.y, p.w, p.h);
+        ctx.shadowBlur = 0; // Skrur av gløden for resten av grafikken
+    });
     enemies.forEach(e => { 
         ctx.fillStyle = e.color; ctx.fillRect(e.x, e.y, e.w, e.h); 
         if (e.isHeavy) {
