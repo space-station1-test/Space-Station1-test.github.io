@@ -121,10 +121,10 @@ function endreSkin(valg) {
     } 
     else if (valg === 'neon' || valg === 'The Core') { // Godtar begge
     if (neonOwned) { currentSkin = 'neon'; }
-    else if (coins >= 8000) {
-        coins -= 8000; neonOwned = true; currentSkin = 'neon';
+    else if (coins >= 7000) {
+        coins -= 7000; neonOwned = true; currentSkin = 'neon';
         localStorage.setItem("neonOwned", true);
-    } else { alert("You need 8000 coins for The Core!"); }
+    } else { alert("You need 7000 coins for The Core!"); }
 }
     // NY DEL FOR GRIS:
     else if (valg === 'pig') {
