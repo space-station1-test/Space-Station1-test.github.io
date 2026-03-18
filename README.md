@@ -396,7 +396,7 @@ function update(sf) {
                     createExplosion(e.x+e.w/2, e.y+e.h/2, e.color);
 
                     // 0.1% sjanse for Rainbow Drop
-                    if (Math.random() < 0.009) {
+                    if (Math.random() < 0.01) {
                         powerups.push({ x: e.x, y: e.y, w: 25, h: 25, speedY: 2 * sf });
                     }
 
