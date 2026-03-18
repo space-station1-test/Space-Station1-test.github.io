@@ -408,13 +408,13 @@ function update(sf) {
 powerups.forEach((p, pi) => {
     p.y += p.speedY;
     if (player.alive && rainbowTimer <= 0 && player.x < e.x + e.w && player.x + player.width > e.x && player.y < e.y + e.h && player.y + player.height > e.y) {
-        rainbowTimer = 500; // Varer i ca. 8-10 sekunder
+        rainbowTimer = 500; 
         powerups.splice(pi, 1);
         floatingTexts.push({x: player.x, y: player.y - 20, text: "ULTRA RAINBOW!", color: "#f0f", life: 2});
     }
     if (p.y > 600) powerups.splice(pi, 1);
 });
-// ... (koden for powerups og rainbowTimer her) ...
+
 
     if (rainbowTimer > 0) rainbowTimer -= 1 * sf;
 
