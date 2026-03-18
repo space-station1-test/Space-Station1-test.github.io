@@ -404,6 +404,7 @@ function update(sf) {
                 }
             }   
         });
+    });
 powerups.forEach((p, pi) => {
     p.y += p.speedY;
     if (player.alive && player.x < p.x + p.w && player.x + player.width > p.x && player.y < p.y + p.h && player.y + player.height > p.y) {
