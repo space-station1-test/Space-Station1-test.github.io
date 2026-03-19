@@ -38,7 +38,7 @@
     <div class="ui-left" id="skinShop">
     <div id="shop">
         <span class="section-title">Skins</span>
-        <button id="neonBtn" onclick="endreSkin('neon')">Buy Neon Core (8000🟡)</button>
+        <button id="coreBtn" onclick="endreSkin('The Core')">Buy The Core (7000🟡)</button>
         <button id="pigBtn" onclick="endreSkin('pig')">Buy Pig (5500🟡)</button>
         <button id="creeperBtn" onclick="endreSkin('creeper')">Buy Creeper (5000🟡)</button>
         <button onclick="endreSkin('default')">Standard 🚀</button>
@@ -108,7 +108,7 @@ let lastTime = 0; // For Delta Time
 let currentSkin = "default";
 // Sjekker om spilleren allerede eier skinnet fra før
 let creeperOwned = JSON.parse(localStorage.getItem("creeperOwned")) || false;
-let neonOwned = JSON.parse(localStorage.getItem("neonOwned")) || false;
+let The CoreOwned = JSON.parse(localStorage.getItem("The CoreOwned")) || false;
 let pigOwned = JSON.parse(localStorage.getItem("pigOwned")) || false;
     
 function endreSkin(valg) {
@@ -120,10 +120,10 @@ function endreSkin(valg) {
         }
     } 
     else if (valg === 'neon' || valg === 'The Core') { // Godtar begge
-    if (neonOwned) { currentSkin = 'neon'; }
+    if (The CoreOwned) { currentSkin = 'The Core'; }
     else if (coins >= 7000) {
-        coins -= 7000; neonOwned = true; currentSkin = 'neon';
-        localStorage.setItem("neonOwned", true);
+        coins -= 7000; neonOwned = true; currentSkin = 'The Core';
+        localStorage.setItem("The CoreOwned", true);
     } else { alert("You need 7000 coins for The Core!"); }
 }
     // NY DEL FOR GRIS:
@@ -228,15 +228,15 @@ function updateUI() {
         }
     }
     
-// Oppdater Neon/Core-knappen
-    const nBtn = document.getElementById("neonBtn");
-    if (nBtn) {
+// Oppdater Neon/Core-knappenweaponsOwne
+    tBtn = document.getElementById("The CoreBtn");
+    if (tBtn) {
         if (neonOwned) {
-            nBtn.innerText = currentSkin === 'The Core' ? "The Core (Equipped)" : "Use The Core";
-            nBtn.style.borderColor = "#f0f";
+            tBtn.innerText = currentSkin === 'The Core' ? "The Core (Equipped)" : "Use The Core";
+            tBtn.style.borderColor = "#f0f";
         } else {
-            nBtn.innerText = "Buy The Core (7000🟡)";
-            nBtn.disabled = coins < 7000;
+            tBtn.innerText = "Buy The Core (7000🟡)";
+            tBtn.disabled = coins < 7000;
         }
     }
 
@@ -406,23 +406,15 @@ function update(sf) {
         });
     });
 powerups.forEach((p, pi) => {
-    p.y += p.speedY;
-    if (player.alive && rainbowTimer <= 0 && player.x < e.x + e.w && player.x + player.width > e.x && player.y < e.y + e.h && player.y + player.height > e.y) {
-        rainbowTimer = 500; 
+    p.y += p.speedY * sf;
+    // Her må det stå p.x og p.w, ikke e.x og e.w!
+    if (player.alive && player.x < p.x + p.w && player.x + player.width > p.x && player.y < p.y + p.h && player.y + player.height > p.y) {
+        rainbowTimer = 500; // Starter regnbue-modus
         powerups.splice(pi, 1);
         floatingTexts.push({x: player.x, y: player.y - 20, text: "ULTRA RAINBOW!", color: "#f0f", life: 2});
     }
     if (p.y > 600) powerups.splice(pi, 1);
 });
-
-
-    if (rainbowTimer > 0) rainbowTimer -= 1 * sf;
-
-    // FLYTT DISSE TO LINJENE HIT:
-    score += 0.3 * sf; 
-    if (score >= gemMilestone) { gems += 2; gemMilestone += 10000; updateUI(); }
-
-}
 
 function draw() {
     ctx.clearRect(0,0,400,600);
