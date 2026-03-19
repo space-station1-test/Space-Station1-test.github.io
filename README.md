@@ -233,7 +233,7 @@ function updateUI() {
     }
     
 // Oppdater Neon/Core-knappenweaponsOwne
-    tBtn = document.getElementById("coreBtn");
+   const tBtn = document.getElementById("coreBtn");
     if (tBtn) {
         if (TheCoreOwned) {
             tBtn.innerText = currentSkin === 'The Core' ? "The Core (Equipped)" : "Use The Core";
