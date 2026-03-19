@@ -125,7 +125,7 @@ function endreSkin(valg) {
     }
     else if (coins >= 7000) {
         coins -= 7000; 
-        theCoreOwned = true; // Match variabelnavnet her
+        TheCoreOwned = true; // Match variabelnavnet her
         currentSkin = 'The Core';
         localStorage.setItem("TheCoreOwned", true);
     } 
