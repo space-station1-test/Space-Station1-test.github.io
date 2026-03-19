@@ -407,7 +407,7 @@ function update(sf) {
                     enemies.splice(ei, 1); 
                     updateUI();
                 }   
-            });
+            }
         });
     });
 powerups.forEach((p, pi) => {
