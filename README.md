@@ -119,12 +119,16 @@ function endreSkin(valg) {
             localStorage.setItem("creeperOwned", true);
         }
     } 
-    else if (valg === 'neon' || valg === 'The Core') { // Godtar begge
-    if (The CoreOwned) { currentSkin = 'The Core'; }
+    else if (valg === 'The Core') { 
+    if (theCoreOwned) { // Bruk det nye navnet uten mellomrom her også
+        currentSkin = 'The Core'; 
+    }
     else if (coins >= 7000) {
-        coins -= 7000; neonOwned = true; currentSkin = 'The Core';
+        coins -= 7000; 
+        theCoreOwned = true; // Match variabelnavnet her
+        currentSkin = 'The Core';
         localStorage.setItem("TheCoreOwned", true);
-    } else { alert("You need 7000 coins for The Core!"); }
+    } 
 }
     // NY DEL FOR GRIS:
     else if (valg === 'pig') {
@@ -132,7 +136,6 @@ function endreSkin(valg) {
         else if (coins >= 5500) {
             coins -= 5500; pigOwned = true; currentSkin = 'pig';
             localStorage.setItem("pigOwned", true);
-        } else { alert("Du trenger 5500 coins for Gris!"); }
     }
     else { currentSkin = 'default'; }
     saveProgress();
@@ -190,7 +193,7 @@ function updateUI() {
     document.getElementById("buySMGBtn").style.display = weaponsOwned.smg ? "none" : "block";
     const upgSMG = document.getElementById("upgradeSMGBtn");
     upgSMG.style.display = weaponsOwned.smg ? "block" : "none";
-    upgSMG.innerText = weaponLevels.smg >= 1 ? "Maxed" : "Upgrade 1100🟡)";
+    upgSMG.innerText = weaponLevels.smg >= 1 ? "Maxed" : "Upgrade (1100🟡)";
     upgSMG.disabled = weaponLevels.smg >= 1 || coins < 1000;
 
     document.getElementById("buyShotgunBtn").style.display = weaponsOwned.shotgun ? "none" : "block";
@@ -229,7 +232,7 @@ function updateUI() {
     }
     
 // Oppdater Neon/Core-knappenweaponsOwne
-    tBtn = document.getElementById("The CoreBtn");
+    tBtn = document.getElementById("coreBtn");
     if (tBtn) {
         if (neonOwned) {
             tBtn.innerText = currentSkin === 'The Core' ? "The Core (Equipped)" : "Use The Core";
@@ -340,6 +343,7 @@ function fire() {
 }
 
 function update(sf) {
+    if (rainbowTimer > 0) rainbowTimer -= 1 * sf;
     particles.forEach((p, i) => { p.x += p.vx * sf; p.y += p.vy * sf; p.life -= 0.02 * sf; if(p.life <= 0) particles.splice(i,1); });
     floatingTexts.forEach((t, i) => { t.y -= 1 * sf; t.life -= 0.02 * sf; if(t.life <= 0) floatingTexts.splice(i,1); });
     if (gameOver || paused) return;
@@ -442,7 +446,7 @@ if (player.alive) {
             ctx.fillStyle = "#03AC13";
             ctx.fillRect(player.x + 13, player.y + 25, 9, 3);
         }
-        else if (currentSkin === "neon") {
+        else if (currentSkin === "The Core") {
             // The Core design
             let hue = (Date.now() * 0.1) % 360;
             ctx.fillStyle = "#000";
