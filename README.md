@@ -132,11 +132,12 @@ function endreSkin(valg) {
 }
     // NY DEL FOR GRIS:
     else if (valg === 'pig') {
-        if (pigOwned) { currentSkin = 'pig'; }
-        else if (coins >= 5500) {
-            coins -= 5500; pigOwned = true; currentSkin = 'pig';
-            localStorage.setItem("pigOwned", true);
-    }
+    if (pigOwned) { currentSkin = 'pig'; }
+    else if (coins >= 5500) {
+        coins -= 5500; pigOwned = true; currentSkin = 'pig';
+        localStorage.setItem("pigOwned", true);
+    } 
+} 
     else { currentSkin = 'default'; }
     saveProgress();
     updateUI();
@@ -234,7 +235,7 @@ function updateUI() {
 // Oppdater Neon/Core-knappenweaponsOwne
     tBtn = document.getElementById("coreBtn");
     if (tBtn) {
-        if (neonOwned) {
+        if (TheCoreOwned) {
             tBtn.innerText = currentSkin === 'The Core' ? "The Core (Equipped)" : "Use The Core";
             tBtn.style.borderColor = "#f0f";
         } else {
