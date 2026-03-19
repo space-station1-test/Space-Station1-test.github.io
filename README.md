@@ -232,8 +232,8 @@ function updateUI() {
         }
     }
     
-// Oppdater Neon/Core-knappenweaponsOwne
-   const tBtn = document.getElementById("coreBtn");
+    // Oppdater Neon/Core-knappen
+    const tBtn = document.getElementById("coreBtn");
     if (tBtn) {
         if (TheCoreOwned) {
             tBtn.innerText = currentSkin === 'The Core' ? "The Core (Equipped)" : "Use The Core";
@@ -406,8 +406,8 @@ function update(sf) {
 
                     enemies.splice(ei, 1); 
                     updateUI();
-                }
-            }   
+                }   
+            });
         });
     });
 powerups.forEach((p, pi) => {
