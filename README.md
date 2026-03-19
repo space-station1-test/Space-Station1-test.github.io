@@ -108,7 +108,7 @@ let lastTime = 0; // For Delta Time
 let currentSkin = "default";
 // Sjekker om spilleren allerede eier skinnet fra før
 let creeperOwned = JSON.parse(localStorage.getItem("creeperOwned")) || false;
-let The CoreOwned = JSON.parse(localStorage.getItem("The CoreOwned")) || false;
+let TheCoreOwned = JSON.parse(localStorage.getItem("TheCoreOwned")) || false;
 let pigOwned = JSON.parse(localStorage.getItem("pigOwned")) || false;
     
 function endreSkin(valg) {
@@ -123,7 +123,7 @@ function endreSkin(valg) {
     if (The CoreOwned) { currentSkin = 'The Core'; }
     else if (coins >= 7000) {
         coins -= 7000; neonOwned = true; currentSkin = 'The Core';
-        localStorage.setItem("The CoreOwned", true);
+        localStorage.setItem("TheCoreOwned", true);
     } else { alert("You need 7000 coins for The Core!"); }
 }
     // NY DEL FOR GRIS:
