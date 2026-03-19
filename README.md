@@ -347,79 +347,86 @@ function update(sf) {
     if (rainbowTimer > 0) rainbowTimer -= 1 * sf;
     particles.forEach((p, i) => { p.x += p.vx * sf; p.y += p.vy * sf; p.life -= 0.02 * sf; if(p.life <= 0) particles.splice(i,1); });
     floatingTexts.forEach((t, i) => { t.y -= 1 * sf; t.life -= 0.02 * sf; if(t.life <= 0) floatingTexts.splice(i,1); });
+    
     if (gameOver || paused) return;
+    
     if (player.alive && activeWeapon !== "none" && shootCooldown <= 0) fire();
     if (shootCooldown > 0) shootCooldown -= 1 * sf;
+    
     stars.forEach(s => { s.y += s.s * sf; if(s.y > 600) s.y = 0; });
+    
     if (player.alive) {
         if ((keys['a'] || keys['arrowleft']) && player.x > 0) player.x -= player.speed * sf;
         if ((keys['d'] || keys['arrowright']) && player.x < 400 - player.width) player.x += player.speed * sf;
     }
+    
     bullets.forEach((b, i) => {
         b.x += b.vx * sf; b.y += b.vy * sf;
         if (b.y < -20 || b.x < -20 || b.x > 420) bullets.splice(i, 1);
     });
+
     let enemySpeedMult = (boosters.slowEnemies ? 0.5 : 1.0) * sf;
+    
     enemies.forEach((e, ei) => {
         if (e.type === 'sinus') {
             if (!e.centerX) e.centerX = e.x;
             e.angle += 0.05 * sf; e.x = e.centerX + Math.sin(e.angle) * 50;
             e.y += e.speedY * enemySpeedMult;
-        } else { e.y += e.speedY * enemySpeedMult; }
+        } else { 
+            e.y += e.speedY * enemySpeedMult; 
+        }
+
+        // Spiller treffer fiende
         if (player.alive && player.x < e.x + e.w && player.x + player.width > e.x && player.y < e.y + e.h && player.y + player.height > e.y) {
             if (boosters.armor && !player.armorUsed) { 
-                player.armorUsed = true; enemies.splice(ei, 1); createExplosion(player.x+17, player.y, "#4af"); 
+                player.armorUsed = true; 
+                enemies.splice(ei, 1); 
+                createExplosion(player.x+17, player.y, "#4af"); 
             } else { 
                 player.alive = false;
                 createExplosion(player.x + 17, player.y + 17, "#0f0", 50); 
                 createExplosion(player.x + 17, player.y + 17, "orange", 30);
-
-                // Boosters fjernes ved Game Over
-                boosters.armor = false;
-                boosters.doubleDamage = false;
-                boosters.slowEnemies = false;
-
+                boosters.armor = false; boosters.doubleDamage = false; boosters.slowEnemies = false;
                 setTimeout(() => { gameOver = true; if(score > highscore) { highscore = Math.floor(score); saveProgress(); } updateUI(); }, 1000);
             }
         }
-                bullets.forEach((b, bi) => {
+
+        // Kuler treffer fiende
+        bullets.forEach((b, bi) => {
             if (b.x < e.x + e.w && b.x + 6 > e.x && b.y < e.y + e.h && b.y + 12 > e.y) {
                 e.hp -= (b.dmg || 1); 
                 bullets.splice(bi, 1);
                 
                 if (e.hp <= 0) {
-                    // Drop gems
                     if (Math.random() < 0.02) { 
                         gems += 5; 
                         floatingTexts.push({x: e.x, y: e.y, text: "+5 GEMS!", color: "#a4f", life: 1}); 
                     }
-                    
-                    // Legg til coins og score
                     coins += (e.coins || 10); 
                     score += (e.isHeavy ? 500 : 100); 
                     createExplosion(e.x+e.w/2, e.y+e.h/2, e.color);
 
-                    // 0.1% sjanse for Rainbow Drop
                     if (Math.random() < 0.01) {
-                        powerups.push({ x: e.x, y: e.y, w: 25, h: 25, speedY: 2 * sf });
+                        powerups.push({ x: e.x, y: e.y, w: 25, h: 25, speedY: 2 });
                     }
 
                     enemies.splice(ei, 1); 
                     updateUI();
-                }   
-            }
+                }
+            }   
         });
+    }); // Denne lukker enemies.forEach
+
+    powerups.forEach((p, pi) => {
+        p.y += p.speedY * sf;
+        if (player.alive && player.x < p.x + p.w && player.x + player.width > p.x && player.y < p.y + p.h && player.y + player.height > p.y) {
+            rainbowTimer = 500;
+            powerups.splice(pi, 1);
+            floatingTexts.push({x: player.x, y: player.y - 20, text: "ULTRA RAINBOW!", color: "#f0f", life: 2});
+        }
+        if (p.y > 600) powerups.splice(pi, 1);
     });
-powerups.forEach((p, pi) => {
-    p.y += p.speedY * sf;
-    // Her må det stå p.x og p.w, ikke e.x og e.w!
-    if (player.alive && player.x < p.x + p.w && player.x + player.width > p.x && player.y < p.y + p.h && player.y + player.height > p.y) {
-        rainbowTimer = 500; // Starter regnbue-modus
-        powerups.splice(pi, 1);
-        floatingTexts.push({x: player.x, y: player.y - 20, text: "ULTRA RAINBOW!", color: "#f0f", life: 2});
-    }
-    if (p.y > 600) powerups.splice(pi, 1);
-});
+}
 
 function draw() {
     ctx.clearRect(0,0,400,600);
