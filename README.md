@@ -349,6 +349,8 @@ function update(sf) {
     floatingTexts.forEach((t, i) => { t.y -= 1 * sf; t.life -= 0.02 * sf; if(t.life <= 0) floatingTexts.splice(i,1); });
     
     if (gameOver || paused) return;
+
+    if (player.alive) score += 0.5 * sf;
     
     if (player.alive && activeWeapon !== "none" && shootCooldown <= 0) fire();
     if (shootCooldown > 0) shootCooldown -= 1 * sf;
