@@ -120,7 +120,7 @@ function endreSkin(valg) {
         }
     } 
     else if (valg === 'The Core') { 
-    if (theCoreOwned) { // Bruk det nye navnet uten mellomrom her også
+    if (TheCoreOwned) { // Bruk det nye navnet uten mellomrom her også
         currentSkin = 'The Core'; 
     }
     else if (coins >= 7000) {
