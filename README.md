@@ -378,20 +378,32 @@ function update(sf) {
             e.y += e.speedY * enemySpeedMult; 
         }
 
-        // Spiller treffer fiende
-        if (player.alive && player.x < e.x + e.w && player.x + player.width > e.x && player.y < e.y + e.h && player.y + player.height > e.y) {
-            if (boosters.armor && !player.armorUsed) { 
-                player.armorUsed = true; 
-                enemies.splice(ei, 1); 
-                createExplosion(player.x+17, player.y, "#4af"); 
-            } else { 
-                player.alive = false;
-                createExplosion(player.x + 17, player.y + 17, "#0f0", 50); 
-                createExplosion(player.x + 17, player.y + 17, "orange", 30);
-                boosters.armor = false; boosters.doubleDamage = false; boosters.slowEnemies = false;
-                setTimeout(() => { gameOver = true; if(score > highscore) { highscore = Math.floor(score); saveProgress(); } updateUI(); }, 1000);
-            }
-        }
+    // Spiller treffer fiende
+    if (player.alive && player.x < e.x + e.w && player.x + player.width > e.x && player.y < e.y + e.h && player.y + player.height > e.y) {
+    
+    // SJEKK 1: Er vi i Rainbow Mode? (Da dør fienden, ikke vi)
+    if (rainbowTimer > 0) {
+        enemies.splice(ei, 1);
+        createExplosion(e.x + e.w/2, e.y + e.h/2, "white", 10);
+        score += (e.isHeavy ? 500 : 100);
+        coins += (e.coins || 10);
+        updateUI();
+    } 
+    // SJEKK 2: Har vi Armor?
+    else if (boosters.armor && !player.armorUsed) { 
+        player.armorUsed = true; 
+        enemies.splice(ei, 1); 
+        createExplosion(player.x+17, player.y, "#4af"); 
+    } 
+    // ELLERS: Vi dør
+    else { 
+        player.alive = false;
+        createExplosion(player.x + 17, player.y + 17, "#0f0", 50); 
+        createExplosion(player.x + 17, player.y + 17, "orange", 30);
+        boosters.armor = false; boosters.doubleDamage = false; boosters.slowEnemies = false;
+        setTimeout(() => { gameOver = true; if(score > highscore) { highscore = Math.floor(score); saveProgress(); } updateUI(); }, 1000);
+    }
+}
 
         // Kuler treffer fiende
         bullets.forEach((b, bi) => {
