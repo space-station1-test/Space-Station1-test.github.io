@@ -412,7 +412,7 @@ function update(sf) {
                 bullets.splice(bi, 1);
                 
                 if (e.hp <= 0) {
-                    if (Math.random() < 0.02) { 
+                    if (Math.random() < 0.05) { 
                         gems += 5; 
                         floatingTexts.push({x: e.x, y: e.y, text: "+5 GEMS!", color: "#a4f", life: 1}); 
                     }
