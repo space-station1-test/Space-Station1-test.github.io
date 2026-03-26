@@ -609,15 +609,17 @@ function resetGameData() { if(confirm("Delete all data?")) { localStorage.clear(
 init();
 let lastSpawnTime = 0;
 function handleEnemySpawning(timestamp) {
-    // Grunnhastighet er 600ms. Vi trekker fra tid basert på score.
-    // Jo høyere score, jo kortere tid mellom hver spawn.
-    let spawnDelay = Math.max(150, 600 - (Math.floor(score / 10000) * 100));
+    // Øker tiden mellom hver vanlige spawn litt mer gradvis
+    let spawnDelay = Math.max(200, 600 - (Math.floor(score / 15000) * 50));
 
     if (timestamp - lastSpawnTime > spawnDelay) {
         spawnEnemy();
         
-        // Bonus-spawns: Per 10 000 poeng spawner vi 2 ekstra fiender
-        let extraEnemies = Math.floor(score / 10000) * 2;
+        // NY LOGIKK: Spawner færre ekstra fiender. 
+        // Her spawner vi 1 ekstra fiende per 20 000 poeng, 
+        // og vi setter en maksgrense på 3 ekstra fiender samtidig.
+        let extraEnemies = Math.min(5, Math.floor(score / 20000)); 
+        
         for (let i = 0; i < extraEnemies; i++) {
             spawnEnemy();
         }
