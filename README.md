@@ -37,7 +37,7 @@
         <span class="section-title">Skins</span>
         <button id="coreBtn" onclick="endreSkin('The Core')">Buy The Core (7000🟡)</button>
         <button id="pigBtn" onclick="endreSkin('pig')">Buy Pig 🐷(5500🟡)</button>
-        <button id="StrikerBtn" onclick="endreSkin('creeper')">Buy Striker 🚀(5000🟡)</button>
+        <button id="StrikerBtn" onclick="endreSkin('Striker')">Buy Striker 🚀(5000🟡)</button>
         <button onclick="endreSkin('default')">Standard 🟩</button>
         
         <span class="section-title">Boosters (Gems)</span>
