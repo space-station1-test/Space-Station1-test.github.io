@@ -37,7 +37,7 @@
         <span class="section-title">Skins</span>
         <button id="coreBtn" onclick="endreSkin('The Core')">Buy The Core (7000🟡)</button>
         <button id="pigBtn" onclick="endreSkin('pig')">Buy Pig (5500🟡)</button>
-        <button id="creeperBtn" onclick="endreSkin('creeper')">Buy Creeper (5000🟡)</button>
+        <button id="creeperBtn" onclick="endreSkin('creeper')">Buy hunter (5000🟡)</button>
         <button onclick="endreSkin('default')">Standard 🚀</button>
         
         <span class="section-title">Boosters (Gems)</span>
@@ -109,11 +109,11 @@ let TheCoreOwned = JSON.parse(localStorage.getItem("TheCoreOwned")) || false;
 let pigOwned = JSON.parse(localStorage.getItem("pigOwned")) || false;
     
 function endreSkin(valg) {
-    if (valg === 'creeper') {
-        if (creeperOwned) { currentSkin = 'creeper'; }
+    if (valg === 'Hunter') {
+        if (creeperOwned) { currentSkin = 'Hunter'; }
         else if (coins >= 5000) {
-            coins -= 5000; creeperOwned = true; currentSkin = 'creeper';
-            localStorage.setItem("creeperOwned", true);
+            coins -= 5000; creeperOwned = true; currentSkin = 'Hunter';
+            localStorage.setItem("HunterOwned", true);
         }
     } 
     else if (valg === 'The Core') { 
@@ -221,7 +221,7 @@ function updateUI() {
     const pBtn = document.getElementById("pigBtn");
     if (pBtn) {
         if (pigOwned) {
-            pBtn.innerText = currentSkin === 'pig' ? "Pig (Equipped)" : "Use Pig 🐷";
+            pBtn.innerText = currentSkin === 'pig' ? "Pig (Equipped)" : "Use Pig";
             pBtn.style.borderColor = "#f9f";
         } else {
             pBtn.innerText = "Buy Pig (5500🟡)";
@@ -241,14 +241,14 @@ function updateUI() {
         }
     }
 
-    // Oppdater Creeper-knappen
-    const cBtn = document.getElementById("creeperBtn");
+    // Oppdater Striker-knappen
+    const cBtn = document.getElementById("StrikerBtn");
     if (cBtn) {
-        if (creeperOwned) {
-            cBtn.innerText = currentSkin === 'creeper' ? "Creeper (Equipped)" : "Use Creeper 🟩";
+        if (StrikerOwned) {
+            cBtn.innerText = currentSkin === 'Striker' ? "Striker (Equipped)" : "Use Striker";
             cBtn.style.borderColor = "#0f0";
         } else {
-            cBtn.innerText = "Buy Neon Hunter (5000🟡)";
+            cBtn.innerText = "Buy Striker (5000🟡)";
             cBtn.disabled = coins < 5000;
         }
     }
@@ -446,53 +446,55 @@ function draw() {
     floatingTexts.forEach(t => { ctx.globalAlpha = t.life; ctx.fillStyle = t.color; ctx.font="bold 14px Arial"; ctx.fillText(t.text, t.x, t.y); });
     ctx.globalAlpha = 1;
 if (player.alive) {
-                if (currentSkin === "creeper") {
-    // "Neon Striker" - Designet for å matche hitboxen perfekt
+                if (currentSkin === "Striker") {
+    // "Neon Striker" - Forbedret med skarpe vinger og tydelig hitbox
     let time = Date.now() * 0.005;
-    let pulse = Math.sin(time) * 10; 
+    let pulse = Math.sin(time) * 8; 
 
-    // 1. Hitbox-basen (Kvadratisk bunnlag)
-    // Bruker en veldig mørk grå/svart så man ser kanten av hitboxen tydelig
-    ctx.fillStyle = "#111";
+    // 1. HITBOX-BASE (Viktig for gameplay)
+    // En mørk bunnplate som fyller hele 35x35 kvadratet
+    ctx.fillStyle = "#0a0a0a";
     ctx.fillRect(player.x, player.y, player.width, player.height);
     
-    // En tynn neon-ramme rundt hele kvadratet (viser nøyaktig hitbox)
+    // Neon-kant som markerer rammene
     ctx.strokeStyle = "#0f0";
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 2;
     ctx.strokeRect(player.x, player.y, player.width, player.height);
 
-    // 2. Detaljer oppå kvadratet (Design)
-    // Mørkegrønn midtseksjon
-    ctx.fillStyle = "#004400";
-    ctx.fillRect(player.x + 5, player.y + 5, player.width - 10, player.height - 10);
+    // 2. DESIGN-DETALJER
+    // Indre skrog (Mørkegrønn)
+    ctx.fillStyle = "#003300";
+    ctx.fillRect(player.x + 4, player.y + 4, player.width - 8, player.height - 8);
 
-    // Neon-vinger (små trekanter på sidene)
+    // NYE TREKANTER (Vinger)
+    // Venstre vinge - spissere og flyttet litt inn for bedre balanse
     ctx.fillStyle = "#0f0";
     ctx.beginPath();
-    ctx.moveTo(player.x, player.y + player.height);
-    ctx.lineTo(player.x + 10, player.y + 15);
-    ctx.lineTo(player.x + 15, player.y + player.height);
+    ctx.moveTo(player.x + 2, player.y + player.height - 2); // Start nede til venstre
+    ctx.lineTo(player.x + 8, player.y + 12);               // Spiss oppover
+    ctx.lineTo(player.x + 14, player.y + player.height - 2); // Ned til midten
     ctx.fill();
 
+    // Høyre vinge - speilet versjon
     ctx.beginPath();
-    ctx.moveTo(player.x + player.width, player.y + player.height);
-    ctx.lineTo(player.x + player.width - 10, player.y + 15);
-    ctx.lineTo(player.x + player.width - 15, player.y + player.height);
+    ctx.moveTo(player.x + player.width - 2, player.y + player.height - 2);
+    ctx.lineTo(player.x + player.width - 8, player.y + 12);
+    ctx.lineTo(player.x + player.width - 14, player.y + player.height - 2);
     ctx.fill();
 
-    // 3. Glødende Reaktor (Senter)
-    // Denne pulserer i styrke
+    // 3. REAKTOR (Senter)
+    // Glødende kjerne som pulserer
     ctx.shadowBlur = 10 + pulse;
     ctx.shadowColor = "#0f0";
-    ctx.fillStyle = "#5f5";
-    ctx.fillRect(player.x + 12, player.y + 10, 11, 15);
+    ctx.fillStyle = "#aaffaa"; // Lysere senter for "hot" look
+    ctx.fillRect(player.x + 13, player.y + 8, 9, 12);
     
-    // Små "lys" i hjørnene
+    // Små detaljer i fronten
     ctx.fillStyle = "#0f0";
-    ctx.fillRect(player.x + 2, player.y + 2, 4, 4);
-    ctx.fillRect(player.x + player.width - 6, player.y + 2, 4, 4);
+    ctx.fillRect(player.x + 5, player.y + 2, 2, 5);
+    ctx.fillRect(player.x + player.width - 7, player.y + 2, 2, 5);
 
-    ctx.shadowBlur = 0; // Nullstiller gløden for resten av spillet
+    ctx.shadowBlur = 0; 
 }
         else if (currentSkin === "The Core") {
             // The Core design
