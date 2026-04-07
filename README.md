@@ -573,12 +573,53 @@ if (player.alive) {
         ctx.shadowBlur = 0; // Skrur av gløden for resten av grafikken
     });
     enemies.forEach(e => { 
-        ctx.fillStyle = e.color; ctx.fillRect(e.x, e.y, e.w, e.h); 
-        if (e.isHeavy) {
-            ctx.fillStyle = "red"; ctx.fillRect(e.x, e.y - 8, e.w, 5);
-            ctx.fillStyle = "lime"; ctx.fillRect(e.x, e.y - 8, e.w * (e.hp/e.maxHp), 5);
-        }
-    });
+    if (e.type === 'normal') {
+        // Meteoritt-design for de røde fiendene
+        ctx.save();
+        ctx.translate(e.x + e.w / 2, e.y + e.h / 2);
+        
+        // Roter meteoritten litt basert på posisjon for mer liv
+        ctx.rotate(e.y * 0.01); 
+
+        // Tegn selve steinen (ujevn sirkel/polygon)
+        ctx.fillStyle = '#554433'; // Mørkebrun/grå stein-farge
+        ctx.beginPath();
+        ctx.moveTo(e.w/2, 0);
+        ctx.lineTo(e.w/2.2, e.h/2.2);
+        ctx.lineTo(0, e.h/2);
+        ctx.lineTo(-e.w/2.2, e.h/2.5);
+        ctx.lineTo(-e.w/2, 0);
+        ctx.lineTo(-e.w/2.5, -e.h/2.2);
+        ctx.lineTo(0, -e.h/2);
+        ctx.lineTo(e.w/2.5, -e.h/2.5);
+        ctx.closePath();
+        ctx.fill();
+
+        // Legg til noen "kratere" (små mørke prikker)
+        ctx.fillStyle = 'rgba(0,0,0,0.3)';
+        ctx.beginPath();
+        ctx.arc(-e.w/4, -e.h/6, e.w/6, 0, Math.PI * 2);
+        ctx.arc(e.w/6, e.h/4, e.w/8, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Glødende effekt (atmosfærisk friksjon)
+        ctx.strokeStyle = '#f44';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        ctx.restore();
+    } else {
+        // Behold de andre fiendetypene som de er
+        ctx.fillStyle = e.color; 
+        ctx.fillRect(e.x, e.y, e.w, e.h); 
+    }
+
+    // HP-bar for Heavy enemies (behold denne som før)
+    if (e.isHeavy) {
+        ctx.fillStyle = "red"; ctx.fillRect(e.x, e.y - 8, e.w, 5);
+        ctx.fillStyle = "lime"; ctx.fillRect(e.x, e.y - 8, e.w * (e.hp/e.maxHp), 5);
+    }
+});
     ctx.fillStyle = 'white'; ctx.font = 'bold 16px Arial';
     ctx.fillText(`Score: ${Math.floor(score)}`, 10, 25);
     ctx.fillStyle = '#4af'; ctx.font = '12px Arial';
