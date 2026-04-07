@@ -104,16 +104,16 @@ let lastTime = 0; // For Delta Time
 // SKIN LOGIKK
 let currentSkin = "default";
 // Sjekker om spilleren allerede eier skinnet fra før
-let creeperOwned = JSON.parse(localStorage.getItem("creeperOwned")) || false;
+let creeperOwned = JSON.parse(localStorage.getItem("StrikerOwned")) || false;
 let TheCoreOwned = JSON.parse(localStorage.getItem("TheCoreOwned")) || false;
 let pigOwned = JSON.parse(localStorage.getItem("pigOwned")) || false;
     
 function endreSkin(valg) {
-    if (valg === 'Hunter') {
-        if (creeperOwned) { currentSkin = 'Hunter'; }
+    if (valg === 'Striker') {
+        if (StrikerOwned) { currentSkin = 'Striker'; }
         else if (coins >= 5000) {
-            coins -= 5000; creeperOwned = true; currentSkin = 'Hunter';
-            localStorage.setItem("HunterOwned", true);
+            coins -= 5000; StrikerOwned = true; currentSkin = 'Striker';
+            localStorage.setItem("StrikerOwned", true);
         }
     } 
     else if (valg === 'The Core') { 
