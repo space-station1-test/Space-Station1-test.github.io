@@ -447,34 +447,52 @@ function draw() {
     ctx.globalAlpha = 1;
 if (player.alive) {
                 if (currentSkin === "creeper") {
-    // Dette er nå "Neon Hunter" - et unikt, lovlig design
+    // "Neon Striker" - Designet for å matche hitboxen perfekt
     let time = Date.now() * 0.005;
-    let glow = Math.sin(time) * 5 + 5; // Lager en pulserende effekt
+    let pulse = Math.sin(time) * 10; 
 
-    // Hovedkropp (Mørk grønn)
-    ctx.fillStyle = "#004d00";
-    ctx.fillRect(player.x + 5, player.y, 25, 35);
+    // 1. Hitbox-basen (Kvadratisk bunnlag)
+    // Bruker en veldig mørk grå/svart så man ser kanten av hitboxen tydelig
+    ctx.fillStyle = "#111";
+    ctx.fillRect(player.x, player.y, player.width, player.height);
+    
+    // En tynn neon-ramme rundt hele kvadratet (viser nøyaktig hitbox)
+    ctx.strokeStyle = "#0f0";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(player.x, player.y, player.width, player.height);
 
-    // Vinger (Neon grønn)
-    ctx.fillStyle = "#00ff00";
+    // 2. Detaljer oppå kvadratet (Design)
+    // Mørkegrønn midtseksjon
+    ctx.fillStyle = "#004400";
+    ctx.fillRect(player.x + 5, player.y + 5, player.width - 10, player.height - 10);
+
+    // Neon-vinger (små trekanter på sidene)
+    ctx.fillStyle = "#0f0";
     ctx.beginPath();
-    ctx.moveTo(player.x, player.y + 35);
-    ctx.lineTo(player.x + 5, player.y + 10);
-    ctx.lineTo(player.x + 10, player.y + 35);
+    ctx.moveTo(player.x, player.y + player.height);
+    ctx.lineTo(player.x + 10, player.y + 15);
+    ctx.lineTo(player.x + 15, player.y + player.height);
     ctx.fill();
 
     ctx.beginPath();
-    ctx.moveTo(player.x + 35, player.y + 35);
-    ctx.lineTo(player.x + 30, player.y + 10);
-    ctx.lineTo(player.x + 25, player.y + 35);
+    ctx.moveTo(player.x + player.width, player.y + player.height);
+    ctx.lineTo(player.x + player.width - 10, player.y + 15);
+    ctx.lineTo(player.x + player.width - 15, player.y + player.height);
     ctx.fill();
 
-    // Glødende kjerne i midten (som ikonet ditt!)
-    ctx.fillStyle = "#4fff4f";
-    ctx.shadowBlur = glow;
-    ctx.shadowColor = "#00ff00";
+    // 3. Glødende Reaktor (Senter)
+    // Denne pulserer i styrke
+    ctx.shadowBlur = 10 + pulse;
+    ctx.shadowColor = "#0f0";
+    ctx.fillStyle = "#5f5";
     ctx.fillRect(player.x + 12, player.y + 10, 11, 15);
-    ctx.shadowBlur = 0; // Skru av gløden for resten av tegningen
+    
+    // Små "lys" i hjørnene
+    ctx.fillStyle = "#0f0";
+    ctx.fillRect(player.x + 2, player.y + 2, 4, 4);
+    ctx.fillRect(player.x + player.width - 6, player.y + 2, 4, 4);
+
+    ctx.shadowBlur = 0; // Nullstiller gløden for resten av spillet
 }
         else if (currentSkin === "The Core") {
             // The Core design
