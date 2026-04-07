@@ -248,7 +248,7 @@ function updateUI() {
             cBtn.innerText = currentSkin === 'creeper' ? "Creeper (Equipped)" : "Use Creeper 🟩";
             cBtn.style.borderColor = "#0f0";
         } else {
-            cBtn.innerText = "Buy Creeper (5000🟡)";
+            cBtn.innerText = "Buy Neon Hunter (5000🟡)";
             cBtn.disabled = coins < 5000;
         }
     }
@@ -447,24 +447,35 @@ function draw() {
     ctx.globalAlpha = 1;
 if (player.alive) {
                 if (currentSkin === "creeper") {
-            // Bakgrunn (Grønn)
-            ctx.fillStyle = "#03AC13";
-            ctx.fillRect(player.x, player.y, player.width, player.height);
-            
-            ctx.fillStyle = "black";
-            // Øyne (Symmetrisk plassert)
-            ctx.fillRect(player.x + 5, player.y + 7, 8, 8);  
-            ctx.fillRect(player.x + 22, player.y + 7, 8, 8);
-            
-            // Munn/Nese (Den klassiske Creeper-formen)
-            // Midtdelen (nese/overleppe)
-            ctx.fillRect(player.x + 13, player.y + 15, 9, 10); 
-            // Sidene som går ned (leppene)
-            ctx.fillRect(player.x + 9, player.y + 20, 17, 8);  
-            // Fjerner det som er under "haken" for å få riktig form
-            ctx.fillStyle = "#03AC13";
-            ctx.fillRect(player.x + 13, player.y + 25, 9, 3);
-        }
+    // Dette er nå "Neon Hunter" - et unikt, lovlig design
+    let time = Date.now() * 0.005;
+    let glow = Math.sin(time) * 5 + 5; // Lager en pulserende effekt
+
+    // Hovedkropp (Mørk grønn)
+    ctx.fillStyle = "#004d00";
+    ctx.fillRect(player.x + 5, player.y, 25, 35);
+
+    // Vinger (Neon grønn)
+    ctx.fillStyle = "#00ff00";
+    ctx.beginPath();
+    ctx.moveTo(player.x, player.y + 35);
+    ctx.lineTo(player.x + 5, player.y + 10);
+    ctx.lineTo(player.x + 10, player.y + 35);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(player.x + 35, player.y + 35);
+    ctx.lineTo(player.x + 30, player.y + 10);
+    ctx.lineTo(player.x + 25, player.y + 35);
+    ctx.fill();
+
+    // Glødende kjerne i midten (som ikonet ditt!)
+    ctx.fillStyle = "#4fff4f";
+    ctx.shadowBlur = glow;
+    ctx.shadowColor = "#00ff00";
+    ctx.fillRect(player.x + 12, player.y + 10, 11, 15);
+    ctx.shadowBlur = 0; // Skru av gløden for resten av tegningen
+}
         else if (currentSkin === "The Core") {
             // The Core design
             let hue = (Date.now() * 0.1) % 360;
