@@ -447,7 +447,7 @@ function draw() {
     ctx.globalAlpha = 1;
 if (player.alive) {
                 if (currentSkin === "Striker") {
-    // "Neon Striker" - Forbedret med skarpe vinger og tydelig hitbox
+    // "Striker" - Forbedret med skarpe vinger og tydelig hitbox
     let time = Date.now() * 0.005;
     let pulse = Math.sin(time) * 8; 
 
