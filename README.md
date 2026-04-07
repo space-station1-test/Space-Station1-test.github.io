@@ -104,7 +104,7 @@ let lastTime = 0; // For Delta Time
 // SKIN LOGIKK
 let currentSkin = "default";
 // Sjekker om spilleren allerede eier skinnet fra før
-let creeperOwned = JSON.parse(localStorage.getItem("StrikerOwned")) || false;
+let StrikerOwned = JSON.parse(localStorage.getItem("StrikerOwned")) || false;
 let TheCoreOwned = JSON.parse(localStorage.getItem("TheCoreOwned")) || false;
 let pigOwned = JSON.parse(localStorage.getItem("pigOwned")) || false;
     
