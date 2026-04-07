@@ -36,9 +36,9 @@
     <div id="shop">
         <span class="section-title">Skins</span>
         <button id="coreBtn" onclick="endreSkin('The Core')">Buy The Core (7000🟡)</button>
-        <button id="pigBtn" onclick="endreSkin('pig')">Buy Pig (5500🟡)</button>
-        <button id="creeperBtn" onclick="endreSkin('creeper')">Buy hunter (5000🟡)</button>
-        <button onclick="endreSkin('default')">Standard 🚀</button>
+        <button id="pigBtn" onclick="endreSkin('pig')">Buy Pig 🐷(5500🟡)</button>
+        <button id="creeperBtn" onclick="endreSkin('creeper')">Buy Striker 🚀(5000🟡)</button>
+        <button onclick="endreSkin('default')">Standard 🟩</button>
         
         <span class="section-title">Boosters (Gems)</span>
         <button id="armorBtn" onclick="buyBooster('armor', 50)">🛡️Armor (50💎)</button>
