@@ -574,45 +574,47 @@ if (player.alive) {
     });
     enemies.forEach(e => { 
     if (e.type === 'normal') {
-        // Meteoritt-design for de røde fiendene
-        ctx.save();
-        ctx.translate(e.x + e.w / 2, e.y + e.h / 2);
-        
-        // Roter meteoritten litt basert på posisjon for mer liv
-        ctx.rotate(e.y * 0.01); 
+        if (e.type === 'normal') {
+    // Meteoritt-design (Subtil og realistisk)
+    ctx.save();
+    ctx.translate(e.x + e.w / 2, e.y + e.h / 2);
+    ctx.rotate(e.y * 0.015); // Roterer basert på fart nedover
 
-        // Tegn selve steinen (ujevn sirkel/polygon)
-        ctx.fillStyle = '#554433'; // Mørkebrun/grå stein-farge
-        ctx.beginPath();
-        ctx.moveTo(e.w/2, 0);
-        ctx.lineTo(e.w/2.2, e.h/2.2);
-        ctx.lineTo(0, e.h/2);
-        ctx.lineTo(-e.w/2.2, e.h/2.5);
-        ctx.lineTo(-e.w/2, 0);
-        ctx.lineTo(-e.w/2.5, -e.h/2.2);
-        ctx.lineTo(0, -e.h/2);
-        ctx.lineTo(e.w/2.5, -e.h/2.5);
-        ctx.closePath();
-        ctx.fill();
+    // 1. Selve steinen (Mørkegrå base)
+    ctx.fillStyle = '#3a3a3a'; 
+    ctx.beginPath();
+    ctx.moveTo(e.w/2, 0);
+    ctx.lineTo(e.w/3, e.h/2.2);
+    ctx.lineTo(-e.w/4, e.h/2);
+    ctx.lineTo(-e.w/2, e.h/4);
+    ctx.lineTo(-e.w/2.2, -e.h/5);
+    ctx.lineTo(-e.w/4, -e.h/2);
+    ctx.lineTo(e.w/4, -e.h/2.2);
+    ctx.closePath();
+    ctx.fill();
 
-        // Legg til noen "kratere" (små mørke prikker)
-        ctx.fillStyle = 'rgba(0,0,0,0.3)';
-        ctx.beginPath();
-        ctx.arc(-e.w/4, -e.h/6, e.w/6, 0, Math.PI * 2);
-        ctx.arc(e.w/6, e.h/4, e.w/8, 0, Math.PI * 2);
-        ctx.fill();
+    // 2. Enkel shading (Lysere grå på den ene siden for 3D-effekt)
+    ctx.fillStyle = '#555';
+    ctx.beginPath();
+    ctx.moveTo(e.w/2, 0);
+    ctx.lineTo(e.w/4, -e.h/2.2);
+    ctx.lineTo(0, 0);
+    ctx.fill();
 
-        // Glødende effekt (atmosfærisk friksjon)
-        ctx.strokeStyle = '#f44';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-        
-        ctx.restore();
-    } else {
-        // Behold de andre fiendetypene som de er
-        ctx.fillStyle = e.color; 
-        ctx.fillRect(e.x, e.y, e.w, e.h); 
-    }
+    // 3. Kratere (Mørke groper)
+    ctx.fillStyle = '#222';
+    ctx.beginPath();
+    ctx.arc(-e.w/5, -e.h/4, e.w/7, 0, Math.PI * 2);
+    ctx.arc(e.w/4, e.h/6, e.w/10, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 4. Minimal rød glød (Kun en tynn kant for å indikere fare)
+    ctx.strokeStyle = 'rgba(255, 68, 68, 0.4)'; // Svakere og mer gjennomsiktig rød
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.restore();
+}
 
     // HP-bar for Heavy enemies (behold denne som før)
     if (e.isHeavy) {
