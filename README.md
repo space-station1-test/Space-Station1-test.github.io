@@ -575,46 +575,61 @@ if (player.alive) {
     enemies.forEach(e => { 
     if (e.type === 'normal') {
         if (e.type === 'normal') {
-    // Meteoritt-design (Subtil og realistisk)
-    ctx.save();
-    ctx.translate(e.x + e.w / 2, e.y + e.h / 2);
-    ctx.rotate(e.y * 0.015); // Roterer basert på fart nedover
+    enemies.forEach(e => { 
+    if (e.type === 'normal') {
+        // --- NYTT METEORITT DESIGN ---
+        ctx.save();
+        ctx.translate(e.x + e.w / 2, e.y + e.h / 2);
+        
+        // Roterer steinen basert på dens vertikale posisjon (y)
+        ctx.rotate(e.y * 0.015); 
 
-    // 1. Selve steinen (Mørkegrå base)
-    ctx.fillStyle = '#3a3a3a'; 
-    ctx.beginPath();
-    ctx.moveTo(e.w/2, 0);
-    ctx.lineTo(e.w/3, e.h/2.2);
-    ctx.lineTo(-e.w/4, e.h/2);
-    ctx.lineTo(-e.w/2, e.h/4);
-    ctx.lineTo(-e.w/2.2, -e.h/5);
-    ctx.lineTo(-e.w/4, -e.h/2);
-    ctx.lineTo(e.w/4, -e.h/2.2);
-    ctx.closePath();
-    ctx.fill();
+        // 1. Selve steinen (Mørkegrå base)
+        ctx.fillStyle = '#3a3a3a'; 
+        ctx.beginPath();
+        ctx.moveTo(e.w/2, 0);
+        ctx.lineTo(e.w/3, e.h/2.2);
+        ctx.lineTo(-e.w/4, e.h/2);
+        ctx.lineTo(-e.w/2, e.h/4);
+        ctx.lineTo(-e.w/2.2, -e.h/5);
+        ctx.lineTo(-e.w/4, -e.h/2);
+        ctx.lineTo(e.w/4, -e.h/2.2);
+        ctx.closePath();
+        ctx.fill();
 
-    // 2. Enkel shading (Lysere grå på den ene siden for 3D-effekt)
-    ctx.fillStyle = '#555';
-    ctx.beginPath();
-    ctx.moveTo(e.w/2, 0);
-    ctx.lineTo(e.w/4, -e.h/2.2);
-    ctx.lineTo(0, 0);
-    ctx.fill();
+        // 2. Enkel shading (Lysere grå felt for å gi dybde)
+        ctx.fillStyle = '#555';
+        ctx.beginPath();
+        ctx.moveTo(e.w/2, 0);
+        ctx.lineTo(e.w/4, -e.h/2.2);
+        ctx.lineTo(0, 0);
+        ctx.fill();
 
-    // 3. Kratere (Mørke groper)
-    ctx.fillStyle = '#222';
-    ctx.beginPath();
-    ctx.arc(-e.w/5, -e.h/4, e.w/7, 0, Math.PI * 2);
-    ctx.arc(e.w/4, e.h/6, e.w/10, 0, Math.PI * 2);
-    ctx.fill();
+        // 3. Kratere (Mørke hull i overflaten)
+        ctx.fillStyle = '#222';
+        ctx.beginPath();
+        ctx.arc(-e.w/5, -e.h/4, e.w/7, 0, Math.PI * 2);
+        ctx.arc(e.w/4, e.h/6, e.w/10, 0, Math.PI * 2);
+        ctx.fill();
 
-    // 4. Minimal rød glød (Kun en tynn kant for å indikere fare)
-    ctx.strokeStyle = 'rgba(255, 68, 68, 0.4)'; // Svakere og mer gjennomsiktig rød
-    ctx.lineWidth = 1;
-    ctx.stroke();
+        // 4. Minimal rød glød (Tynn og gjennomsiktig kant)
+        ctx.strokeStyle = 'rgba(255, 68, 68, 0.4)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
 
-    ctx.restore();
-}
+        ctx.restore();
+        // --- SLUTT PÅ DESIGN ---
+    } else {
+        // Tegner de andre fiendene (sinus/heavy) med deres vanlige farger
+        ctx.fillStyle = e.color; 
+        ctx.fillRect(e.x, e.y, e.w, e.h); 
+    }
+
+    // Viser livslinjen til de tunge fiendene over dem
+    if (e.isHeavy) {
+        ctx.fillStyle = "red"; 
+        ctx.fillRect(e.x, e.y - 8, e.w, 5);
+        ctx
 
     // HP-bar for Heavy enemies (behold denne som før)
     if (e.isHeavy) {
