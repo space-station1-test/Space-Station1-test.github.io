@@ -605,8 +605,8 @@ if (player.alive) {
             ctx.arc(e.w/4, e.h/6, e.w/10, 0, Math.PI * 2);
             ctx.fill();
 
-            ctx.strokeStyle = 'rgba(255, 68, 68, 0.4)';
-            ctx.lineWidth = 1;
+            ctx.strokeStyle = '#ff0000'; // Kraftig rød farge
+            ctx.lineWidth = 2;           // Litt tykkere strek så den syns bedre
             ctx.stroke();
             ctx.restore();
         } else {
