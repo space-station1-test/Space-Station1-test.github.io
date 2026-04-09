@@ -573,55 +573,12 @@ if (player.alive) {
         ctx.shadowBlur = 0; // Skrur av gløden for resten av grafikken
     });
     enemies.forEach(e => { 
-        if (e.type === 'normal') {
-            // Meteoritt-design
-            ctx.save();
-            ctx.translate(e.x + e.w / 2, e.y + e.h / 2);
-            ctx.rotate(e.y * 0.015); 
-            
-            // Definerer formen én gang
-            ctx.beginPath();
-            ctx.moveTo(e.w/2, 0);
-            ctx.lineTo(e.w/3, e.h/2.2);
-            ctx.lineTo(-e.w/4, e.h/2);
-            ctx.lineTo(-e.w/2, e.h/4);
-            ctx.lineTo(-e.w/2.2, -e.h/5);
-            ctx.lineTo(-e.w/4, -e.h/2);
-            ctx.lineTo(e.w/4, -e.h/2.2);
-            ctx.closePath();
-
-            // Fyller selve steinen
-            ctx.fillStyle = '#3a3a3a'; 
-            ctx.fill();
-
-            // TEGNER DEN RØDE KANTEN (Stroke) her, etter fylling
-            ctx.strokeStyle = '#ff0000'; 
-            ctx.lineWidth = 3;           
-            ctx.lineJoin = 'round';      
-            ctx.stroke();
-
-            // Legger på detaljer (lysere partier og kratre) ETTER kanten
-            ctx.fillStyle = '#555';
-            ctx.beginPath();
-            ctx.moveTo(e.w/2, 0);
-            ctx.lineTo(e.w/4, -e.h/2.2);
-            ctx.lineTo(0, 0);
-            ctx.fill();
-
-            ctx.fillStyle = '#222';
-            ctx.beginPath();
-            ctx.arc(-e.w/5, -e.h/4, e.w/7, 0, Math.PI * 2);
-            ctx.arc(e.w/4, e.h/6, e.w/10, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.restore();
-        enemies.forEach(e => { 
-        // 1. Tegne-logikk for både Meteor og Sinus (Stein-utseende)
+        // 1. Stein-utseende for både vanlig og Sinus
         if (e.type === 'normal' || e.type === 'sinus') {
             ctx.save();
             ctx.translate(e.x + e.w / 2, e.y + e.h / 2);
             
-            // Meteoritter roterer, Sinus-steiner holdes rette for å se mer "kontrollerte" ut
+            // Vanlige meteoritter roterer, Sinus-steiner er stabile
             if (e.type === 'normal') ctx.rotate(e.y * 0.015); 
             
             ctx.beginPath();
@@ -634,16 +591,16 @@ if (player.alive) {
             ctx.lineTo(e.w/4, -e.h/2.2);
             ctx.closePath();
 
-            ctx.fillStyle = '#3a3a3a'; // Grå farge (Stein)
+            ctx.fillStyle = '#3a3a3a'; // Grå stein
             ctx.fill();
 
-            // Velger farge på kanten basert på type
+            // Lilla kant for Sinus, rød for vanlig
             ctx.strokeStyle = (e.type === 'sinus') ? '#a0f' : '#ff0000'; 
             ctx.lineWidth = 3;           
             ctx.stroke();
             ctx.restore();
         } 
-        // 2. Tegne-logikk for Heavy (Firkantet)
+        // 2. Heavy (Firkantet)
         else if (e.type === 'heavy') {
             ctx.fillStyle = e.color; 
             ctx.fillRect(e.x, e.y, e.w, e.h); 
@@ -656,29 +613,29 @@ if (player.alive) {
             ctx.fillStyle = "lime"; 
             ctx.fillRect(e.x, e.y - 8, e.w * (e.hp/e.maxHp), 5);
         }
-    });
-    // --- TIL HIT ---
-        // Tegner de andre fiendene (sinus/heavy) med deres vanlige farger
+    }); // Lukker enemies.forEach
+
+    // UI og tekst
     ctx.fillStyle = 'white'; ctx.font = 'bold 16px Arial';
+    ctx.textAlign = "left";
     ctx.fillText(`Score: ${Math.floor(score)}`, 10, 25);
     ctx.fillStyle = '#4af'; ctx.font = '12px Arial';
     ctx.fillText(`Highscore: ${Math.floor(highscore)}`, 10, 45);
-    if(gameOver) { ctx.fillStyle="red"; ctx.font="30px Arial"; ctx.fillText("GAME OVER", 110, 300); }
-    // Tegn PAUSE-tekst midt på skjermen
+
+    if(gameOver) { 
+        ctx.fillStyle="red"; ctx.font="30px Arial"; ctx.textAlign = "center";
+        ctx.fillText("GAME OVER", 200, 300); 
+    }
+
     if (paused && !gameOver) {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.5)"; // Gjør bakgrunnen litt mørkere
+        ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
         ctx.fillRect(0, 0, 400, 600);
-        
         ctx.fillStyle = "white";
         ctx.font = "bold 40px Arial";
         ctx.textAlign = "center";
         ctx.fillText("PAUSED", 200, 300);
-        
-        ctx.font = "16px Arial";
-        ctx.fillText("", 200, 340);
-        ctx.textAlign = "start"; // Nullstill tekstjustering for andre tekster
     }
-}
+} // LUKKER DRAW-FUNKSJONEN
 
 window.addEventListener("keydown", e => { 
     const key = e.key.toLowerCase(); keys[key] = true; 
