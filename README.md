@@ -572,15 +572,14 @@ if (player.alive) {
         ctx.strokeRect(p.x, p.y, p.w, p.h);
         ctx.shadowBlur = 0; // Skrur av gløden for resten av grafikken
     });
-    enemies.forEach(e => { 
-        // 1. Stein-utseende for både vanlig og Sinus
+        enemies.forEach(e => {
         if (e.type === 'normal' || e.type === 'sinus') {
             ctx.save();
             ctx.translate(e.x + e.w / 2, e.y + e.h / 2);
             
-            // Vanlige meteoritter roterer, Sinus-steiner er stabile
             if (e.type === 'normal') ctx.rotate(e.y * 0.015); 
             
+            // 1. Definer meteor-formen (stien)
             ctx.beginPath();
             ctx.moveTo(e.w/2, 0);
             ctx.lineTo(e.w/3, e.h/2.2);
@@ -591,29 +590,60 @@ if (player.alive) {
             ctx.lineTo(e.w/4, -e.h/2.2);
             ctx.closePath();
 
-            ctx.fillStyle = '#3a3a3a'; // Grå stein
+            // 2. Fyll hovedfarge
+            ctx.fillStyle = '#3a3a3a';
             ctx.fill();
 
-            // Lilla kant for Sinus, rød for vanlig
+            // 3. TEGN OUTLINE HER (Nå følger den meteor-formen!)
             ctx.strokeStyle = (e.type === 'sinus') ? '#a0f' : '#ff0000'; 
             ctx.lineWidth = 3;           
             ctx.stroke();
+
+            // 4. LEGG PÅ TEKSTUR INNI (Bruker klippedeler for å holde det inni formen)
+            ctx.clip(); // Dette gjør at alt vi tegner etterpå bare vises INNI meteoren
+
+            // Skygge (3D-effekt)
+            ctx.fillStyle = 'rgba(0,0,0,0.4)';
+            ctx.beginPath();
+            ctx.arc(-e.w/4, e.h/4, e.w/1.5, 0, Math.PI*2);
+            ctx.fill();
+
+            // Kratre
+            ctx.fillStyle = '#222';
+            ctx.beginPath();
+            ctx.arc(e.w/4, -e.h/4, e.w/8, 0, Math.PI*2); 
+            ctx.arc(-e.w/4, -e.h/10, e.w/12, 0, Math.PI*2); 
+            ctx.arc(0, e.h/4, e.w/10, 0, Math.PI*2); 
+            ctx.fill();
+
+            // Lyspunkter
+            ctx.fillStyle = '#555';
+            ctx.fillRect(e.w/10, -e.h/3, 4, 4);
+
             ctx.restore();
         } 
-        // 2. Heavy (Firkantet)
         else if (e.type === 'heavy') {
-            ctx.fillStyle = e.color; 
-            ctx.fillRect(e.x, e.y, e.w, e.h); 
+            // Heavy tekstur (Metallisk look)
+            ctx.fillStyle = '#444';
+            ctx.fillRect(e.x, e.y, e.w, e.h);
+            ctx.strokeStyle = '#666';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(e.x + 5, e.y + 5, e.w - 10, e.h - 10);
+            
+            // Røde "øyne"/lys
+            ctx.fillStyle = '#f44'; 
+            ctx.fillRect(e.x + 8, e.y + 8, 6, 6);
+            ctx.fillRect(e.x + e.w - 14, e.y + 8, 6, 6);
         }
 
-        // 3. HP-bar for Heavy
+        // HP-bar for Heavy
         if (e.isHeavy) {
             ctx.fillStyle = "red"; 
-            ctx.fillRect(e.x, e.y - 8, e.w, 5);
+            ctx.fillRect(e.x, e.y - 12, e.w, 6);
             ctx.fillStyle = "lime"; 
-            ctx.fillRect(e.x, e.y - 8, e.w * (e.hp/e.maxHp), 5);
+            ctx.fillRect(e.x, e.y - 12, e.w * (e.hp/e.maxHp), 6);
         }
-    }); // Lukker enemies.forEach
+    });
 
     // UI og tekst
     ctx.fillStyle = 'white'; ctx.font = 'bold 16px Arial';
