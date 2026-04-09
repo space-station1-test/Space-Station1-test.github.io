@@ -605,8 +605,9 @@ if (player.alive) {
             ctx.arc(e.w/4, e.h/6, e.w/10, 0, Math.PI * 2);
             ctx.fill();
 
-            ctx.strokeStyle = '#ff0000'; // Kraftig rød farge
-            ctx.lineWidth = 4;           // Litt tykkere strek så den syns bedre
+            ctx.strokeStyle = '#ff0000'; // Ren rød farge
+            ctx.lineWidth = 3;           // Tykkere strek (juster til 2 hvis 3 blir for mye)
+            ctx.lineJoin = 'round';      // Gjør hjørnene i kanten litt mykere
             ctx.stroke();
             ctx.restore();
         } else {
