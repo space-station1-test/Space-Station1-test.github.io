@@ -612,7 +612,7 @@ enemies.forEach(e => {
             // Funksjon for å tegne små kratre raskt inni loopen
             const drawCrater = (cx, cy, radius) => {
                 ctx.beginPath();
-                ctx.arc(cx, cy, radius, 0, Math.PI * 1);
+                ctx.arc(cx, cy, radius, 0, Math.PI * 2);
                 ctx.fill();
                 // Legg til en liten lys kant i bunnen av krateret for dybde
                 ctx.strokeStyle = 'rgba(255,255,255,0.1)';
@@ -624,9 +624,6 @@ enemies.forEach(e => {
             drawCrater(e.w/4, -e.h/4, e.w/7);   // Stort krater oppe til høyre
             drawCrater(-e.w/5, -e.h/6, e.w/10); // Mellomstort krater midt-venstre
             drawCrater(0, e.h/4, e.w/8);       // Mellomstort nede
-            drawCrater(-e.w/3, e.h/5, e.w/15);  // Lite krater nede til venstre
-            drawCrater(e.w/6, e.h/8, e.w/20);   // Bittelite krater
-            drawCrater(-e.w/8, -e.h/3, e.w/18); // Lite krater på toppen
 
             // Lyspunkter (høydepunkter på steinen)
             ctx.fillStyle = 'rgba(255,255,255,0.05)';
