@@ -572,7 +572,6 @@ if (player.alive) {
         ctx.strokeRect(p.x, p.y, p.w, p.h);
         ctx.shadowBlur = 0; // Skrur av gløden for resten av grafikken
     });
-    // --- BYTT UT FRA HER ---
     enemies.forEach(e => { 
         if (e.type === 'normal') {
             // Meteoritt-design
@@ -580,7 +579,7 @@ if (player.alive) {
             ctx.translate(e.x + e.w / 2, e.y + e.h / 2);
             ctx.rotate(e.y * 0.015); 
             
-            ctx.fillStyle = '#3a3a3a'; 
+            // Definerer formen én gang
             ctx.beginPath();
             ctx.moveTo(e.w/2, 0);
             ctx.lineTo(e.w/3, e.h/2.2);
@@ -590,8 +589,18 @@ if (player.alive) {
             ctx.lineTo(-e.w/4, -e.h/2);
             ctx.lineTo(e.w/4, -e.h/2.2);
             ctx.closePath();
+
+            // Fyller selve steinen
+            ctx.fillStyle = '#3a3a3a'; 
             ctx.fill();
 
+            // TEGNER DEN RØDE KANTEN (Stroke) her, etter fylling
+            ctx.strokeStyle = '#ff0000'; 
+            ctx.lineWidth = 3;           
+            ctx.lineJoin = 'round';      
+            ctx.stroke();
+
+            // Legger på detaljer (lysere partier og kratre) ETTER kanten
             ctx.fillStyle = '#555';
             ctx.beginPath();
             ctx.moveTo(e.w/2, 0);
@@ -605,10 +614,6 @@ if (player.alive) {
             ctx.arc(e.w/4, e.h/6, e.w/10, 0, Math.PI * 2);
             ctx.fill();
 
-            ctx.strokeStyle = '#ff0000'; // Ren rød farge
-            ctx.lineWidth = 3;           // Tykkere strek (juster til 2 hvis 3 blir for mye)
-            ctx.lineJoin = 'round';      // Gjør hjørnene i kanten litt mykere
-            ctx.stroke();
             ctx.restore();
         } else {
             // Sinus og Heavy
