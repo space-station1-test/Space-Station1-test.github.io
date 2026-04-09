@@ -572,14 +572,14 @@ if (player.alive) {
         ctx.strokeRect(p.x, p.y, p.w, p.h);
         ctx.shadowBlur = 0; // Skrur av gløden for resten av grafikken
     });
-        enemies.forEach(e => {
+enemies.forEach(e => {
         if (e.type === 'normal' || e.type === 'sinus') {
             ctx.save();
             ctx.translate(e.x + e.w / 2, e.y + e.h / 2);
             
             if (e.type === 'normal') ctx.rotate(e.y * 0.015); 
             
-            // 1. Definer meteor-formen (stien)
+            // 1. Definer den taggete meteor-formen
             ctx.beginPath();
             ctx.moveTo(e.w/2, 0);
             ctx.lineTo(e.w/3, e.h/2.2);
@@ -590,38 +590,51 @@ if (player.alive) {
             ctx.lineTo(e.w/4, -e.h/2.2);
             ctx.closePath();
 
-            // 2. Fyll hovedfarge
+            // 2. Grunnfarge og Outline
             ctx.fillStyle = '#3a3a3a';
             ctx.fill();
-
-            // 3. TEGN OUTLINE HER (Nå følger den meteor-formen!)
             ctx.strokeStyle = (e.type === 'sinus') ? '#a0f' : '#ff0000'; 
             ctx.lineWidth = 3;           
             ctx.stroke();
 
-            // 4. LEGG PÅ TEKSTUR INNI (Bruker klippedeler for å holde det inni formen)
-            ctx.clip(); // Dette gjør at alt vi tegner etterpå bare vises INNI meteoren
+            // 3. Klipping for tekstur
+            ctx.clip(); 
 
-            // Skygge (3D-effekt)
+            // Skygge (gjør den ene siden mørkere for volum)
             ctx.fillStyle = 'rgba(0,0,0,0.4)';
             ctx.beginPath();
-            ctx.arc(-e.w/4, e.h/4, e.w/1.5, 0, Math.PI*2);
+            ctx.arc(-e.w/3, e.h/3, e.w, 0, Math.PI*2);
             ctx.fill();
 
-            // Kratre
-            ctx.fillStyle = '#222';
-            ctx.beginPath();
-            ctx.arc(e.w/4, -e.h/4, e.w/8, 0, Math.PI*2); 
-            ctx.arc(-e.w/4, -e.h/10, e.w/12, 0, Math.PI*2); 
-            ctx.arc(0, e.h/4, e.w/10, 0, Math.PI*2); 
-            ctx.fill();
+            // --- MANGE KRATRE ---
+            ctx.fillStyle = '#222'; // Farge på kratre
+            
+            // Funksjon for å tegne små kratre raskt inni loopen
+            const drawCrater = (cx, cy, radius) => {
+                ctx.beginPath();
+                ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+                ctx.fill();
+                // Legg til en liten lys kant i bunnen av krateret for dybde
+                ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            };
 
-            // Lyspunkter
-            ctx.fillStyle = '#555';
-            ctx.fillRect(e.w/10, -e.h/3, 4, 4);
+            // Plassering av kratre (relativt til senter)
+            drawCrater(e.w/4, -e.h/4, e.w/7);   // Stort krater oppe til høyre
+            drawCrater(-e.w/5, -e.h/6, e.w/10); // Mellomstort krater midt-venstre
+            drawCrater(0, e.h/4, e.w/8);       // Mellomstort nede
+            drawCrater(-e.w/3, e.h/5, e.w/15);  // Lite krater nede til venstre
+            drawCrater(e.w/6, e.h/8, e.w/20);   // Bittelite krater
+            drawCrater(-e.w/8, -e.h/3, e.w/18); // Lite krater på toppen
+
+            // Lyspunkter (høydepunkter på steinen)
+            ctx.fillStyle = 'rgba(255,255,255,0.05)';
+            ctx.fillRect(e.w/6, -e.h/3, 5, 2);
+            ctx.fillRect(-e.w/4, 0, 3, 3);
 
             ctx.restore();
-        } 
+        }
         else if (e.type === 'heavy') {
             // Heavy tekstur (Metallisk look)
             ctx.fillStyle = '#444';
