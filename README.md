@@ -615,6 +615,49 @@ if (player.alive) {
             ctx.fill();
 
             ctx.restore();
+        enemies.forEach(e => { 
+        if (e.type === 'normal') {
+            // Meteoritt-design
+            ctx.save();
+            ctx.translate(e.x + e.w / 2, e.y + e.h / 2);
+            ctx.rotate(e.y * 0.015); 
+            
+            // Definerer formen én gang
+            ctx.beginPath();
+            ctx.moveTo(e.w/2, 0);
+            ctx.lineTo(e.w/3, e.h/2.2);
+            ctx.lineTo(-e.w/4, e.h/2);
+            ctx.lineTo(-e.w/2, e.h/4);
+            ctx.lineTo(-e.w/2.2, -e.h/5);
+            ctx.lineTo(-e.w/4, -e.h/2);
+            ctx.lineTo(e.w/4, -e.h/2.2);
+            ctx.closePath();
+
+            // Fyller selve steinen
+            ctx.fillStyle = '#3a3a3a'; 
+            ctx.fill();
+
+            // TEGNER DEN RØDE KANTEN (Stroke) her, etter fylling
+            ctx.strokeStyle = '#ff0000'; 
+            ctx.lineWidth = 3;           
+            ctx.lineJoin = 'round';      
+            ctx.stroke();
+
+            // Legger på detaljer (lysere partier og kratre) ETTER kanten
+            ctx.fillStyle = '#555';
+            ctx.beginPath();
+            ctx.moveTo(e.w/2, 0);
+            ctx.lineTo(e.w/4, -e.h/2.2);
+            ctx.lineTo(0, 0);
+            ctx.fill();
+
+            ctx.fillStyle = '#222';
+            ctx.beginPath();
+            ctx.arc(-e.w/5, -e.h/4, e.w/7, 0, Math.PI * 2);
+            ctx.arc(e.w/4, e.h/6, e.w/10, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
         } else {
             // Sinus og Heavy
             ctx.fillStyle = e.color; 
