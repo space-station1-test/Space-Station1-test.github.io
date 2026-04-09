@@ -606,29 +606,22 @@ enemies.forEach(e => {
             ctx.arc(-e.w/3, e.h/3, e.w, 0, Math.PI*2);
             ctx.fill();
 
-            // --- MANGE KRATRE ---
-            ctx.fillStyle = '#222'; // Farge på kratre
+            // --- FÆRRE KRATER (Kun 3 stk) ---
+            ctx.fillStyle = '#222';
             
-            // Funksjon for å tegne små kratre raskt inni loopen
             const drawCrater = (cx, cy, radius) => {
                 ctx.beginPath();
                 ctx.arc(cx, cy, radius, 0, Math.PI * 2);
                 ctx.fill();
-                // Legg til en liten lys kant i bunnen av krateret for dybde
                 ctx.strokeStyle = 'rgba(255,255,255,0.1)';
                 ctx.lineWidth = 1;
                 ctx.stroke();
             };
 
-            // Plassering av kratre (relativt til senter)
-            drawCrater(e.w/4, -e.h/4, e.w/7);   // Stort krater oppe til høyre
-            drawCrater(-e.w/5, -e.h/6, e.w/10); // Mellomstort krater midt-venstre
-            drawCrater(0, e.h/4, e.w/8);       // Mellomstort nede
-
-            // Lyspunkter (høydepunkter på steinen)
-            ctx.fillStyle = 'rgba(255,255,255,0.05)';
-            ctx.fillRect(e.w/6, -e.h/3, 5, 2);
-            ctx.fillRect(-e.w/4, 0, 3, 3);
+            // Vi holder oss til tre strategiske plasseringer
+            drawCrater(e.w/5, -e.h/5, e.w/7);   // Et stort et oppe
+            drawCrater(-e.w/4, 0, e.w/10);      // Et mellomstort på siden
+            drawCrater(e.w/10, e.h/4, e.w/12);  // Et mindre nede
 
             ctx.restore();
         }
