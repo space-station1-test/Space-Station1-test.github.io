@@ -475,10 +475,10 @@ if (player.alive) {
 
     // 3. REAKTOR (Senter)
     // Glødende kjerne som pulserer
-    ctx.shadowBlur = 10 + pulse;
+    ctx.shadowBlur = 11 + pulse;
     ctx.shadowColor = "#0f0";
     ctx.fillStyle = "#aaffaa"; // Lysere senter for "hot" look
-    ctx.fillRect(player.x + 13, player.y + 8, 9, 12);
+    ctx.fillRect(player.x + 13, player.y + 10, 10, 12);
     
     // Små detaljer i fronten
     ctx.fillStyle = "#0f0";
