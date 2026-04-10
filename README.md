@@ -466,21 +466,12 @@ if (player.alive) {
     ctx.fillStyle = "#003300";
     ctx.fillRect(player.x + 4, player.y + 4, player.width - 8, player.height - 8);
 
-    // NYE TREKANTER (Vinger)
-    // Venstre vinge - spissere og flyttet litt inn for bedre balanse
+    // 2. DESIGN-DETALJER (Nye side-kanoner som matcher fronten)
     ctx.fillStyle = "#0f0";
-    ctx.beginPath();
-    ctx.moveTo(player.x + 2, player.y + player.height - 2); // Start nede til venstre
-    ctx.lineTo(player.x + 8, player.y + 12);               // Spiss oppover
-    ctx.lineTo(player.x + 14, player.y + player.height - 2); // Ned til midten
-    ctx.fill();
-
-    // Høyre vinge - speilet versjon
-    ctx.beginPath();
-    ctx.moveTo(player.x + player.width - 2, player.y + player.height - 2);
-    ctx.lineTo(player.x + player.width - 8, player.y + 12);
-    ctx.lineTo(player.x + player.width - 14, player.y + player.height - 2);
-    ctx.fill();
+    // Venstre side (lik fronten)
+    ctx.fillRect(player.x + 5, player.y + player.height - 7, 2, 5);
+    // Høyre side (lik fronten)
+    ctx.fillRect(player.x + player.width - 7, player.y + player.height - 7, 2, 5);
 
     // 3. REAKTOR (Senter)
     // Glødende kjerne som pulserer
