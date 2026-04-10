@@ -478,7 +478,7 @@ if (player.alive) {
     ctx.shadowBlur = 11 + pulse;
     ctx.shadowColor = "#0f0";
     ctx.fillStyle = "#aaffaa"; // Lysere senter for "hot" look
-    ctx.fillRect(player.x + 13, player.y + 11, 1, 11);
+    ctx.fillRect(player.x + 13, player.y + 11, 9, 11);
     
     // Små detaljer i fronten
     ctx.fillStyle = "#0f0";
