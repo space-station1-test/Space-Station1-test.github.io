@@ -480,11 +480,11 @@ if (player.alive) {
     drawBolt(player.x, player.y + player.height, cx - 5, cy + 5); // Bunn venstre
     drawBolt(player.x + player.width, player.y + player.height, cx + 5, cy + 5); // Bunn høyre
 
-    // 3. LYN-KJERNE (Senter)
+        // 3. LYN-KJERNE (Senter)
     let pulse = Math.sin(Date.now() * 0.01) * 5;
     ctx.shadowBlur = 15 + pulse;
     ctx.shadowColor = "#ff0";
-    ctx.fillStyle = "#fff"; // Hvit kjerne for intensitet
+    ctx.fillStyle = "#fff"; 
     ctx.beginPath();
     ctx.arc(cx, cy, 4 + (Math.random() * 2), 0, Math.PI * 2);
     ctx.fill();
@@ -493,6 +493,9 @@ if (player.alive) {
     ctx.strokeStyle = "#ff0";
     ctx.lineWidth = 2;
     ctx.stroke();
+
+    // VIKTIG: Nullstill gløden her så den ikke smitter over på resten av spillet!
+    ctx.shadowBlur = 0; 
                 }
         else if (currentSkin === "The Core") {
             // The Core design
