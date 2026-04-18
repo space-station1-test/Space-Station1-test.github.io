@@ -446,7 +446,7 @@ function draw() {
     floatingTexts.forEach(t => { ctx.globalAlpha = t.life; ctx.fillStyle = t.color; ctx.font="bold 14px Arial"; ctx.fillText(t.text, t.x, t.y); });
     ctx.globalAlpha = 1;
 if (player.alive) {
-                if (currentSkin === Striker) {// 1. HITBOX-BASE & RAMME
+                if (currentSkin === "Striker") {// 1. HITBOX-BASE & RAMME
     ctx.fillStyle = "#0a0a0a";
     ctx.fillRect(player.x, player.y, player.width, player.height);
     
@@ -512,6 +512,7 @@ if (player.alive) {
             ctx.fillRect(-player.width/4, -player.height/4, player.width/2, player.height/2);
             ctx.restore();
         } 
+} 
                 else if (currentSkin === "pig") {
             // Kropp (Rosa)
             ctx.fillStyle = "#ffadad";
