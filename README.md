@@ -245,10 +245,10 @@ function updateUI() {
     const cBtn = document.getElementById("StrikerBtn");
     if (cBtn) {
         if (StrikerOwned) {
-            cBtn.innerText = currentSkin === 'Striker' ? "Striker (Equipped)" : "Use Striker";
+            cBtn.innerText = currentSkin === 'Striker' ? "Bolt (Equipped)" : "Use Bolt";
             cBtn.style.borderColor = "#0f0";
         } else {
-            cBtn.innerText = "Buy Striker (5000🟡)";
+            cBtn.innerText = "Buy Bolt (5000🟡)";
             cBtn.disabled = coins < 5000;
         }
     }
