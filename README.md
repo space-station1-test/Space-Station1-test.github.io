@@ -446,47 +446,54 @@ function draw() {
     floatingTexts.forEach(t => { ctx.globalAlpha = t.life; ctx.fillStyle = t.color; ctx.font="bold 14px Arial"; ctx.fillText(t.text, t.x, t.y); });
     ctx.globalAlpha = 1;
 if (player.alive) {
-                if (currentSkin === "Striker") {
-    // "Striker" - Forbedret med skarpe vinger og tydelig hitbox
-    let time = Date.now() * 0.005;
-    let pulse = Math.sin(time) * 8; 
-
-    // 1. HITBOX-BASE (Viktig for gameplay)
-    // En mørk bunnplate som fyller hele 35x35 kvadratet
+                if (currentSkin === Striker) // 1. HITBOX-BASE & RAMME
     ctx.fillStyle = "#0a0a0a";
     ctx.fillRect(player.x, player.y, player.width, player.height);
     
-    // Neon-kant som markerer rammene
-    ctx.strokeStyle = "#0f0";
+    // Gul neon-ramme
+    ctx.strokeStyle = "#ff0"; 
     ctx.lineWidth = 2;
     ctx.strokeRect(player.x, player.y, player.width, player.height);
 
-    // 2. DESIGN-DETALJER
-    // Indre skrog (Mørkegrønn)
-    ctx.fillStyle = "#003300";
-    ctx.fillRect(player.x + 4, player.y + 4, player.width - 8, player.height - 8);
+    // 2. LYN FRA HJØRNENE
+    ctx.strokeStyle = "#ff0";
+    ctx.lineWidth = 1.5;
+    let offset = (Math.random() - 0.5) * 4; // Gjør at lynene "vibrerer" litt
 
-    // 2. DESIGN-DETALJER (Nye side-kanoner som matcher fronten)
-    ctx.fillStyle = "#0f0";
-    // Venstre side (lik fronten)
-    ctx.fillRect(player.x + 5, player.y + player.height - 7, 2, 5);
-    // Høyre side (lik fronten)
-    ctx.fillRect(player.x + player.width - 7, player.y + player.height - 7, 2, 5);
+    const drawBolt = (x1, y1, x2, y2) => {
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        // Lager et "knekk" på lynet mot midten
+        let midX = (x1 + x2) / 2 + (Math.random() - 0.5) * 10;
+        let midY = (y1 + y2) / 2 + (Math.random() - 0.5) * 10;
+        ctx.lineTo(midX, midY);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+    };
 
-    // 3. REAKTOR (Senter)
-    // Glødende kjerne som pulserer
-    ctx.shadowBlur = 11 + pulse;
-    ctx.shadowColor = "#0f0";
-    ctx.fillStyle = "#aaffaa"; // Lysere senter for "hot" look
-    ctx.fillRect(player.x + 13, player.y + 10, 10, 10);
+    let cx = player.x + player.width / 2;
+    let cy = player.y + player.height / 2;
+
+    // Tegner lyn fra hvert hjørne nesten inn til midten
+    drawBolt(player.x, player.y, cx - 5, cy - 5); // Topp venstre
+    drawBolt(player.x + player.width, player.y, cx + 5, cy - 5); // Topp høyre
+    drawBolt(player.x, player.y + player.height, cx - 5, cy + 5); // Bunn venstre
+    drawBolt(player.x + player.width, player.y + player.height, cx + 5, cy + 5); // Bunn høyre
+
+    // 3. LYN-KJERNE (Senter)
+    let pulse = Math.sin(Date.now() * 0.01) * 5;
+    ctx.shadowBlur = 15 + pulse;
+    ctx.shadowColor = "#ff0";
+    ctx.fillStyle = "#fff"; // Hvit kjerne for intensitet
+    ctx.beginPath();
+    ctx.arc(cx, cy, 4 + (Math.random() * 2), 0, Math.PI * 2);
+    ctx.fill();
     
-    // Små detaljer i fronten
-    ctx.fillStyle = "#0f0";
-    ctx.fillRect(player.x + 5, player.y + 2, 2, 5);
-    ctx.fillRect(player.x + player.width - 7, player.y + 2, 2, 5);
+    // En gul sirkel rundt den hvite kjernen
+    ctx.strokeStyle = "#ff0";
+    ctx.lineWidth = 2;
+    ctx.stroke();
 
-    ctx.shadowBlur = 0; 
-}
         else if (currentSkin === "The Core") {
             // The Core design
             let hue = (Date.now() * 0.1) % 360;
