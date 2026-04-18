@@ -493,7 +493,7 @@ if (player.alive) {
     ctx.strokeStyle = "#ff0";
     ctx.lineWidth = 2;
     ctx.stroke();
-
+                }
         else if (currentSkin === "The Core") {
             // The Core design
             let hue = (Date.now() * 0.1) % 360;
@@ -512,7 +512,6 @@ if (player.alive) {
             ctx.fillRect(-player.width/4, -player.height/4, player.width/2, player.height/2);
             ctx.restore();
         } 
-} 
                 else if (currentSkin === "pig") {
             // Kropp (Rosa)
             ctx.fillStyle = "#ffadad";
