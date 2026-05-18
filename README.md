@@ -301,10 +301,39 @@ function buyBooster(type, cost) {
 }
 
 function saveProgress() {
-    localStorage.setItem("coins", coins); localStorage.setItem("gems", gems);
-    localStorage.setItem("highscore", highscore); localStorage.setItem("activeWeapon", activeWeapon);
-    localStorage.setItem("weaponsOwned", JSON.stringify(weaponsOwned));
-    localStorage.setItem("weaponLevels", JSON.stringify(weaponLevels));
+    // Hvis ingen er logget inn ennå (f.eks. på påloggingsskjermen), avbryter vi så vi ikke overskriver noe feil
+    if (!aktivBruker) return;
+
+    localStorage.setItem(aktivBruker + "_coins", coins); 
+    localStorage.setItem(aktivBruker + "_gems", gems);
+    localStorage.setItem(aktivBruker + "_highscore", highscore); 
+    localStorage.setItem(aktivBruker + "_activeWeapon", activeWeapon);
+    localStorage.setItem(aktivBruker + "_weaponsOwned", JSON.stringify(weaponsOwned));
+    localStorage.setItem(aktivBruker + "_weaponLevels", JSON.stringify(weaponLevels));
+    localStorage.setItem(aktivBruker + "_currentSkin", currentSkin);
+    localStorage.setItem(aktivBruker + "_StrikerOwned", StrikerOwned);
+    localStorage.setItem(aktivBruker + "_TheCoreOwned", TheCoreOwned);
+    localStorage.setItem(aktivBruker + "_pigOwned", pigOwned);
+}
+
+function lastInnBrukerData() {
+    if (!aktivBruker) return;
+
+    // Henter data unikt for denne brukeren, eller bruker standardverdier hvis det er en helt ny bruker
+    coins = Number(localStorage.getItem(aktivBruker + "_coins")) || 0;
+    gems = Number(localStorage.getItem(aktivBruker + "_gems")) || 0;
+    highscore = Number(localStorage.getItem(aktivBruker + "_highscore")) || 0;
+    activeWeapon = localStorage.getItem(aktivBruker + "_activeWeapon") || "none";
+    
+    weaponsOwned = JSON.parse(localStorage.getItem(aktivBruker + "_weaponsOwned")) || { pistol: false, smg: false, shotgun: false, ar: false };
+    weaponLevels = JSON.parse(localStorage.getItem(aktivBruker + "_weaponLevels")) || { pistol: 0, smg: 0, shotgun: 0, ar: 0 };
+    
+    currentSkin = localStorage.getItem(aktivBruker + "_currentSkin") || "default";
+    StrikerOwned = localStorage.getItem(aktivBruker + "_StrikerOwned") === "true";
+    TheCoreOwned = localStorage.getItem(aktivBruker + "_TheCoreOwned") === "true";
+    pigOwned = localStorage.getItem(aktivBruker + "_pigOwned") === "true";
+
+    updateUI();
 }
 
 function init() {
@@ -746,7 +775,9 @@ function validerInnlogging() {
         aktivBruker = user;
         document.getElementById("loginScreen").style.display = "none";
         
-        // Fyrer i gang spillet etter godkjent kode
+        // --- NYTT: Laster inn denne spesifikke brukeren sine lagrede ting før spillet starter ---
+        lastInnBrukerData();
+        
         init();
         requestAnimationFrame(loop);
     } else {
