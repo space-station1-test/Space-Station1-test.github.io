@@ -32,7 +32,7 @@
 </head>
 <body>
 
-    <div class="ui-left" id="skinShop">
+<div class="ui-left" id="skinShop">
     <div id="shop">
         <span class="section-title">Skins</span>
         <button id="coreBtn" onclick="endreSkin('The Core')">Buy The Core (7000🟡)</button>
@@ -46,6 +46,7 @@
         <button id="slowEnemiesBtn" onclick="buyBooster('slowEnemies', 50)">❄️Slow (50💎)</button>
     </div>
 </div>
+
 <div class="ui" id="mainUI">
     <button id="toggleUIBtn" onclick="toggleUI()">Hide UI</button>
     <div id="uiContent">
@@ -102,65 +103,50 @@
 
 <canvas id="game" width="400" height="600"></canvas>
 
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
 <script>
+// Din unike Firebase-konfigurasjon
+const firebaseConfig = {
+  apiKey: "AIzaSyC_9tm_EelwGyBMjKfjqCZXbr4_fEuycWs",
+  authDomain: "space-station1-base.firebaseapp.com",
+  projectId: "space-station1-base",
+  storageBucket: "space-station1-base.firebasestorage.app",
+  messagingSenderId: "624029879873",
+  appId: "1:624029879873:web:32b5bf9453c7ec033000c0"
+};
+
+// Start opp Firebase-forbindelsen
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 const BASE_SPEED = 1.3;
 
 let player, enemies, bullets, stars, particles, floatingTexts;
-let powerups = []; // Ny liste for drops
-let rainbowTimer = 0; // Ny timer for effekten
+let powerups = []; 
+let rainbowTimer = 0; 
 let score = 0, gameOver = false, paused = false, shootCooldown = 0;
 let keys = {};
 let uiVisible = true;
 let gemMilestone = 10000;
-let lastTime = 0; // For Delta Time
-// SKIN LOGIKK
-let currentSkin = "default";
-// Sjekker om spilleren allerede eier skinnet fra før
-let StrikerOwned = JSON.parse(localStorage.getItem("StrikerOwned")) || false;
-let TheCoreOwned = JSON.parse(localStorage.getItem("TheCoreOwned")) || false;
-let pigOwned = JSON.parse(localStorage.getItem("pigOwned")) || false;
-    
-function endreSkin(valg) {
-    if (valg === 'Striker') {
-        if (StrikerOwned) { currentSkin = 'Striker'; }
-        else if (coins >= 5000) {
-            coins -= 5000; StrikerOwned = true; currentSkin = 'Striker';
-            localStorage.setItem("StrikerOwned", true);
-        }
-    } 
-    else if (valg === 'The Core') { 
-    if (TheCoreOwned) { // Bruk det nye navnet uten mellomrom her også
-        currentSkin = 'The Core'; 
-    }
-    else if (coins >= 7000) {
-        coins -= 7000; 
-        TheCoreOwned = true; // Match variabelnavnet her
-        currentSkin = 'The Core';
-        localStorage.setItem("TheCoreOwned", true);
-    } 
-}
-    // NY DEL FOR GRIS:
-    else if (valg === 'pig') {
-    if (pigOwned) { currentSkin = 'pig'; }
-    else if (coins >= 5500) {
-        coins -= 5500; pigOwned = true; currentSkin = 'pig';
-        localStorage.setItem("pigOwned", true);
-    } 
-} 
-    else { currentSkin = 'default'; }
-    saveProgress();
-    updateUI();
-}
+let lastTime = 0; 
 
-let coins = Number(localStorage.getItem("coins")) || 0;
-let gems = Number(localStorage.getItem("gems")) || 0;
-let highscore = Number(localStorage.getItem("highscore")) || 0;
-let activeWeapon = localStorage.getItem("activeWeapon") || "none";
-let weaponsOwned = JSON.parse(localStorage.getItem("weaponsOwned")) || { pistol: false, smg: false, shotgun: false, ar: false };
-let weaponLevels = JSON.parse(localStorage.getItem("weaponLevels")) || { pistol: 0, smg: 0, shotgun: 0, ar: 0 };
+// Spill-tilstander (Data synkroniseres nå med Firebase)
+let currentSkin = "default";
+let StrikerOwned = false;
+let TheCoreOwned = false;
+let pigOwned = false;
+let coins = 0;
+let gems = 0;
+let highscore = 0;
+let activeWeapon = "none";
+let weaponsOwned = { pistol: false, smg: false, shotgun: false, ar: false };
+let weaponLevels = { pistol: 0, smg: 0, shotgun: 0, ar: 0 };
 let boosters = { armor: false, doubleDamage: false, slowEnemies: false };
+let aktivBruker = null;
 
 const weaponConfigs = {
     pistol: { cooldown: [25, 21, 18], maxLvl: 2, type: "single", dmg: 1 },
@@ -169,19 +155,35 @@ const weaponConfigs = {
     ar: { cooldown: [14, 11], maxLvl: 1, type: "fast", dmg: 1 }
 };
 
+function endreSkin(valg) {
+    if (valg === 'Striker') {
+        if (StrikerOwned) { currentSkin = 'Striker'; }
+        else if (coins >= 5000) {
+            coins -= 5000; StrikerOwned = true; currentSkin = 'Striker';
+        }
+    } 
+    else if (valg === 'The Core') { 
+        if (TheCoreOwned) { currentSkin = 'The Core'; }
+        else if (coins >= 7000) {
+            coins -= 7000; TheCoreOwned = true; currentSkin = 'The Core';
+        } 
+    }
+    else if (valg === 'pig') {
+        if (pigOwned) { currentSkin = 'pig'; }
+        else if (coins >= 5500) {
+            coins -= 5500; pigOwned = true; currentSkin = 'pig';
+        } 
+    } 
+    else { currentSkin = 'default'; }
+    saveProgress();
+    updateUI();
+}
+
 function toggleUI() {
     uiVisible = !uiVisible;
-    
-    // Skjuler innholdet i høyre meny
     document.getElementById("uiContent").classList.toggle("hidden", !uiVisible);
-    
-    // Skjuler hele venstre meny (skins)
     const leftUI = document.getElementById("skinShop");
-    if (leftUI) {
-        leftUI.classList.toggle("hidden", !uiVisible);
-    }
-    
-    // Oppdaterer teksten på knappen
+    if (leftUI) leftUI.classList.toggle("hidden", !uiVisible);
     document.getElementById("toggleUIBtn").innerText = uiVisible ? "Hide UI" : "Show UI";
 }
 
@@ -206,7 +208,7 @@ function updateUI() {
     const upgSMG = document.getElementById("upgradeSMGBtn");
     upgSMG.style.display = weaponsOwned.smg ? "block" : "none";
     upgSMG.innerText = weaponLevels.smg >= 1 ? "Maxed" : "Upgrade (1100🟡)";
-    upgSMG.disabled = weaponLevels.smg >= 1 || coins < 1000;
+    upgSMG.disabled = weaponLevels.smg >= 1 || coins < 1100; // Rettet til 1100 i henhold til logikken
 
     document.getElementById("buyShotgunBtn").style.display = weaponsOwned.shotgun ? "none" : "block";
     const upgShotgun = document.getElementById("upgradeShotgunBtn");
@@ -232,6 +234,7 @@ function updateUI() {
     document.getElementById("armorBtn").style.borderColor = boosters.armor ? "#2f6" : "#4af";
     document.getElementById("doubleDamageBtn").style.borderColor = boosters.doubleDamage ? "#0f0" : "#4af";
     document.getElementById("slowEnemiesBtn").style.borderColor = boosters.slowEnemies ? "#0f0" : "#4af";
+    
     const pBtn = document.getElementById("pigBtn");
     if (pBtn) {
         if (pigOwned) {
@@ -243,7 +246,6 @@ function updateUI() {
         }
     }
     
-    // Oppdater Neon/Core-knappen
     const tBtn = document.getElementById("coreBtn");
     if (tBtn) {
         if (TheCoreOwned) {
@@ -255,7 +257,6 @@ function updateUI() {
         }
     }
 
-    // Oppdater Striker-knappen
     const cBtn = document.getElementById("StrikerBtn");
     if (cBtn) {
         if (StrikerOwned) {
@@ -267,6 +268,7 @@ function updateUI() {
         }
     }
 }
+
 function buyWeapon(type, cost) {
     if (coins >= cost) { coins -= cost; weaponsOwned[type] = true; activeWeapon = type; saveProgress(); updateUI(); }
 }
@@ -300,40 +302,49 @@ function buyBooster(type, cost) {
     }
 }
 
+// --- EKTESKY-LAGRING MED FIREBASE ---
 function saveProgress() {
-    // Hvis ingen er logget inn ennå (f.eks. på påloggingsskjermen), avbryter vi så vi ikke overskriver noe feil
     if (!aktivBruker) return;
 
-    localStorage.setItem(aktivBruker + "_coins", coins); 
-    localStorage.setItem(aktivBruker + "_gems", gems);
-    localStorage.setItem(aktivBruker + "_highscore", highscore); 
-    localStorage.setItem(aktivBruker + "_activeWeapon", activeWeapon);
-    localStorage.setItem(aktivBruker + "_weaponsOwned", JSON.stringify(weaponsOwned));
-    localStorage.setItem(aktivBruker + "_weaponLevels", JSON.stringify(weaponLevels));
-    localStorage.setItem(aktivBruker + "_currentSkin", currentSkin);
-    localStorage.setItem(aktivBruker + "_StrikerOwned", StrikerOwned);
-    localStorage.setItem(aktivBruker + "_TheCoreOwned", TheCoreOwned);
-    localStorage.setItem(aktivBruker + "_pigOwned", pigOwned);
+    db.collection("users").doc(aktivBruker).set({
+        coins: coins,
+        gems: gems,
+        highscore: highscore,
+        activeWeapon: activeWeapon,
+        weaponsOwned: weaponsOwned,
+        weaponLevels: weaponLevels,
+        currentSkin: currentSkin,
+        StrikerOwned: StrikerOwned,
+        TheCoreOwned: TheCoreOwned,
+        pigOwned: pigOwned
+    }, { merge: true }).catch(err => console.error("Feil ved lagring:", err));
 }
 
 function lastInnBrukerData() {
-    if (!aktivBruker) return;
+    if (!aktivBruker) return Promise.resolve();
 
-    // Henter data unikt for denne brukeren, eller bruker standardverdier hvis det er en helt ny bruker
-    coins = Number(localStorage.getItem(aktivBruker + "_coins")) || 0;
-    gems = Number(localStorage.getItem(aktivBruker + "_gems")) || 0;
-    highscore = Number(localStorage.getItem(aktivBruker + "_highscore")) || 0;
-    activeWeapon = localStorage.getItem(aktivBruker + "_activeWeapon") || "none";
-    
-    weaponsOwned = JSON.parse(localStorage.getItem(aktivBruker + "_weaponsOwned")) || { pistol: false, smg: false, shotgun: false, ar: false };
-    weaponLevels = JSON.parse(localStorage.getItem(aktivBruker + "_weaponLevels")) || { pistol: 0, smg: 0, shotgun: 0, ar: 0 };
-    
-    currentSkin = localStorage.getItem(aktivBruker + "_currentSkin") || "default";
-    StrikerOwned = localStorage.getItem(aktivBruker + "_StrikerOwned") === "true";
-    TheCoreOwned = localStorage.getItem(aktivBruker + "_TheCoreOwned") === "true";
-    pigOwned = localStorage.getItem(aktivBruker + "_pigOwned") === "true";
-
-    updateUI();
+    return db.collection("users").doc(aktivBruker).get().then((doc) => {
+        if (doc.exists) {
+            const data = doc.data();
+            coins = data.coins || 0;
+            gems = data.gems || 0;
+            highscore = data.highscore || 0;
+            activeWeapon = data.activeWeapon || "none";
+            weaponsOwned = data.weaponsOwned || { pistol: false, smg: false, shotgun: false, ar: false };
+            weaponLevels = data.weaponLevels || { pistol: 0, smg: 0, shotgun: 0, ar: 0 };
+            currentSkin = data.currentSkin || "default";
+            StrikerOwned = data.StrikerOwned || false;
+            TheCoreOwned = data.TheCoreOwned || false;
+            pigOwned = data.pigOwned || false;
+        } else {
+            // Hvis det er en helt ny profil, sett standardverdier
+            coins = 0; gems = 0; highscore = 0; activeWeapon = "none";
+            weaponsOwned = { pistol: false, smg: false, shotgun: false, ar: false };
+            weaponLevels = { pistol: 0, smg: 0, shotgun: 0, ar: 0 };
+            currentSkin = "default"; StrikerOwned = false; TheCoreOwned = false; pigOwned = false;
+        }
+        updateUI();
+    }).catch(err => console.error("Feil ved innlasting:", err));
 }
 
 function init() {
@@ -343,7 +354,6 @@ function init() {
     score = 0; gemMilestone = 10000;
     gameOver = false; paused = false; shootCooldown = 0;
     updateUI();
-    // Legg disse nederst i init()-funksjonen
     powerups = []; 
     rainbowTimer = 0;
 }
@@ -359,7 +369,7 @@ function spawnEnemy() {
     let extraChance = Math.min(0.2, score / 100000);
     let r = Math.random();
     if (r < 0.15 && score > 2000) {
-        let hp =6 + Math.floor(score / 10000);
+        let hp = 6 + Math.floor(score / 10000);
         enemies.push({x: Math.random()*350, y: -50, w: 45, h: 45, speedY: 1.2 * BASE_SPEED, color: '#800', coins: 50, hp: hp, maxHp: hp, isHeavy: true, type: 'heavy'});
     } else if (r < 0.30 + extraChance && score > 1000) {
         enemies.push({x: Math.random()*300 + 50, y: -40, w: 25, h: 25, speedY: 2 * BASE_SPEED, color: '#a0f', coins: 20, hp: 1, isHeavy: false, type: 'sinus', centerX: 0, angle: 0});
@@ -380,7 +390,7 @@ function fire() {
     } else {
         bullets.push({x: player.x + 15, y: player.y, vx: 0, vy: -12, dmg: damage});
     }
-    shootCooldown = rainbowTimer > 0 ? config.cooldown[lvl] / 3 : config.cooldown[lvl]; // 3x raskere!
+    shootCooldown = rainbowTimer > 0 ? config.cooldown[lvl] / 3 : config.cooldown[lvl]; 
 }
 
 function update(sf) {
@@ -418,34 +428,33 @@ function update(sf) {
             e.y += e.speedY * enemySpeedMult; 
         }
 
-    // Spiller treffer fiende
-    if (player.alive && player.x < e.x + e.w && player.x + player.width > e.x && player.y < e.y + e.h && player.y + player.height > e.y) {
-    
-    // SJEKK 1: Er vi i Rainbow Mode? (Da dør fienden, ikke vi)
-    if (rainbowTimer > 0) {
-        enemies.splice(ei, 1);
-        createExplosion(e.x + e.w/2, e.y + e.h/2, "white", 10);
-        score += (e.isHeavy ? 500 : 100);
-        coins += (e.coins || 10);
-        updateUI();
-    } 
-    // SJEKK 2: Har vi Armor?
-    else if (boosters.armor && !player.armorUsed) { 
-        player.armorUsed = true; 
-        enemies.splice(ei, 1); 
-        createExplosion(player.x+17, player.y, "#4af"); 
-    } 
-    // ELLERS: Vi dør
-    else { 
-        player.alive = false;
-        createExplosion(player.x + 17, player.y + 17, "#0f0", 50); 
-        createExplosion(player.x + 17, player.y + 17, "orange", 30);
-        boosters.armor = false; boosters.doubleDamage = false; boosters.slowEnemies = false;
-        setTimeout(() => { gameOver = true; if(score > highscore) { highscore = Math.floor(score); saveProgress(); } updateUI(); }, 1000);
-    }
-}
+        if (player.alive && player.x < e.x + e.w && player.x + player.width > e.x && player.y < e.y + e.h && player.y + player.height > e.y) {
+            if (rainbowTimer > 0) {
+                enemies.splice(ei, 1);
+                createExplosion(e.x + e.w/2, e.y + e.h/2, "white", 10);
+                score += (e.isHeavy ? 500 : 100);
+                coins += (e.coins || 10);
+                updateUI();
+            } 
+            else if (boosters.armor && !player.armorUsed) { 
+                player.armorUsed = true; 
+                enemies.splice(ei, 1); 
+                createExplosion(player.x+17, player.y, "#4af"); 
+            } 
+            else { 
+                player.alive = false;
+                createExplosion(player.x + 17, player.y + 17, "#0f0", 50); 
+                createExplosion(player.x + 17, player.y + 17, "orange", 30);
+                boosters.armor = false; boosters.doubleDamage = false; boosters.slowEnemies = false;
+                setTimeout(() => { 
+                    gameOver = true; 
+                    if(score > highscore) { highscore = Math.floor(score); } 
+                    saveProgress(); 
+                    updateUI(); 
+                }, 1000);
+            }
+        }
 
-        // Kuler treffer fiende
         bullets.forEach((b, bi) => {
             if (b.x < e.x + e.w && b.x + 6 > e.x && b.y < e.y + e.h && b.y + 12 > e.y) {
                 e.hp -= (b.dmg || 1); 
@@ -469,7 +478,7 @@ function update(sf) {
                 }
             }   
         });
-    }); // Denne lukker enemies.forEach
+    }); 
 
     powerups.forEach((p, pi) => {
         p.y += p.speedY * sf;
@@ -488,69 +497,54 @@ function draw() {
     particles.forEach(p => { ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, 4, 4); });
     floatingTexts.forEach(t => { ctx.globalAlpha = t.life; ctx.fillStyle = t.color; ctx.font="bold 14px Arial"; ctx.fillText(t.text, t.x, t.y); });
     ctx.globalAlpha = 1;
-if (player.alive) {
-                if (currentSkin === "Striker") {// 1. HITBOX-BASE & RAMME
-    ctx.fillStyle = "#0a0a0a";
-    ctx.fillRect(player.x, player.y, player.width, player.height);
     
-    // Gul neon-ramme
-    ctx.strokeStyle = "#ff0"; 
-    ctx.lineWidth = 2;
-    ctx.strokeRect(player.x, player.y, player.width, player.height);
+    if (player.alive) {
+        if (currentSkin === "Striker") {
+            ctx.fillStyle = "#0a0a0a";
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+            ctx.strokeStyle = "#ff0"; 
+            ctx.lineWidth = 2;
+            ctx.strokeRect(player.x, player.y, player.width, player.height);
 
-    // 2. LYN FRA HJØRNENE
-    ctx.strokeStyle = "#ff0";
-    ctx.lineWidth = 1.5;
-    let offset = (Math.random() - 0.5) * 4; // Gjør at lynene "vibrerer" litt
+            ctx.strokeStyle = "#ff0";
+            ctx.lineWidth = 1.5;
+            const drawBolt = (x1, y1, x2, y2) => {
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                let midX = (x1 + x2) / 2 + (Math.random() - 0.5) * 10;
+                let midY = (y1 + y2) / 2 + (Math.random() - 0.5) * 10;
+                ctx.lineTo(midX, midY);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+            };
 
-    const drawBolt = (x1, y1, x2, y2) => {
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        // Lager et "knekk" på lynet mot midten
-        let midX = (x1 + x2) / 2 + (Math.random() - 0.5) * 10;
-        let midY = (y1 + y2) / 2 + (Math.random() - 0.5) * 10;
-        ctx.lineTo(midX, midY);
-        ctx.lineTo(x2, y2);
-        ctx.stroke();
-    };
+            let cx = player.x + player.width / 2;
+            let cy = player.y + player.height / 2;
+            drawBolt(player.x, player.y, cx - 5, cy - 5); 
+            drawBolt(player.x + player.width, player.y, cx + 5, cy - 5); 
+            drawBolt(player.x, player.y + player.height, cx - 5, cy + 5); 
+            drawBolt(player.x + player.width, player.y + player.height, cx + 5, cy + 5); 
 
-    let cx = player.x + player.width / 2;
-    let cy = player.y + player.height / 2;
-
-    // Tegner lyn fra hvert hjørne nesten inn til midten
-    drawBolt(player.x, player.y, cx - 5, cy - 5); // Topp venstre
-    drawBolt(player.x + player.width, player.y, cx + 5, cy - 5); // Topp høyre
-    drawBolt(player.x, player.y + player.height, cx - 5, cy + 5); // Bunn venstre
-    drawBolt(player.x + player.width, player.y + player.height, cx + 5, cy + 5); // Bunn høyre
-
-        // 3. LYN-KJERNE (Senter)
-    let pulse = Math.sin(Date.now() * 0.01) * 5;
-    ctx.shadowBlur = 15 + pulse;
-    ctx.shadowColor = "#ff0";
-    ctx.fillStyle = "#fff"; 
-    ctx.beginPath();
-    ctx.arc(cx, cy, 4 + (Math.random() * 2), 0, Math.PI * 2);
-    ctx.fill();
-    
-    // En gul sirkel rundt den hvite kjernen
-    ctx.strokeStyle = "#ff0";
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    // VIKTIG: Nullstill gløden her så den ikke smitter over på resten av spillet!
-    ctx.shadowBlur = 0; 
-                }
+            let pulse = Math.sin(Date.now() * 0.01) * 5;
+            ctx.shadowBlur = 15 + pulse;
+            ctx.shadowColor = "#ff0";
+            ctx.fillStyle = "#fff"; 
+            ctx.beginPath();
+            ctx.arc(cx, cy, 4 + (Math.random() * 2), 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = "#ff0";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.shadowBlur = 0; 
+        }
         else if (currentSkin === "The Core") {
-            // The Core design
             let hue = (Date.now() * 0.1) % 360;
             ctx.fillStyle = "#000";
             ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
             ctx.lineWidth = 3;
-            
             ctx.fillRect(player.x, player.y, player.width, player.height);
             ctx.strokeRect(player.x, player.y, player.width, player.height);
             
-            // Roterende kjerne
             ctx.save();
             ctx.translate(player.x + player.width/2, player.y + player.height/2);
             ctx.rotate(Date.now() * 0.005);
@@ -558,21 +552,14 @@ if (player.alive) {
             ctx.fillRect(-player.width/4, -player.height/4, player.width/2, player.height/2);
             ctx.restore();
         } 
-                else if (currentSkin === "pig") {
-            // Kropp (Rosa)
+        else if (currentSkin === "pig") {
             ctx.fillStyle = "#ffadad";
             ctx.fillRect(player.x, player.y, player.width, player.height);
-
-            // Tryne (Mørkere rosa)
             ctx.fillStyle = "#ff85a2";
             ctx.fillRect(player.x + 10, player.y + 18, 15, 10);
-            
-            // Nesebor
             ctx.fillStyle = "#d44d7d";
             ctx.fillRect(player.x + 12, player.y + 21, 3, 3);
             ctx.fillRect(player.x + 20, player.y + 21, 3, 3);
-
-            // Øyne
             ctx.fillStyle = "white";
             ctx.fillRect(player.x + 6, player.y + 10, 6, 6);
             ctx.fillRect(player.x + 23, player.y + 10, 6, 6);
@@ -581,12 +568,10 @@ if (player.alive) {
             ctx.fillRect(player.x + 25, player.y + 12, 3, 3);
         }
         else {
-            // Standard skin
             ctx.fillStyle = (boosters.armor && !player.armorUsed) ? '#4af' : '#0f0';
             ctx.fillRect(player.x, player.y, player.width, player.height);
         }
 
-        // Armor-effekt (blå ramme)
         if (boosters.armor && !player.armorUsed) {
             ctx.strokeStyle = "#4af";
             ctx.lineWidth = 2;
@@ -594,10 +579,8 @@ if (player.alive) {
         }
     }
 
-    
-        bullets.forEach(b => { 
+    bullets.forEach(b => { 
         if (rainbowTimer > 0) {
-            // Regnbuefarge som skifter raskt (0.8 styrer farten)
             ctx.fillStyle = `hsl(${(Date.now() * 0.8) % 360}, 100%, 60%)`;
         } else {
             ctx.fillStyle = boosters.doubleDamage ? 'orange' : 'yellow'; 
@@ -605,40 +588,35 @@ if (player.alive) {
         ctx.fillRect(b.x, b.y, 6, 12); 
     });
 
-    // Tegner selve den sjeldne boksen når den faller
     powerups.forEach(p => {
         ctx.fillStyle = `hsl(${(Date.now() * 0.5) % 360}, 100%, 50%)`;
-        ctx.shadowBlur = 15; // Gir boksen en hvit glød så den synes godt
+        ctx.shadowBlur = 15; 
         ctx.shadowColor = "white";
         ctx.fillRect(p.x, p.y, p.w, p.h);
         ctx.strokeStyle = "white";
         ctx.lineWidth = 2;
         ctx.strokeRect(p.x, p.y, p.w, p.h);
-        ctx.shadowBlur = 0; // Skrur av gløden for resten av grafikken
+        ctx.shadowBlur = 0; 
     });
-enemies.forEach(e => {
+
+    enemies.forEach(e => {
         if (e.type === 'normal' || e.type === 'sinus') {
-            // Tegner vanlige fiender og sinus-fiender som rene kvadrater
-            ctx.fillStyle = (e.type === 'sinus') ? '#0cf' : '#f44'; // Lyseblå (#0cf) for sinus, rød (#f44) for normal
+            ctx.fillStyle = (e.type === 'sinus') ? '#0cf' : '#f44'; 
             ctx.fillRect(e.x, e.y, e.w, e.h);
         } 
         else if (e.type === 'heavy') {
-            // Beholder det kule Heavy-designet ditt (Metallisk look med striper og lys)
             ctx.fillStyle = '#444';
             ctx.fillRect(e.x, e.y, e.w, e.h);
             ctx.strokeStyle = '#666';
             ctx.lineWidth = 2;
             ctx.strokeRect(e.x + 5, e.y + 5, e.w - 10, e.h - 10);
-            
             ctx.fillStyle = '#f44'; 
             ctx.fillRect(e.x + 8, e.y + 8, 6, 6);
             ctx.fillRect(e.x + e.w - 14, e.y + 8, 6, 6);
-            
             ctx.fillStyle = '#333';
             ctx.fillRect(e.x + e.w/2 - 2, e.y + 15, 4, e.h - 30);
         }
 
-        // HP-bar for Heavy
         if (e.isHeavy) {
             ctx.fillStyle = "red"; 
             ctx.fillRect(e.x, e.y - 12, e.w, 6);
@@ -647,7 +625,6 @@ enemies.forEach(e => {
         }
     });
 
-    // UI og tekst
     ctx.fillStyle = 'white'; ctx.font = 'bold 16px Arial';
     ctx.textAlign = "left";
     ctx.fillText(`Score: ${Math.floor(score)}`, 10, 25);
@@ -667,7 +644,7 @@ enemies.forEach(e => {
         ctx.textAlign = "center";
         ctx.fillText("PAUSED", 200, 300);
     }
-} // LUKKER DRAW-FUNKSJONEN
+} 
 
 window.addEventListener("keydown", e => { 
     const key = e.key.toLowerCase(); keys[key] = true; 
@@ -693,37 +670,36 @@ canvas.addEventListener("touchmove", (e) => { e.preventDefault(); handleMove(e);
 function togglePause() {
     paused = !paused;
     const pBtn = document.getElementById("pauseBtn");
-    
     if (paused) {
-        pBtn.innerText = "Continue"; // Teksten når spillet ER pauset
-        pBtn.style.backgroundColor = "#440000"; // Valgfritt: gjør knappen rødlig når pauset
+        pBtn.innerText = "Continue"; 
+        pBtn.style.backgroundColor = "#440000"; 
     } else {
-        pBtn.innerText = "Pause"; // Teksten når spillet kjører
-        pBtn.style.backgroundColor = "#222"; // Tilbake til vanlig farge
+        pBtn.innerText = "Pause"; 
+        pBtn.style.backgroundColor = "#222"; 
     }
 }
 
 function restartGame() { init(); }
-function resetGameData() { if(confirm("Delete all data?")) { localStorage.clear(); location.reload(); } }
 
-init();
+function resetGameData() { 
+    if(confirm("Vil du slette all data for denne brukeren i skyen?")) { 
+        if (aktivBruker) {
+            db.collection("users").doc(aktivBruker).delete().then(() => {
+                location.reload();
+            });
+        }
+    } 
+}
+
 let lastSpawnTime = 0;
 function handleEnemySpawning(timestamp) {
-    // Øker tiden mellom hver vanlige spawn litt mer gradvis
     let spawnDelay = Math.max(200, 600 - (Math.floor(score / 15000) * 50));
-
     if (timestamp - lastSpawnTime > spawnDelay) {
         spawnEnemy();
-        
-        // NY LOGIKK: Spawner færre ekstra fiender. 
-        // Her spawner vi 1 ekstra fiende per 20 000 poeng, 
-        // og vi setter en maksgrense på 3 ekstra fiender samtidig.
         let extraEnemies = Math.min(5, Math.floor(score / 20000)); 
-        
         for (let i = 0; i < extraEnemies; i++) {
             spawnEnemy();
         }
-        
         lastSpawnTime = timestamp;
     }
 }
@@ -740,12 +716,9 @@ function loop(timestamp) {
     requestAnimationFrame(loop);
 }
 
-// --- PÅLOGGINGSLOGIKK SOM STARTER SPILLET ---
-let lagredeBrukere = JSON.parse(localStorage.getItem("gameUsers")) || {};
-let aktivBruker = null;
-
+// --- SKY-BASERT BRUKERLOGIKK MED CLOUD FIRESTORE ---
 function registrerBruker() {
-    const user = document.getElementById("loginUser").value.trim();
+    const user = document.getElementById("loginUser").value.trim().toLowerCase(); // Gjør unike små bokstaver
     const code = document.getElementById("loginCode").value.trim();
     const msg = document.getElementById("loginMessage");
 
@@ -755,39 +728,74 @@ function registrerBruker() {
         return;
     }
 
-    if (lagredeBrukere[user]) {
+    msg.style.color = "#4af";
+    msg.innerText = "Sjekker tilgjengelighet...";
+
+    // Sjekk i skyen om profilen finnes fra før
+    db.collection("users").doc(user).get().then((doc) => {
+        if (doc.exists) {
+            msg.style.color = "#ff4444";
+            msg.innerText = "Brukernavnet er opptatt i databasen!";
+        } else {
+            // Lager en flunkende ny bruker i skyen
+            db.collection("users").doc(user).set({
+                pinCode: code,
+                coins: 0,
+                gems: 0,
+                highscore: 0
+            }).then(() => {
+                msg.style.color = "#0f0";
+                msg.innerText = "Bruker opprettet i skyen! Logg inn nå.";
+            });
+        }
+    }).catch(err => {
         msg.style.color = "#ff4444";
-        msg.innerText = "Brukernavnet er opptatt!";
-    } else {
-        lagredeBrukere[user] = code;
-        localStorage.setItem("gameUsers", JSON.stringify(lagredeBrukere));
-        msg.style.color = "#0f0";
-        msg.innerText = "Bruker opprettet! Klikk Logg inn.";
-    }
+        msg.innerText = "Kunne ikke koble til database.";
+    });
 }
 
 function validerInnlogging() {
-    const user = document.getElementById("loginUser").value.trim();
+    const user = document.getElementById("loginUser").value.trim().toLowerCase();
     const code = document.getElementById("loginCode").value.trim();
     const msg = document.getElementById("loginMessage");
 
-    if (lagredeBrukere[user] && lagredeBrukere[user] === code) {
-        aktivBruker = user;
-        document.getElementById("loginScreen").style.display = "none";
-        
-        // --- NYTT: Laster inn denne spesifikke brukeren sine lagrede ting før spillet starter ---
-        lastInnBrukerData();
-        
-        init();
-        requestAnimationFrame(loop);
-    } else {
+    if (!user || !code) {
         msg.style.color = "#ff4444";
-        msg.innerText = "Feil brukernavn eller kode!";
+        msg.innerText = "Fyll inn brukernavn og kode!";
+        return;
     }
-}
 
-// Merk: init() og requestAnimationFrame(loop) kjøres IKKE her lenger.
-// De kjøres nå bare inni validerInnlogging() når koden er riktig!
+    msg.style.color = "#4af";
+    msg.innerText = "Logger inn...";
+
+    // Henter profilen direkte fra skyen
+    db.collection("users").doc(user).get().then((doc) => {
+        if (doc.exists) {
+            const userData = doc.data();
+            
+            // Sjekker om koden stemmer overens med det som ble registrert
+            if (userData.pinCode === code) {
+                aktivBruker = user;
+                document.getElementById("loginScreen").style.display = "none";
+                
+                // Henter alt av spillfremgang fra skyen før spillet starter
+                lastInnBrukerData().then(() => {
+                    init();
+                    requestAnimationFrame(loop);
+                });
+            } else {
+                msg.style.color = "#ff4444";
+                msg.innerText = "Feil kode (PIN)!";
+            }
+        } else {
+            msg.style.color = "#ff4444";
+            msg.innerText = "Brukeren finnes ikke. Registrer ny først.";
+        }
+    }).catch(err => {
+        msg.style.color = "#ff4444";
+        msg.innerText = "Feil under pålogging.";
+    });
+}
 </script>
 </body>
 </html>
