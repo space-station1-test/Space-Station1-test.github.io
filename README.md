@@ -86,6 +86,20 @@
     </div>
 </div>
 
+<div id="loginScreen" style="position: absolute; width: 400px; height: 600px; background: rgba(5, 8, 15, 0.95); border: 2px solid #4af; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; border-radius: 8px; font-family: Arial, sans-serif; box-sizing: border-box; padding: 20px;">
+    <h2 style="color: #4af; text-transform: uppercase; margin-bottom: 20px; font-size: 18px; letter-spacing: 2px;">Space Station Login</h2>
+    
+    <div style="display: flex; flex-direction: column; gap: 10px; width: 80%;">
+        <input type="text" id="loginUser" placeholder="Brukernavn" style="padding: 10px; background: #111; color: white; border: 1px solid #4af; border-radius: 4px; outline: none;">
+        <input type="password" id="loginCode" placeholder="Kode (PIN)" style="padding: 10px; background: #111; color: white; border: 1px solid #4af; border-radius: 4px; outline: none;">
+        
+        <button onclick="validerInnlogging()" style="padding: 10px; background: #004400; color: #0f0; border: 1px solid #0f0; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 10px;">LOGG INN</button>
+        <button onclick="registrerBruker()" style="padding: 10px; background: #222; color: #4af; border: 1px solid #4af; border-radius: 4px; cursor: pointer;">REGISTRER NY BRUKER</button>
+        
+        <p id="loginMessage" style="color: #ff4444; font-size: 12px; text-align: center; margin-top: 10px; min-height: 15px;"></p>
+    </div>
+</div>
+
 <canvas id="game" width="400" height="600"></canvas>
 
 <script>
@@ -575,69 +589,24 @@ if (player.alive) {
     });
 enemies.forEach(e => {
         if (e.type === 'normal' || e.type === 'sinus') {
-            ctx.save();
-            ctx.translate(e.x + e.w / 2, e.y + e.h / 2);
-            
-            if (e.type === 'normal') ctx.rotate(e.y * 0.015); 
-            
-            // 1. Definer den taggete meteor-formen
-            ctx.beginPath();
-            ctx.moveTo(e.w/2, 0);
-            ctx.lineTo(e.w/3, e.h/2.2);
-            ctx.lineTo(-e.w/4, e.h/2);
-            ctx.lineTo(-e.w/2, e.h/4);
-            ctx.lineTo(-e.w/2.2, -e.h/5);
-            ctx.lineTo(-e.w/4, -e.h/2);
-            ctx.lineTo(e.w/4, -e.h/2.2);
-            ctx.closePath();
-
-            // 2. Grunnfarge og Outline
-            ctx.fillStyle = '#3a3a3a';
-            ctx.fill();
-            ctx.strokeStyle = (e.type === 'sinus') ? '#a0f' : '#ff0000'; 
-            ctx.lineWidth = 3;           
-            ctx.stroke();
-
-            // 3. Klipping for tekstur
-            ctx.clip(); 
-
-            // Skygge (gjør den ene siden mørkere for volum)
-            ctx.fillStyle = 'rgba(0,0,0,0.4)';
-            ctx.beginPath();
-            ctx.arc(-e.w/3, e.h/3, e.w, 0, Math.PI*2);
-            ctx.fill();
-
-            // --- FÆRRE KRATER (Kun 3 stk) ---
-            ctx.fillStyle = '#222';
-            
-            const drawCrater = (cx, cy, radius) => {
-                ctx.beginPath();
-                ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-                ctx.lineWidth = 1;
-                ctx.stroke();
-            };
-
-            // Vi holder oss til tre strategiske plasseringer
-            drawCrater(e.w/5, -e.h/5, e.w/7);   // Et stort et oppe
-            drawCrater(-e.w/4, 0, e.w/10);      // Et mellomstort på siden
-            drawCrater(e.w/10, e.h/4, e.w/12);  // Et mindre nede
-
-            ctx.restore();
-        }
+            // Tegner vanlige fiender og sinus-fiender som rene kvadrater
+            ctx.fillStyle = (e.type === 'sinus') ? '#0cf' : '#f44'; // Lyseblå (#0cf) for sinus, rød (#f44) for normal
+            ctx.fillRect(e.x, e.y, e.w, e.h);
+        } 
         else if (e.type === 'heavy') {
-            // Heavy tekstur (Metallisk look)
+            // Beholder det kule Heavy-designet ditt (Metallisk look med striper og lys)
             ctx.fillStyle = '#444';
             ctx.fillRect(e.x, e.y, e.w, e.h);
             ctx.strokeStyle = '#666';
             ctx.lineWidth = 2;
             ctx.strokeRect(e.x + 5, e.y + 5, e.w - 10, e.h - 10);
             
-            // Røde "øyne"/lys
             ctx.fillStyle = '#f44'; 
             ctx.fillRect(e.x + 8, e.y + 8, 6, 6);
             ctx.fillRect(e.x + e.w - 14, e.y + 8, 6, 6);
+            
+            ctx.fillStyle = '#333';
+            ctx.fillRect(e.x + e.w/2 - 2, e.y + 15, 4, e.h - 30);
         }
 
         // HP-bar for Heavy
@@ -741,7 +710,53 @@ function loop(timestamp) {
     draw();
     requestAnimationFrame(loop);
 }
-requestAnimationFrame(loop);
+
+// --- PÅLOGGINGSLOGIKK SOM STARTER SPILLET ---
+let lagredeBrukere = JSON.parse(localStorage.getItem("gameUsers")) || {};
+let aktivBruker = null;
+
+function registrerBruker() {
+    const user = document.getElementById("loginUser").value.trim();
+    const code = document.getElementById("loginCode").value.trim();
+    const msg = document.getElementById("loginMessage");
+
+    if (!user || !code) {
+        msg.style.color = "#ff4444";
+        msg.innerText = "Fyll inn både brukernavn og kode!";
+        return;
+    }
+
+    if (lagredeBrukere[user]) {
+        msg.style.color = "#ff4444";
+        msg.innerText = "Brukernavnet er opptatt!";
+    } else {
+        lagredeBrukere[user] = code;
+        localStorage.setItem("gameUsers", JSON.stringify(lagredeBrukere));
+        msg.style.color = "#0f0";
+        msg.innerText = "Bruker opprettet! Klikk Logg inn.";
+    }
+}
+
+function validerInnlogging() {
+    const user = document.getElementById("loginUser").value.trim();
+    const code = document.getElementById("loginCode").value.trim();
+    const msg = document.getElementById("loginMessage");
+
+    if (lagredeBrukere[user] && lagredeBrukere[user] === code) {
+        aktivBruker = user;
+        document.getElementById("loginScreen").style.display = "none";
+        
+        // Fyrer i gang spillet etter godkjent kode
+        init();
+        requestAnimationFrame(loop);
+    } else {
+        msg.style.color = "#ff4444";
+        msg.innerText = "Feil brukernavn eller kode!";
+    }
+}
+
+// Merk: init() og requestAnimationFrame(loop) kjøres IKKE her lenger.
+// De kjøres nå bare inni validerInnlogging() når koden er riktig!
 </script>
 </body>
 </html>
