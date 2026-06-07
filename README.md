@@ -396,7 +396,7 @@ function fire() {
         bullets.push({x: player.x + 15, y: player.y, vx: 0, vy: -12, dmg: damage});
         bullets.push({x: player.x + 15, y: player.y, vx: 2.5, vy: -11, dmg: damage});
     } else if (activeWeapon === "sniper") {
-        bullets.push({x: player.x + 15, y: player.y, vx: 0, vy: -16, dmg: damage, isSniper: true});
+        bullets.push({x: player.x + 12, y: player.y, vx: 0, vy: -16, dmg: damage, isSniper: true});
     } else {
         bullets.push({x: player.x + 15, y: player.y, vx: 0, vy: -12, dmg: damage});
     }
@@ -483,7 +483,8 @@ function update(sf) {
         }
 
         bullets.forEach((b, bi) => {
-            if (b.x < activeBoss.x + activeBoss.w && b.x + 6 > activeBoss.x && b.y < activeBoss.y + activeBoss.h && b.y + 12 > activeBoss.y) {
+            // Sjekk om activeBoss fortsatt eksisterer for å hindre krasj under fjerning av kuler
+            if (activeBoss && b.x < activeBoss.x + activeBoss.w && b.x + 6 > activeBoss.x && b.y < activeBoss.y + activeBoss.h && b.y + 12 > activeBoss.y) {
                 activeBoss.hp -= b.dmg;
                 bullets.splice(bi, 1);
                 createExplosion(b.x, b.y, "orange", 3);
@@ -496,12 +497,13 @@ function update(sf) {
                     gems += 150;
                     voidOverlordOwned = true;
                     weaponsOwned.sniper = true;
+                    activeWeapon = "sniper"; // Bytter automatisk til den nye sniperen!
                     
                     floatingTexts.push({x: 100, y: 300, text: "DREADNOUGHT DETONATED!", color: "#f00", life: 3});
                     floatingTexts.push({x: 100, y: 330, text: "+8000 COINS! +150 GEMS!", color: "#ff0", life: 3});
                     floatingTexts.push({x: 100, y: 360, text: "NEW WEAPON & SKIN UNLOCKED!", color: "#a0f", life: 3});
                     
-                    activeBoss = null;
+                    activeBoss = null; 
                     saveProgress();
                     updateUI();
                 }
@@ -532,10 +534,10 @@ function update(sf) {
             if (b.x < e.x + e.w && b.x + 6 > e.x && b.y < e.y + e.h && b.y + 12 > e.y) {
                 e.hp -= b.dmg; bullets.splice(bi, 1);
                 if (e.hp <= 0) {
-                    if (Math.random() < 0.10) { gems += 5; floatingTexts.push({x: e.x, y: e.y, text: "+5 GEMS!", color: "#a4f", life: 1}); }
+                    if (Math.random() < 0.05) { gems += 5; floatingTexts.push({x: e.x, y: e.y, text: "+5 GEMS!", color: "#a4f", life: 1}); }
                     coins += (e.coins || 10); score += (e.isHeavy ? 500 : 100); 
                     createExplosion(e.x+e.w/2, e.y+e.h/2, e.color);
-                    if (Math.random() < 0.20) powerups.push({ x: e.x, y: e.y, w: 25, h: 25, speedY: 2 });
+                    if (Math.random() < 0.01) powerups.push({ x: e.x, y: e.y, w: 25, h: 25, speedY: 2 });
                     enemies.splice(ei, 1); updateUI();
                 }
             }   
@@ -561,18 +563,48 @@ function draw() {
     
     if (player.alive) {
         if (currentSkin === "Void Overlord") {
-            let pulse = Math.sin(Date.now() * 0.01) * 4;
-            ctx.shadowBlur = 15 + pulse;
-            ctx.shadowColor = "#a0f";
-            ctx.fillStyle = "#0a0015";
-            ctx.strokeStyle = "#a0f";
-            ctx.lineWidth = 2;
-            ctx.fillRect(player.x, player.y, player.width, player.height);
-            ctx.strokeRect(player.x, player.y, player.width, player.height);
+            let time = Date.now();
+            let pulse = Math.sin(time * 0.005) * 5;
             
-            ctx.fillStyle = "#fff";
+            // 1. Ekstern kosmisk aura (Nebula)
+            ctx.shadowBlur = 20 + pulse;
+            ctx.shadowColor = "#a0f";
+            
+            // 2. Tegn skipets mørke skrog (Diamant-formet)
+            ctx.fillStyle = "#090214";
+            ctx.strokeStyle = "#d8f";
+            ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.arc(player.x + player.width/2, player.y + player.height/2, 5, 0, Math.PI*2);
+            ctx.moveTo(player.x + player.width / 2, player.y); // Topp
+            ctx.lineTo(player.x + player.width, player.y + player.height * 0.7); // Høyre vinge
+            ctx.lineTo(player.x + player.width * 0.7, player.y + player.height); // Bak høyre
+            ctx.lineTo(player.x + player.width * 0.3, player.y + player.height); // Bak venstre
+            ctx.lineTo(player.x, player.y + player.height * 0.7); // Venstre vinge
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            ctx.shadowBlur = 0; // Nullstill skygge for indre detaljer
+            
+            // 3. Roterende indre ringer (Event Horizon)
+            ctx.save();
+            ctx.translate(player.x + player.width / 2, player.y + player.height / 2);
+            ctx.rotate(time * 0.003);
+            ctx.strokeStyle = "rgba(160, 0, 255, 0.6)";
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(-10, -10, 20, 20);
+            ctx.restore();
+            
+            // 4. Glødende plasma-vingetipper
+            ctx.fillStyle = "#ff00aa";
+            ctx.fillRect(player.x, player.y + player.height * 0.6, 3, 6);
+            ctx.fillRect(player.x + player.width - 3, player.y + player.height * 0.6, 3, 6);
+            
+            // 5. Lysende hvit Singularitets-kjerne i midten
+            ctx.fillStyle = "#fff";
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = "#0ff";
+            ctx.beginPath();
+            ctx.arc(player.x + player.width / 2, player.y + player.height / 2, 4, 0, Math.PI * 2);
             ctx.fill();
             ctx.shadowBlur = 0;
         }
