@@ -548,7 +548,7 @@ if (shootCooldown > 0) shootCooldown -= 1 * sf;
                     if (Math.random() < 0.05) { gems += 5; floatingTexts.push({x: e.x, y: e.y, text: "+5 GEMS!", color: "#a4f", life: 1}); }
                     coins += (e.coins || 10); score += (e.isHeavy ? 500 : 100); 
                     createExplosion(e.x+e.w/2, e.y+e.h/2, e.color);
-                    if (Math.random() < 0.01) powerups.push({ x: e.x, y: e.y, w: 25, h: 25, speedY: 2 });
+                    if (Math.random() < 0.10) powerups.push({ x: e.x, y: e.y, w: 25, h: 25, speedY: 2 });
                     enemies.splice(ei, 1); updateUI();
                 }
             }   
