@@ -434,8 +434,11 @@ function update(sf) {
         spawnBoss();
     }
 
-    if (player.alive && activeWeapon !== "none" && shootCooldown <= 0) fire();
-    if (shootCooldown > 0) shootCooldown -= 1 * sf;
+    if (player.alive && activeWeapon !== "none") {
+    if (shootCooldown <= 0) {
+        fire();
+    }
+}
     
     stars.forEach(s => { s.y += s.s * sf; if(s.y > 600) s.y = 0; });
     
