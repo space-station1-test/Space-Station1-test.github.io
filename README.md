@@ -532,10 +532,10 @@ function update(sf) {
             if (b.x < e.x + e.w && b.x + 6 > e.x && b.y < e.y + e.h && b.y + 12 > e.y) {
                 e.hp -= b.dmg; bullets.splice(bi, 1);
                 if (e.hp <= 0) {
-                    if (Math.random() < 0.20) { gems += 5; floatingTexts.push({x: e.x, y: e.y, text: "+5 GEMS!", color: "#a4f", life: 1}); }
+                    if (Math.random() < 0.10) { gems += 5; floatingTexts.push({x: e.x, y: e.y, text: "+5 GEMS!", color: "#a4f", life: 1}); }
                     coins += (e.coins || 10); score += (e.isHeavy ? 500 : 100); 
                     createExplosion(e.x+e.w/2, e.y+e.h/2, e.color);
-                    if (Math.random() < 0.01) powerups.push({ x: e.x, y: e.y, w: 25, h: 25, speedY: 2 });
+                    if (Math.random() < 0.20) powerups.push({ x: e.x, y: e.y, w: 25, h: 25, speedY: 2 });
                     enemies.splice(ei, 1); updateUI();
                 }
             }   
