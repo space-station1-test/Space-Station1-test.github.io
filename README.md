@@ -439,6 +439,8 @@ function update(sf) {
         fire();
     }
 }
+
+if (shootCooldown > 0) shootCooldown -= 1 * sf;
     
     stars.forEach(s => { s.y += s.s * sf; if(s.y > 600) s.y = 0; });
     
