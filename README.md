@@ -162,7 +162,7 @@ const weaponConfigs = {
     smg: { cooldown: [8, 5], maxLvl: 1, type: "single", dmg: 0.5 },
     shotgun: { cooldown: [45, 30], maxLvl: 1, type: "triple", dmg: 1 },
     ar: { cooldown: [14, 11], maxLvl: 1, type: "fast", dmg: 1 },
-    sniper: { cooldown: [30], maxLvl: 0, type: "single", dmg: 4 } 
+    sniper: { cooldown: [45], maxLvl: 0, type: "single", dmg: 4 } 
 };
 
 function endreSkin(valg) {
