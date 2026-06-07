@@ -388,7 +388,10 @@ function spawnEnemy() {
 function fire() {
     if (!player.alive || activeWeapon === "none") return;
     const config = weaponConfigs[activeWeapon];
-    const lvl = weaponLevels[activeWeapon];
+    
+    // Her er den magiske oppdateringen som fikser krasjen:
+    const lvl = weaponLevels[activeWeapon] || 0; 
+    
     const damage = config.dmg * (boosters.doubleDamage ? 2 : 1);
     
     if (config.type === "triple") {
@@ -400,8 +403,11 @@ function fire() {
     } else {
         bullets.push({x: player.x + 15, y: player.y, vx: 0, vy: -12, dmg: damage});
     }
+    
+    // Nå vil cooldown alltid finne et gyldig tall!
     shootCooldown = rainbowTimer > 0 ? config.cooldown[lvl] / 3 : config.cooldown[lvl]; 
 }
+
 
 function killPlayer() {
     if (boosters.armor && !player.armorUsed) { 
