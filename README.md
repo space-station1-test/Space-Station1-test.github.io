@@ -1,4 +1,4 @@
-<html lang="no">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Space Station - The Void Awakening</title>
@@ -38,8 +38,8 @@
         <button id="voidBtn" onclick="endreSkin('Void Overlord')" style="display:none; background: #1a0033 !important; border-color: #a0f !important; color: #d8f !important; font-weight: bold;">Void Overlord 🔮</button>
         <button id="coreBtn" onclick="endreSkin('The Core')">Buy The Core (7000🟡)</button>
         <button id="pigBtn" onclick="endreSkin('pig')">Buy Pig 🐷(5500🟡)</button>
-        <button id="StrikerBtn" onclick="endreSkin('Striker')">Buy Striker 🚀(5000🟡)</button>
-        <button onclick="endreSkin('default')">Standard 🟩</button>
+        <button id="StrikerBtn" onclick="endreSkin('Striker')">Buy Bolt 🚀(5000🟡)</button>
+        <button onclick="endreSkin('default')">Default 🟩</button>
         
         <span class="section-title">Boosters (Gems)</span>
         <button id="armorBtn" onclick="buyBooster('armor', 50)">🛡️Armor (50💎)</button>
@@ -83,7 +83,7 @@
             </div>
             <div class="wpn-group" id="sniperGroup" style="display: none;">
                 <button id="sniperSelect" onclick="selectWeapon('sniper')">Sniper</button>
-                <button id="sniperStatus" disabled style="color: #ff0; border-color: #ff0;">LÅST OPP AV BOSS 🎯</button>
+                <button id="sniperStatus" disabled style="color: #ff0; border-color: #ff0;">UNLOCKED BY BOSS 🎯</button>
             </div>
             <button id="rebirthBtn" onclick="rebirth()" style="display:none; background: gold !important; color: black; font-weight: bold;">REBIRTH (500🟡)</button>
         </div>
@@ -96,11 +96,11 @@
     <h2 style="color: #4af; text-transform: uppercase; margin-bottom: 20px; font-size: 18px; letter-spacing: 2px;">Space Station Login</h2>
     
     <div style="display: flex; flex-direction: column; gap: 10px; width: 80%;">
-        <input type="text" id="loginUser" placeholder="Brukernavn" style="padding: 10px; background: #111; color: white; border: 1px solid #4af; border-radius: 4px; outline: none;">
-        <input type="password" id="loginCode" placeholder="Kode (PIN)" style="padding: 10px; background: #111; color: white; border: 1px solid #4af; border-radius: 4px; outline: none;">
+        <input type="text" id="loginUser" placeholder="Username" style="padding: 10px; background: #111; color: white; border: 1px solid #4af; border-radius: 4px; outline: none;">
+        <input type="password" id="loginCode" placeholder="Code (PIN)" style="padding: 10px; background: #111; color: white; border: 1px solid #4af; border-radius: 4px; outline: none;">
         
-        <button onclick="validerInnlogging()" style="padding: 10px; background: #004400; color: #0f0; border: 1px solid #0f0; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 10px;">LOGG INN</button>
-        <button onclick="registrerBruker()" style="padding: 10px; background: #222; color: #4af; border: 1px solid #4af; border-radius: 4px; cursor: pointer;">REGISTRER NY BRUKER</button>
+        <button onclick="validerInnlogging()" style="padding: 10px; background: #004400; color: #0f0; border: 1px solid #0f0; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 10px;">LOG IN</button>
+        <button onclick="registrerBruker()" style="padding: 10px; background: #222; color: #4af; border: 1px solid #4af; border-radius: 4px; cursor: pointer;">REGISTER NEW USER</button>
         
         <p id="loginMessage" style="color: #ff4444; font-size: 12px; text-align: center; margin-top: 10px; min-height: 15px;"></p>
     </div>
@@ -138,11 +138,11 @@ let uiVisible = true;
 let gemMilestone = 10000;
 let lastTime = 0; 
 
-// Boss-tilstander
+// Boss states
 let bossSpawned = false;
 let activeBoss = null;
 
-// Spill-tilstander 
+// Game states 
 let currentSkin = "default";
 let StrikerOwned = false;
 let TheCoreOwned = false;
@@ -162,7 +162,7 @@ const weaponConfigs = {
     smg: { cooldown: [8, 5], maxLvl: 1, type: "single", dmg: 0.5 },
     shotgun: { cooldown: [45, 30], maxLvl: 1, type: "triple", dmg: 1 },
     ar: { cooldown: [14, 11], maxLvl: 1, type: "fast", dmg: 1 },
-    sniper: { cooldown: [60], maxLvl: 0, type: "single", dmg: 4 } 
+    sniper: { cooldown: [30], maxLvl: 0, type: "single", dmg: 4 } 
 };
 
 function endreSkin(valg) {
@@ -321,7 +321,7 @@ function saveProgress() {
         TheCoreOwned: TheCoreOwned,
         pigOwned: pigOwned,
         voidOverlordOwned: voidOverlordOwned
-    }, { merge: true }).catch(err => console.error("Feil ved lagring:", err));
+    }, { merge: true }).catch(err => console.error("Error saving progress:", err));
 }
 
 function lastInnBrukerData() {
@@ -342,7 +342,7 @@ function lastInnBrukerData() {
             voidOverlordOwned = data.voidOverlordOwned || false;
         }
         updateUI();
-    }).catch(err => console.error("Feil ved innlasting:", err));
+    }).catch(err => console.error("Error loading data:", err));
 }
 
 function init() {
@@ -388,10 +388,7 @@ function spawnEnemy() {
 function fire() {
     if (!player.alive || activeWeapon === "none") return;
     const config = weaponConfigs[activeWeapon];
-    
-    // Her er den magiske oppdateringen som fikser krasjen:
-    const lvl = weaponLevels[activeWeapon] || 0; 
-    
+    const lvl = weaponLevels[activeWeapon] || 0;
     const damage = config.dmg * (boosters.doubleDamage ? 2 : 1);
     
     if (config.type === "triple") {
@@ -403,11 +400,8 @@ function fire() {
     } else {
         bullets.push({x: player.x + 15, y: player.y, vx: 0, vy: -12, dmg: damage});
     }
-    
-    // Nå vil cooldown alltid finne et gyldig tall!
     shootCooldown = rainbowTimer > 0 ? config.cooldown[lvl] / 3 : config.cooldown[lvl]; 
 }
-
 
 function killPlayer() {
     if (boosters.armor && !player.armorUsed) { 
@@ -441,12 +435,12 @@ function update(sf) {
     }
 
     if (player.alive && activeWeapon !== "none") {
-    if (shootCooldown <= 0) {
-        fire();
+        if (shootCooldown <= 0) {
+            fire();
+        }
     }
-}
 
-if (shootCooldown > 0) shootCooldown -= 1 * sf;
+    if (shootCooldown > 0) shootCooldown -= 1 * sf;
     
     stars.forEach(s => { s.y += s.s * sf; if(s.y > 600) s.y = 0; });
     
@@ -472,7 +466,7 @@ if (shootCooldown > 0) shootCooldown -= 1 * sf;
 
     let enemySpeedMult = (boosters.slowEnemies ? 0.5 : 1.0) * sf;
 
-    // --- BOSS OPPFØRSEL ---
+    // --- BOSS BEHAVIOR ---
     if (activeBoss) {
         if (activeBoss.y < activeBoss.targetY) {
             activeBoss.y += 1 * sf;
@@ -494,7 +488,6 @@ if (shootCooldown > 0) shootCooldown -= 1 * sf;
         }
 
         bullets.forEach((b, bi) => {
-            // Sjekk om activeBoss fortsatt eksisterer for å hindre krasj under fjerning av kuler
             if (activeBoss && b.x < activeBoss.x + activeBoss.w && b.x + 6 > activeBoss.x && b.y < activeBoss.y + activeBoss.h && b.y + 12 > activeBoss.y) {
                 activeBoss.hp -= b.dmg;
                 bullets.splice(bi, 1);
@@ -507,8 +500,8 @@ if (shootCooldown > 0) shootCooldown -= 1 * sf;
                     coins += 8000;
                     gems += 150;
                     voidOverlordOwned = true;
-                    weaponsOwned.sniper = true;
-                    activeWeapon = "sniper"; // Bytter automatisk til den nye sniperen!
+                    weaponsOwned.sniper = true; 
+                    // AUTO-EQUIP REMOVED FROM HERE PER USER REQUEST
                     
                     floatingTexts.push({x: 100, y: 300, text: "DREADNOUGHT DETONATED!", color: "#f00", life: 3});
                     floatingTexts.push({x: 100, y: 330, text: "+8000 COINS! +150 GEMS!", color: "#ff0", life: 3});
@@ -522,7 +515,7 @@ if (shootCooldown > 0) shootCooldown -= 1 * sf;
         });
     }
     
-    // Oppdater vanlige fiender
+    // Update regular enemies
     enemies.forEach((e, ei) => {
         if (e.type === 'sinus') {
             if (!e.centerX) e.centerX = e.x;
@@ -548,7 +541,7 @@ if (shootCooldown > 0) shootCooldown -= 1 * sf;
                     if (Math.random() < 0.05) { gems += 5; floatingTexts.push({x: e.x, y: e.y, text: "+5 GEMS!", color: "#a4f", life: 1}); }
                     coins += (e.coins || 10); score += (e.isHeavy ? 500 : 100); 
                     createExplosion(e.x+e.w/2, e.y+e.h/2, e.color);
-                    if (Math.random() < 0.10) powerups.push({ x: e.x, y: e.y, w: 25, h: 25, speedY: 2 });
+                    if (Math.random() < 0.01) powerups.push({ x: e.x, y: e.y, w: 25, h: 25, speedY: 2 });
                     enemies.splice(ei, 1); updateUI();
                 }
             }   
@@ -575,47 +568,79 @@ function draw() {
     if (player.alive) {
         if (currentSkin === "Void Overlord") {
             let time = Date.now();
-            let pulse = Math.sin(time * 0.005) * 5;
+            let pulse = Math.sin(time * 0.005) * 6;
             
-            // 1. Ekstern kosmisk aura (Nebula)
-            ctx.shadowBlur = 20 + pulse;
-            ctx.shadowColor = "#a0f";
+            // 1. Deep Cosmic Void Nebula (Aura)
+            ctx.shadowBlur = 25 + pulse;
+            ctx.shadowColor = "#70f";
             
-            // 2. Tegn skipets mørke skrog (Diamant-formet)
-            ctx.fillStyle = "#090214";
-            ctx.strokeStyle = "#d8f";
-            ctx.lineWidth = 2;
+            // Crackling void energy lines behind the ship
+            ctx.strokeStyle = "rgba(160, 0, 255, 0.4)";
+            ctx.lineWidth = 1;
+            for(let i=0; i<3; i++) {
+                ctx.beginPath();
+                ctx.moveTo(player.x + player.width/2, player.y + player.height/2);
+                ctx.lineTo(player.x + player.width/2 + (Math.sin(time*0.01 + i)*25), player.y + player.height + 15);
+                ctx.stroke();
+            }
+
+            // 2. Main Overlord Dreadnought Chassis (Sharp, Spiked Obsidian geometry)
+            ctx.fillStyle = "#04010a";
+            ctx.strokeStyle = "#b0f";
+            ctx.lineWidth = 2.5;
             ctx.beginPath();
-            ctx.moveTo(player.x + player.width / 2, player.y); // Topp
-            ctx.lineTo(player.x + player.width, player.y + player.height * 0.7); // Høyre vinge
-            ctx.lineTo(player.x + player.width * 0.7, player.y + player.height); // Bak høyre
-            ctx.lineTo(player.x + player.width * 0.3, player.y + player.height); // Bak venstre
-            ctx.lineTo(player.x, player.y + player.height * 0.7); // Venstre vinge
+            
+            // Fierce Overlord Spiked Crown / Front Bow
+            ctx.moveTo(player.x + player.width / 2, player.y - 6); // True front razor spike
+            ctx.lineTo(player.x + player.width * 0.65, player.y + player.height * 0.2);
+            ctx.lineTo(player.x + player.width, player.y + player.height * 0.55); // Left sweeping blade wing
+            ctx.lineTo(player.x + player.width * 0.8, player.y + player.height * 0.7); 
+            ctx.lineTo(player.x + player.width * 0.75, player.y + player.height); // Rear thruster spike left
+            ctx.lineTo(player.x + player.width * 0.5, player.y + player.height * 0.85); // Inner engine indentation
+            ctx.lineTo(player.x + player.width * 0.25, player.y + player.height); // Rear thruster spike right
+            ctx.lineTo(player.x + player.width * 0.2, player.y + player.height * 0.7);
+            ctx.lineTo(player.x, player.y + player.height * 0.55); // Right sweeping blade wing
+            ctx.lineTo(player.x + player.width * 0.35, player.y + player.height * 0.2);
+            
             ctx.closePath();
             ctx.fill();
             ctx.stroke();
-            ctx.shadowBlur = 0; // Nullstill skygge for indre detaljer
+            ctx.shadowBlur = 0; // Clear blur for fine details
             
-            // 3. Roterende indre ringer (Event Horizon)
+            // 3. Spiked plating line highlights
+            ctx.strokeStyle = "#e8f";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(player.x + player.width/2, player.y - 4);
+            ctx.lineTo(player.x + player.width/2, player.y + player.height * 0.5);
+            ctx.stroke();
+
+            // 4. Rotating Outer Orbital Fragments (Overlord Shield Relics)
             ctx.save();
             ctx.translate(player.x + player.width / 2, player.y + player.height / 2);
-            ctx.rotate(time * 0.003);
-            ctx.strokeStyle = "rgba(160, 0, 255, 0.6)";
-            ctx.lineWidth = 1.5;
-            ctx.strokeRect(-10, -10, 20, 20);
+            ctx.rotate(time * 0.004);
+            ctx.fillStyle = "#d8f";
+            ctx.strokeStyle = "#a0f";
+            ctx.lineWidth = 1;
+            // Draw 4 tiny obsidian sub-shards revolving around the overlord
+            for(let a=0; a<4; a++) {
+                ctx.rotate(Math.PI / 2);
+                ctx.fillRect(22 + Math.sin(time*0.005)*3, -3, 5, 5);
+                ctx.strokeRect(22 + Math.sin(time*0.005)*3, -3, 5, 5);
+            }
             ctx.restore();
             
-            // 4. Glødende plasma-vingetipper
-            ctx.fillStyle = "#ff00aa";
-            ctx.fillRect(player.x, player.y + player.height * 0.6, 3, 6);
-            ctx.fillRect(player.x + player.width - 3, player.y + player.height * 0.6, 3, 6);
+            // 5. Glowing Void Plasma Wingtips (Hyper-Charged)
+            ctx.fillStyle = "#ff00bb";
+            ctx.fillRect(player.x - 2, player.y + player.height * 0.5, 3, 8);
+            ctx.fillRect(player.x + player.width - 1, player.y + player.height * 0.5, 3, 8);
             
-            // 5. Lysende hvit Singularitets-kjerne i midten
+            // 6. Singular Ominous White Core / Central Eye of the Overlord
             ctx.fillStyle = "#fff";
-            ctx.shadowBlur = 8;
+            ctx.shadowBlur = 12;
             ctx.shadowColor = "#0ff";
             ctx.beginPath();
-            ctx.arc(player.x + player.width / 2, player.y + player.height / 2, 4, 0, Math.PI * 2);
+            ctx.arc(player.x + player.width / 2, player.y + player.height / 2, 4.5, 0, Math.PI * 2);
             ctx.fill();
             ctx.shadowBlur = 0;
         }
@@ -781,7 +806,7 @@ function togglePause() {
 function restartGame() { init(); }
 
 function resetGameData() { 
-    if(confirm("Vil du slette all data for denne brukeren i skyen?")) { 
+    if(confirm("Do you want to delete all data for this user in the cloud?")) { 
         if (aktivBruker) { db.collection("users").doc(aktivBruker).delete().then(() => { location.reload(); }); }
     } 
 }
@@ -814,25 +839,25 @@ function registrerBruker() {
     const user = document.getElementById("loginUser").value.trim().toLowerCase();
     const code = document.getElementById("loginCode").value.trim();
     const msg = document.getElementById("loginMessage");
-    if (!user || !code) { msg.style.color = "#ff4444"; msg.innerText = "Fyll inn både brukernavn og kode!"; return; }
-    msg.style.color = "#4af"; msg.innerText = "Sjekker tilgjengelighet...";
+    if (!user || !code) { msg.style.color = "#ff4444"; msg.innerText = "Fill in both username and code!"; return; }
+    msg.style.color = "#4af"; msg.innerText = "Checking availability...";
 
     db.collection("users").doc(user).get().then((doc) => {
-        if (doc.exists) { msg.style.color = "#ff4444"; msg.innerText = "Brukernavnet er opptatt i databasen!"; } 
+        if (doc.exists) { msg.style.color = "#ff4444"; msg.innerText = "Username is already taken!"; } 
         else {
             db.collection("users").doc(user).set({
                 pinCode: code, coins: 0, gems: 0, highscore: 0
-            }).then(() => { msg.style.color = "#0f0"; msg.innerText = "Bruker opprettet i skyen! Logg inn nå."; });
+            }).then(() => { msg.style.color = "#0f0"; msg.innerText = "User created! Log in now."; });
         }
-    }).catch(err => { msg.style.color = "#ff4444"; msg.innerText = "Kunne ikke koble til database."; });
+    }).catch(err => { msg.style.color = "#ff4444"; msg.innerText = "Could not connect to database."; });
 }
 
 function validerInnlogging() {
     const user = document.getElementById("loginUser").value.trim().toLowerCase();
     const code = document.getElementById("loginCode").value.trim();
     const msg = document.getElementById("loginMessage");
-    if (!user || !code) { msg.style.color = "#ff4444"; msg.innerText = "Fyll inn brukernavn og kode!"; return; }
-    msg.style.color = "#4af"; msg.innerText = "Logger inn...";
+    if (!user || !code) { msg.style.color = "#ff4444"; msg.innerText = "Fill in username and code!"; return; }
+    msg.style.color = "#4af"; msg.innerText = "Logging in...";
 
     db.collection("users").doc(user).get().then((doc) => {
         if (doc.exists) {
@@ -841,9 +866,9 @@ function validerInnlogging() {
                 aktivBruker = user;
                 document.getElementById("loginScreen").style.display = "none";
                 lastInnBrukerData().then(() => { init(); requestAnimationFrame(loop); });
-            } else { msg.style.color = "#ff4444"; msg.innerText = "Feil kode (PIN)!"; }
-        } else { msg.style.color = "#ff4444"; msg.innerText = "Brukeren finnes ikke. Registrer ny først."; }
-    }).catch(err => { msg.style.color = "#ff4444"; msg.innerText = "Feil under pålogging."; });
+            } else { msg.style.color = "#ff4444"; msg.innerText = "Wrong code (PIN)!"; }
+        } else { msg.style.color = "#ff4444"; msg.innerText = "User does not exist. Register first."; }
+    }).catch(err => { msg.style.color = "#ff4444"; msg.innerText = "Error during login."; });
 }
 </script>
 </body>
